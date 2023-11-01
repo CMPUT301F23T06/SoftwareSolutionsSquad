@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">SoftwareSolutionsSquad</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="create_account">Create Account</string>
+    <string name="existing_user">Already have an account?</string>
+    <string name="welcome_header">MANAGE YOUR HOUSEHOLD INVENTORY</string>
+    <string name="welcome_subtext">Unlock the power of organization and peace with HomeTrack.</string>
+    <string name="confirm">Confirm</string>
+    <string name="name">Name</string>
 </resources>
