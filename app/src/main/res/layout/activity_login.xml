@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/login_page_login_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="40sp"
+        android:paddingStart="40sp"
+        android:paddingTop="40sp"
+        android:paddingEnd="40sp"
+        android:text="@string/login"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/login_page_login_email_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35sp"
+        android:layout_marginTop="30sp"
+        android:layout_marginEnd="35sp"
+        android:text="@string/email_address"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/login_page_login_email_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30sp"
+        android:layout_marginEnd="30sp"
+        android:ems="10"
+        android:inputType="textEmailAddress" />
+
+    <TextView
+        android:id="@+id/login__page_login_password_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35sp"
+        android:layout_marginTop="30sp"
+        android:layout_marginEnd="35sp"
+        android:text="@string/password"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/login_page_login_password_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30sp"
+        android:layout_marginEnd="30sp"
+        android:ems="10"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/login_page_login_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="30sp"
+        android:text="@string/login" />
+
+    <TextView
+        android:id="@+id/login_page_forgot_password_click_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/forgot_password"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/login_page_create_account_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50sp"
+        android:text="@string/no_account"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/login_page_create_account_click_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20sp"
+        android:text="@string/create_account"
+        android:textAlignment="center"
+        android:textStyle="bold" />
+
+</LinearLayout>
