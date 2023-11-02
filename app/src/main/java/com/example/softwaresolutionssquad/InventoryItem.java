@@ -2,16 +2,32 @@ package com.example.softwaresolutionssquad;
 
 import java.util.Date;
 
+/**
+ * The InventoryItem class represents an item in an inventory,
+ * including details such as purchase date, description, make,
+ * model, serial number, estimated value, and a comment about the item.
+ */
 public class InventoryItem {
-    private Date purchaseDate;
-    private String description;
-    private String make;
-    private String model;
-    private String serialNumber;
-    private double estimatedValue;
-    private String comment;
+    // Properties of the inventory item
+    private Date purchaseDate;   // The date on which the item was purchased
+    private String description;  // A brief description of the item
+    private String make;         // The make of the item
+    private String model;        // The model of the item
+    private String serialNumber; // The serial number for the item
+    private double estimatedValue; // The estimated value of the item
+    private String comment;      // A comment about the item
 
-    // Constructor with all properties
+    /**
+     * Constructs an InventoryItem with all its details initialized.
+     *
+     * @param purchaseDate    The date the item was purchased
+     * @param description     The item's description
+     * @param make            The make of the item
+     * @param model           The model of the item
+     * @param serialNumber    The serial number of the item
+     * @param estimatedValue  The estimated value of the item
+     * @param comment         A comment about the item
+     */
     public InventoryItem(Date purchaseDate, String description, String make, String model, String serialNumber, double estimatedValue, String comment) {
         this.purchaseDate = purchaseDate;
         this.description = description;
@@ -22,7 +38,7 @@ public class InventoryItem {
         this.comment = comment;
     }
 
-    // Getter and Setter methods for all properties
+    // Accessor (getter) and mutator (setter) methods for each property
 
     public Date getPurchaseDate() {
         return purchaseDate;
@@ -80,6 +96,12 @@ public class InventoryItem {
         this.comment = comment;
     }
 
+    /**
+     * Returns a string representation of the InventoryItem,
+     * including all its properties.
+     *
+     * @return A string representation of the InventoryItem
+     */
     @Override
     public String toString() {
         return "InventoryItem{" +

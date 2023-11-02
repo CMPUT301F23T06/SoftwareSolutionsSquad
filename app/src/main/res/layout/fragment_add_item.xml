@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:focusable="false"
             android:layout_marginBottom="25dp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -88,12 +89,28 @@
             android:layout_height="wrap_content"
             android:text="Estimated Value"
             android:textStyle="bold" />
+
         <EditText
-            android:id="@+id/edtEstimatedValue"
+            android:id="@+id/editTextNumberDecimal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:ems="10"
+            android:inputType="numberDecimal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Comment"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edtCommentTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="25dp"
-            android:inputType="numberDecimal" />
+            android:inputType="text" />
+
+
     </LinearLayout>
 
     <!-- Button section at the bottom -->
@@ -107,7 +124,7 @@
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#00EDFC"
+            android:backgroundTint="@color/button_blue_color"
             android:text="Next" />
 
         <!-- This View will take up all the available space in between the buttons -->
@@ -120,7 +137,7 @@
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#CECECE"
+            android:backgroundTint="@color/gray_color"
             android:text="Cancel" />
     </LinearLayout>
 
