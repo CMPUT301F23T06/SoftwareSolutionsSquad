@@ -1,5 +1,6 @@
 package com.example.softwaresolutionssquad;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Date;
  * including details such as purchase date, description, make,
  * model, serial number, estimated value, and a comment about the item.
  */
-public class InventoryItem {
+public class InventoryItem implements Serializable {
     // Properties of the inventory item
     private Date purchaseDate;   // The date on which the item was purchased
     private String description;  // A brief description of the item

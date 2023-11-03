@@ -1,6 +1,7 @@
 package com.example.softwaresolutionssquad;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,13 +13,8 @@ import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.softwaresolutionssquad.AddItemFragment;
-import com.example.softwaresolutionssquad.InventoryItem;
-import com.example.softwaresolutionssquad.InventoryListAdapter;
-
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -101,6 +97,23 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
             }
         });
 
+        ListView listView = findViewById(R.id.inventory_list_view);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("MainActivity", "onItemClick: position=" + position + " id=" + id);
+                InventoryItem selectedItem = inventoryItems.get(position);
+                AddItemFragment addItemFragment = AddItemFragment.newInstance(selectedItem);
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frag_container, addItemFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+                FrameLayout fragmentContainer = findViewById(R.id.frag_container);
+                fragmentContainer.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     // Helper method to add initial InventoryItem objects to the inventoryItems list
@@ -121,5 +134,14 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         inventoryItems.add(newItem);
         // Notify the adapter that the underlying dataset has changed to update the ListView
         inventoryListAdapter.notifyDataSetChanged();
+    }
+
+    // This method updates an existing inventory item
+    public void onUpdatePressed(InventoryItem updatedItem) {
+        int itemIndex = inventoryItems.indexOf(updatedItem);
+        if(itemIndex != -1) {
+            inventoryItems.set(itemIndex, updatedItem);
+            inventoryListAdapter.notifyDataSetChanged();
+        }
     }
 }
