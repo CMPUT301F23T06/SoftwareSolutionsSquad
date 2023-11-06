@@ -5,22 +5,26 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
 // Define the MainActivity class which extends AppCompatActivity to inherit common app behaviors
 // and implements the OnNewItemSubmission interface for communication with AddItemFragment
-public class MainActivity extends AppCompatActivity implements AddItemFragment.OnNewItemSubmission {
+public class MainActivity extends AppCompatActivity implements AddItemFragment.OnNewItemSubmission, InventoryListAdapter.OnDeleteButtonShowListener {
 
     private FirebaseFirestore db;
 
@@ -31,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     // Custom adapter for converting an ArrayList of items into View items for the ListView
     private InventoryListAdapter inventoryListAdapter;
 
+    // Declare the delete button
+    private Button deleteButton;
     // The onCreate method is called when the Activity is starting
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +58,9 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         // Initialize the custom adapter and assign it to the ListView
         inventoryListAdapter = new InventoryListAdapter(this, inventoryItems);
         inventoryListView.setAdapter(inventoryListAdapter);
+
+        // Update the total estimated value
+        updateTotalValue();
 
         // Initialize the Spinner to sort inventory items
         Spinner spinnerOrder = findViewById(R.id.spinner_order);
@@ -114,6 +123,44 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
                 fragmentContainer.setVisibility(View.VISIBLE);
             }
         });
+
+        deleteButton = findViewById(R.id.delete_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Implement the deletion logic here
+                deleteSelectedItems();
+            }
+        });
+
+        // Set the listener on the adapter
+        inventoryListAdapter.setOnDeleteButtonShowListener(this);
+    }
+
+    // Method to show the delete button if any items are selected
+    public void showDeleteButtonIfNeeded() {
+        boolean isAnyItemSelected = false;
+        for (InventoryItem item : inventoryItems) {
+            if (item.getSelected()) {
+                isAnyItemSelected = true;
+                break;
+            }
+        }
+        deleteButton.setVisibility(isAnyItemSelected ? View.VISIBLE : View.GONE);
+    }
+
+    // Method to delete selected items
+    private void deleteSelectedItems() {
+        List<InventoryItem> itemsToRemove = new ArrayList<>();
+        for (InventoryItem item : inventoryItems) {
+            if (item.getSelected()) {
+                itemsToRemove.add(item);
+            }
+        }
+        inventoryItems.removeAll(itemsToRemove);
+        inventoryListAdapter.notifyDataSetChanged(); // Notify the adapter to refresh the list view
+        showDeleteButtonIfNeeded(); // Hide the delete button as all selected items are removed
+        updateTotalValue(); // Update the total value since items are removed
     }
 
     // Helper method to add initial InventoryItem objects to the inventoryItems list
@@ -123,8 +170,32 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         inventoryItems.add(new InventoryItem(new Date(), "Laptop", "Dell", "Inspiron 5000", "SN12345", 800.00, "Work laptop"));
         inventoryItems.add(new InventoryItem(new Date(), "Phone", "Apple", "iPhone 13", "SN67890", 1200.00, "Personal phone"));
         inventoryItems.add(new InventoryItem(new Date(), "Headphones", "Sony", "WH-1000XM4", "SN11121", 300.00, "Noise-cancelling headphones"));
-        // More items can be added here as needed
     }
+
+    // Method to update total estimated value of InventoryItems
+    private void updateTotalValue() {
+        // Create variable to store sum of the values of the inventory items
+        double total_sum = 0;
+
+        // Get adapter from the ListView
+        InventoryListAdapter inventory_adapter = (InventoryListAdapter) inventoryListView.getAdapter();
+
+        // Loop through all the inventory items
+        for (int i = 0; i < inventory_adapter.getCount(); i++) {
+            InventoryItem item = inventory_adapter.getItem(i);
+            if (item != null) {
+                // Add each item's estimated value to the total
+                total_sum += item.getEstimatedValue();
+            }
+        }
+
+        // Find the TextView for the total estimated value
+        TextView totalValue = findViewById(R.id.total_estimated_value);
+
+        // Update the text in the TextView to the new total
+        totalValue.setText(String.format(Locale.US, "%.2f", total_sum));
+    }
+
 
     // This method is called when the OK button is pressed in the AddItemFragment
     // It adds the new item to the inventory list and updates the adapter
@@ -134,6 +205,9 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         inventoryItems.add(newItem);
         // Notify the adapter that the underlying dataset has changed to update the ListView
         inventoryListAdapter.notifyDataSetChanged();
+
+        // Update the total estimated value
+        updateTotalValue();
     }
 
     // This method updates an existing inventory item
@@ -142,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         if(itemIndex != -1) {
             inventoryItems.set(itemIndex, updatedItem);
             inventoryListAdapter.notifyDataSetChanged();
+            updateTotalValue();
         }
     }
 }

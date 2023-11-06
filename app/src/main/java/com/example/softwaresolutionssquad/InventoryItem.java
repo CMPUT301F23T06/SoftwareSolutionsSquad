@@ -17,7 +17,7 @@ public class InventoryItem implements Serializable {
     private String serialNumber; // The serial number for the item
     private double estimatedValue; // The estimated value of the item
     private String comment;      // A comment about the item
-
+    private boolean isSelected = false; // Keep track of whether the item is selected with the checkbox or not
     /**
      * Constructs an InventoryItem with all its details initialized.
      *
@@ -84,7 +84,6 @@ public class InventoryItem implements Serializable {
     public double getEstimatedValue() {
         return estimatedValue;
     }
-
     public void setEstimatedValue(double estimatedValue) {
         this.estimatedValue = estimatedValue;
     }
@@ -95,6 +94,14 @@ public class InventoryItem implements Serializable {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public boolean getSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     /**
