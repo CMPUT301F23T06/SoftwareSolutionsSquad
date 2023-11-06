@@ -4,7 +4,6 @@ package com.example.softwaresolutionssquad;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -39,14 +36,30 @@ public class AddItemFragment extends Fragment {
     private Button btnNext;
     private Button btnCancel;
 
+    private InventoryItem currentItem;
+
     private OnNewItemSubmission listener;
 
     // Initialize a Calendar instance to manage dates
     final Calendar calendar = Calendar.getInstance();
 
-    // This is the constructor for the AddItemFragment class
-    public AddItemFragment() {
-        // Required empty public constructor
+    public AddItemFragment(){}
+
+    // Static method to create a new instance of AddItemFragment
+    public static AddItemFragment newInstance(InventoryItem item) {
+        AddItemFragment fragment = new AddItemFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("item", item);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            currentItem = (InventoryItem) getArguments().getSerializable("item");
+        }
     }
 
     @Override
@@ -67,20 +80,16 @@ public class AddItemFragment extends Fragment {
         btnNext = view.findViewById(R.id.btnNext);
         btnCancel = view.findViewById(R.id.btnCancel);
 
+
         // Set an onClickListener for the purchase date EditText to show a date picker
-        edtPurchaseDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new DatePickerDialog(getContext(), date, calendar
-                        .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)).show();
-            }
+        edtPurchaseDate.setOnClickListener(v -> {
+            new DatePickerDialog(getContext(), date, calendar
+                    .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)).show();
         });
 
         // Set an onClickListener for the Next button
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnNext.setOnClickListener(v -> {
                 // TODO: Logic for saving the data and transitioning to the next screen
 
                 // Extract data from UI elements
@@ -112,30 +121,48 @@ public class AddItemFragment extends Fragment {
                 Double official_estimated_value = Double.parseDouble(estimated_val);
                 String comm = comment.getText().toString().trim();
 
-                // Call the listener's method to notify the parent activity
-                listener.onOKPressed(new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm));
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().remove(AddItemFragment.this).commit();
-                fragmentManager.popBackStack();
-                FrameLayout fragmentContainer = getActivity().findViewById(R.id.frag_container);
-                fragmentContainer.setVisibility(View.GONE);
-            }
+                InventoryItem itemToSave;
+                if(currentItem != null) {
+                    // Update the existing item's properties
+                    currentItem.setPurchaseDate(officialDate);
+                    currentItem.setDescription(description);
+                    currentItem.setMake(make);
+                    currentItem.setModel(model);
+                    currentItem.setSerialNumber(serialNumber);
+                    currentItem.setEstimatedValue(official_estimated_value);
+                    currentItem.setComment(comm);
+                    itemToSave = currentItem;
+                    listener.onUpdatePressed(itemToSave);
+                } else {
+                    // It's a new item
+                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm);
+                    listener.onOKPressed(itemToSave);
+                }
+
+            // Close the fragment
+            closeFragment();
         });
 
         // Set an onClickListener for the Cancel button
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: Logic for canceling the addition and going back
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().remove(AddItemFragment.this).commit();
-                fragmentManager.popBackStack();
-                FrameLayout fragmentContainer = getActivity().findViewById(R.id.frag_container);
-                fragmentContainer.setVisibility(View.GONE);
-            }
-        });
+        btnCancel.setOnClickListener(v -> closeFragment());
+
+        // Prepopulate fields if currentItem is not null (i.e., we're editing an existing item)
+        if (currentItem != null) {
+            prepopulateFields(currentItem);
+        }
 
         return view;
+    }
+
+    private void prepopulateFields(InventoryItem item) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        edtPurchaseDate.setText(sdf.format(item.getPurchaseDate()));
+        edtDescription.setText(item.getDescription());
+        edtMake.setText(item.getMake());
+        edtModel.setText(item.getModel());
+        edtSerialNumber.setText(item.getSerialNumber());
+        edtEstimatedValue.setText(String.valueOf(item.getEstimatedValue()));
+        comment.setText(item.getComment());
     }
 
     // Listener for date selection in the DatePickerDialog
@@ -150,9 +177,9 @@ public class AddItemFragment extends Fragment {
         }
     };
 
-    // Interface for communication with the parent activity
-    public interface OnNewItemSubmission {
-        void onOKPressed(InventoryItem item);
+    private void updateLabel() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        edtPurchaseDate.setText(sdf.format(calendar.getTime()));
     }
 
     @Override
@@ -161,14 +188,21 @@ public class AddItemFragment extends Fragment {
         if (context instanceof OnNewItemSubmission) {
             listener = (OnNewItemSubmission) context;
         } else {
-            throw new RuntimeException(context.toString() + " OnFragmentInteractionListener is not implemented");
+            throw new RuntimeException(context.toString()
+                    + " must implement OnNewItemSubmission");
         }
     }
 
-    // Helper method to update the date EditText with the selected date
-    private void updateLabel() {
-        String format = "yyyy-MM-dd";
-        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
-        edtPurchaseDate.setText(sdf.format(calendar.getTime()));
+    private void closeFragment() {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction().remove(AddItemFragment.this).commit();
+        fragmentManager.popBackStack();
+        FrameLayout fragmentContainer = getActivity().findViewById(R.id.frag_container);
+        fragmentContainer.setVisibility(View.GONE);
+    }
+
+    public interface OnNewItemSubmission {
+        void onOKPressed(InventoryItem newItem);
+        void onUpdatePressed(InventoryItem updatedItem);
     }
 }
