@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,6 +36,19 @@ public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
         super(context, 0, items);
         this.items = items; // Assign the passed item list to the instance variable.
         this.context = context; // Assign the passed context to the instance variable.
+    }
+
+    // Define an interface for the callback
+    public interface OnDeleteButtonShowListener {
+        void showDeleteButtonIfNeeded();
+    }
+
+    // Reference to the listener
+    private OnDeleteButtonShowListener onDeleteButtonShowListener;
+
+    // Setter for the listener
+    public void setOnDeleteButtonShowListener(OnDeleteButtonShowListener listener) {
+        this.onDeleteButtonShowListener = listener;
     }
 
     /**
@@ -71,6 +85,29 @@ public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
         descriptionTextView.setText(currentItem.getDescription());
         makeTextView.setText(currentItem.getMake());
         estimatedValueTextView.setText("$" + currentItem.getEstimatedValue());
+
+        // Retrieve the checkbox from the layout and set its tag to the position
+        CheckBox checkBox = listItemView.findViewById(R.id.checkItem);
+        checkBox.setTag(position); // Tag with the position to identify the item when checkbox is toggled
+
+        // Set the checkbox state based on the item's selection state
+        checkBox.setChecked(currentItem.getSelected());
+
+        // Set up a click listener for the checkbox
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { // v is the checkbox itself
+                int position = (int) v.getTag(); // get the tag associated with the checkbox: position of the item in the ListView
+                InventoryItem item = getItem(position); // get the Inventory item at the given position
+                if (item != null) {
+                    item.setSelected(!item.getSelected()); // Toggle the current state
+                    // Notify the listener
+                    if (onDeleteButtonShowListener != null) {
+                        onDeleteButtonShowListener.showDeleteButtonIfNeeded();
+                    }
+                }
+            }
+        });
 
         // Return the view with all data set, representing one list item.
         return listItemView;
