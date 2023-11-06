@@ -17,6 +17,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -133,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
 
         // Set the listener on the adapter
         inventoryListAdapter.setOnDeleteButtonShowListener(this);
-
     }
 
     // Method to show the delete button if any items are selected
@@ -169,7 +170,6 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         inventoryItems.add(new InventoryItem(new Date(), "Laptop", "Dell", "Inspiron 5000", "SN12345", 800.00, "Work laptop"));
         inventoryItems.add(new InventoryItem(new Date(), "Phone", "Apple", "iPhone 13", "SN67890", 1200.00, "Personal phone"));
         inventoryItems.add(new InventoryItem(new Date(), "Headphones", "Sony", "WH-1000XM4", "SN11121", 300.00, "Noise-cancelling headphones"));
-        // More items can be added here as needed
     }
 
     // Method to update total estimated value of InventoryItems
@@ -194,7 +194,6 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
 
         // Update the text in the TextView to the new total
         totalValue.setText(String.format(Locale.US, "%.2f", total_sum));
-
     }
 
 
@@ -206,9 +205,9 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         inventoryItems.add(newItem);
         // Notify the adapter that the underlying dataset has changed to update the ListView
         inventoryListAdapter.notifyDataSetChanged();
+
         // Update the total estimated value
         updateTotalValue();
-//        showDeleteButtonIfNeeded();
     }
 
     // This method updates an existing inventory item
@@ -217,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         if(itemIndex != -1) {
             inventoryItems.set(itemIndex, updatedItem);
             inventoryListAdapter.notifyDataSetChanged();
+            updateTotalValue();
         }
     }
 }
