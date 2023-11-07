@@ -17,6 +17,7 @@ public class InventoryItem implements Serializable {
     private String serialNumber; // The serial number for the item
     private double estimatedValue; // The estimated value of the item
     private String comment;      // A comment about the item
+    private String docId;
     private boolean isSelected = false; // Keep track of whether the item is selected with the checkbox or not
     /**
      * Constructs an InventoryItem with all its details initialized.
@@ -29,7 +30,7 @@ public class InventoryItem implements Serializable {
      * @param estimatedValue  The estimated value of the item
      * @param comment         A comment about the item
      */
-    public InventoryItem(Date purchaseDate, String description, String make, String model, String serialNumber, double estimatedValue, String comment) {
+    public InventoryItem(Date purchaseDate, String description, String make, String model, String serialNumber, double estimatedValue, String comment, String docId) {
         this.purchaseDate = purchaseDate;
         this.description = description;
         this.make = make;
@@ -37,6 +38,10 @@ public class InventoryItem implements Serializable {
         this.serialNumber = serialNumber;
         this.estimatedValue = estimatedValue;
         this.comment = comment;
+        this.docId = docId;
+    }
+
+    public InventoryItem() {
     }
 
     // Accessor (getter) and mutator (setter) methods for each property
@@ -104,6 +109,10 @@ public class InventoryItem implements Serializable {
         isSelected = selected;
     }
 
+    public String getDocId() { return docId; }
+
+    public void setDocId(String docId) { this.docId = docId; }
+
     /**
      * Returns a string representation of the InventoryItem,
      * including all its properties.
@@ -114,6 +123,7 @@ public class InventoryItem implements Serializable {
     public String toString() {
         return "InventoryItem{" +
                 "purchaseDate=" + purchaseDate +
+                ", documentId='" + docId + '\'' +
                 ", description='" + description + '\'' +
                 ", make='" + make + '\'' +
                 ", model='" + model + '\'' +
