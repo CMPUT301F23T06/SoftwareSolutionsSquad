@@ -190,7 +190,6 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         ((TextView) findViewById(R.id.total_estimated_value)).setText(String.format(Locale.US, "%.2f", totalSum));
     }
 
-
     // This method is called when the OK button is pressed in the AddItemFragment
     // It adds the new item to the inventory list and updates the adapter
     @Override
