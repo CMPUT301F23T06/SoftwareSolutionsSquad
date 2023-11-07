@@ -16,7 +16,7 @@ jobs:
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
-        java-version: '17' # Change this to Java 17
+        java-version: '17'
         distribution: 'temurin'
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
@@ -29,5 +29,10 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
+    - name: Create google-services.json
+      env:
+        FIREBASE_SERVICE_JSON: ${{ secrets.FIREBASE_SERVICE_JSON }}
+      run: |
+        echo "$FIREBASE_SERVICE_JSON" > ./app/google-services.json
     - name: Build with Gradle
       run: ./gradlew build
