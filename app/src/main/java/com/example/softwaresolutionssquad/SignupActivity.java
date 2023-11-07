@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,51 +53,77 @@ public class SignupActivity extends AppCompatActivity {
         signupButton.setOnClickListener(v -> SignupListener());
     }
 
-    private void SignupListener() {
-        String username = usernameInput.getText().toString();
-        String password = passwordInput.getText().toString();
-        String name = nameInput.getText().toString();
+    private String hashPassword(String passwordToHash) {
+        try {
+            // Create MessageDigest instance for SHA-256
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-        if (username.isEmpty() || password.isEmpty()) {
+            // Add password bytes to digest
+            md.update(passwordToHash.getBytes());
+
+            // Get the hash's bytes
+            byte[] bytes = md.digest();
+
+            // This bytes[] has bytes in decimal format. Convert it to hexadecimal format
+            StringBuilder sb = new StringBuilder();
+            for (byte aByte : bytes) {
+                sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+            }
+
+            // Get complete hashed password in hex format
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void SignupListener() {
+        String username = usernameInput.getText().toString().trim();
+        String password = passwordInput.getText().toString().trim();
+        String name = nameInput.getText().toString().trim();
+
+        if (username.isEmpty() || password.isEmpty() || name.isEmpty()) {
+            Toast.makeText(SignupActivity.this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         DocumentReference userRef = users.document(username);
 
-        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot user = task.getResult();
-                    if (user.exists()) {
-                        // this username is not unique - it already exists
-                    } else {
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot user = task.getResult();
+                if (user != null && user.exists()) {
+                    Toast.makeText(SignupActivity.this, "Username already exists. Please try a different one.", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Hash the password before storing it
+                    String hashedPassword = hashPassword(password);
+
+                    if (hashedPassword != null) {
                         // create user
-                        Map<String,Object> newUser = new HashMap<>();
+                        Map<String, Object> newUser = new HashMap<>();
                         newUser.put("username", username);
                         newUser.put("displayName", name);
-                        newUser.put("password", password);
-                        users.document(username).set(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                // show sign up successful message
+                        newUser.put("password", hashedPassword); // Store the hashed password
 
-                                // if we want them to still login after signing up,
-                                // finish() will return to login page, if they should already be
-                                // logged in now, we need to change this
-                                finish();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // show sign up fail message
-                            }
+                        users.document(username).set(newUser).addOnSuccessListener(unused -> {
+                            Toast.makeText(SignupActivity.this, "Sign up successful!", Toast.LENGTH_SHORT).show();
+                            // Directing to login page or dashboard after sign up, based on your flow
+                            // For instance:
+                            // Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                            // startActivity(intent);
+                            finish();
+                        }).addOnFailureListener(e -> {
+                            Toast.makeText(SignupActivity.this, "Sign up failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         });
+                    } else {
+                        Toast.makeText(SignupActivity.this, "An error occurred during password hashing.", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    // task was unsuccessful show generic error
                 }
+            } else {
+                Toast.makeText(SignupActivity.this, "Failed to check existing users. Try again.", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 }
