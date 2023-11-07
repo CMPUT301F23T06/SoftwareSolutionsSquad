@@ -11,6 +11,10 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -24,6 +28,8 @@ public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
     private ArrayList<InventoryItem> items;
     // Context for accessing application-specific resources and classes.
     private Context context;
+    private FirebaseFirestore db;
+    private CollectionReference itemsRef;
 
     /**
      * Constructor for InventoryListAdapter.

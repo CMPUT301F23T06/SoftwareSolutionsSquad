@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.firebase.firestore.DocumentReference;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -120,6 +122,7 @@ public class AddItemFragment extends Fragment {
                 }
                 Double official_estimated_value = Double.parseDouble(estimated_val);
                 String comm = comment.getText().toString().trim();
+                String documentID = retrieveDocId(currentItem);
 
                 InventoryItem itemToSave;
                 if(currentItem != null) {
@@ -131,11 +134,12 @@ public class AddItemFragment extends Fragment {
                     currentItem.setSerialNumber(serialNumber);
                     currentItem.setEstimatedValue(official_estimated_value);
                     currentItem.setComment(comm);
+                    currentItem.setDocId(documentID);
                     itemToSave = currentItem;
                     listener.onUpdatePressed(itemToSave);
                 } else {
                     // It's a new item
-                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm);
+                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID);
                     listener.onOKPressed(itemToSave);
                 }
 
@@ -152,6 +156,18 @@ public class AddItemFragment extends Fragment {
         }
 
         return view;
+    }
+
+    private String retrieveDocId(InventoryItem currentItem) {
+        if (currentItem != null) {
+            // This means we're updating an existing item, so we should use the existing document ID.
+            return currentItem.getDocId();
+        } else {
+            // This is a new item, so generate a new document ID.
+            // The actual generation of the document ID will be handled by Firestore when we add the item.
+            DocumentReference newDocRef = ((MainActivity)getActivity()).getDb().collection("Item").document();
+            return newDocRef.getId();
+        }
     }
 
     private void prepopulateFields(InventoryItem item) {
