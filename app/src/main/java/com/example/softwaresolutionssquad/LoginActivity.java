@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -51,52 +55,53 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void LoginListener() {
-        String username = usernameInput.getText().toString();
-        String password = passwordInput.getText().toString();
+        String username = usernameInput.getText().toString().trim();
+        String inputPassword = passwordInput.getText().toString().trim();
 
-        DocumentReference userRef = users.document(username);
-        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot user = task.getResult();
-                    if (user.exists()) {
-                        if (user.get("password", String.class).equals(password)) {
-                            // correct password, now logged in
+        if (username.isEmpty() || inputPassword.isEmpty()) {
+            Toast.makeText(LoginActivity.this, "Please enter both username and password.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-                            // traverse to home page
-                            Intent main = new Intent(getBaseContext(), MainActivity.class);
-                            startActivity(main);
-                        } else {
-                            // incorrect password
-                            // show "Incorrect username or password" message
-                        }
-                    } else {
-                        // user doesnt exist, suggest sign up page?
-                    }
+        String hashedPassword = hashPassword(inputPassword);
+        if (hashedPassword == null) {
+            Toast.makeText(LoginActivity.this, "Error hashing password.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        DocumentReference userRef = db.collection("User").document(username);
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot user = task.getResult();
+                if (user != null && user.exists() && hashedPassword.equals(user.getString("password"))) {
+                    // correct password, now logged in
+                    Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                    Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(mainIntent);
+                    finish();
+                } else {
+                    // incorrect password or user does not exist
+                    Toast.makeText(LoginActivity.this, "Incorrect username or password.", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Toast.makeText(LoginActivity.this, "Login failed. Please try again later.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private static Cipher cipher;
-    public static String encrypt(String input) {
+    private String hashPassword(String passwordToHash) {
         try {
-            if (cipher == null) {
-                KeyGenerator keygen = KeyGenerator.getInstance("AES");
-                keygen.init(256);
-                SecretKey key = keygen.generateKey();
-                cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-                cipher.init(Cipher.ENCRYPT_MODE, key);
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(passwordToHash.getBytes());
+            byte[] bytes = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (byte aByte : bytes) {
+                sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
             }
-            byte[] ciphertext = cipher.doFinal(input.getBytes());
-            byte[] iv = cipher.getIV();
-            return ciphertext.toString();
-        } catch (Exception ex) {
-            // not sure what to do if encryption breaks
-            // probably throw exception and thing calling it deals with it appropriately
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
         }
-        // figuring this out still idk
-        return "";
     }
 }
