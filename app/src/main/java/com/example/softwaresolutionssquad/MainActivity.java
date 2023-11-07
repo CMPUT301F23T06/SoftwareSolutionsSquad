@@ -157,13 +157,6 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
 
     // Helper method to add initial InventoryItem objects to the inventoryItems list
     private void populateInitialItems() {
-        // Existing static items can be commented out if they are not needed
-        // and all items should be loaded from Firestore.
-
-//        inventoryItems.add(new InventoryItem(new Date(), "Laptop", "Dell", "Inspiron 5000", "SN12345", 800.00, "Work laptop", "hjkhB4359ee"));
-//        inventoryItems.add(new InventoryItem(new Date(), "Phone", "Apple", "iPhone 13", "SN67890", 1200.00, "Personal phone", "3949fn9q4HHlii3"));
-//        inventoryItems.add(new InventoryItem(new Date(), "Headphones", "Sony", "WH-1000XM4", "SN11121", 300.00, "Noise-cancelling headphones", "wj309jwfwf"));
-
         // Check if adapter is initialized
         if (inventoryListAdapter != null) {
             // Fetch all documents from Firestore and add them to the local list
