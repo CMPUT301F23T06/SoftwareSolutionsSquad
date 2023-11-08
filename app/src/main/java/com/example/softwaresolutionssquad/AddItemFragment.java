@@ -20,6 +20,9 @@ import com.google.firebase.firestore.DocumentReference;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -43,7 +46,7 @@ public class AddItemFragment extends Fragment {
     private OnNewItemSubmission listener;
 
     // Initialize a Calendar instance to manage dates
-    final Calendar calendar = Calendar.getInstance();
+    final LocalDate currentDate = LocalDate.now();
 
     public AddItemFragment(){}
 
@@ -85,9 +88,9 @@ public class AddItemFragment extends Fragment {
 
         // Set an onClickListener for the purchase date EditText to show a date picker
         edtPurchaseDate.setOnClickListener(v -> {
-            new DatePickerDialog(getContext(), date, calendar
-                    .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH)).show();
+            new DatePickerDialog(getContext(), date, currentDate.getYear(),
+                    currentDate.getMonthValue(),
+                    currentDate.getDayOfMonth()).show();
         });
 
         // Set an onClickListener for the Next button
@@ -186,16 +189,14 @@ public class AddItemFragment extends Fragment {
         @Override
         public void onDateSet(android.widget.DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, monthOfYear);
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            updateLabel();
+            LocalDate dateSet = LocalDate.of(year, monthOfYear, dayOfMonth);
+            updateLabel(dateSet);
         }
     };
 
-    private void updateLabel() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        edtPurchaseDate.setText(sdf.format(calendar.getTime()));
+    private void updateLabel(LocalDate dateSet) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        edtPurchaseDate.setText(dateSet.format(dtf));
     }
 
     @Override
