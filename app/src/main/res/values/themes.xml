@@ -11,6 +11,7 @@
         <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
         <item name="fullscreenTextColor">@color/light_blue_A200</item>
     </style>
+<<<<<<< HEAD
 
     <style name="roundedImageViewRounded">
         <item name="cornerFamily">rounded</item>
@@ -21,4 +22,6 @@
         <item name="android:buttonBarButtonStyle">@style/AlertDialogPositiveButtonStyle</item>
         <item name="android:buttonBarNegativeButtonStyle">@style/AlertDialogNegativeButtonStyle</item>
     </style>
+=======
+>>>>>>> 9c6508e (Refactored Fragment Structure and recreated navbar)
 </resources>
