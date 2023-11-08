@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -39,13 +40,24 @@ jobs:
     - name: Run unit tests
       run: ./gradlew test
 
-      # Setup Android Emulator and run instrumented tests
-    - name: Run instrumented tests on Emulator
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: 34  # Use the required API level here
-        target: google_apis
-        arch: x86_64   # Use the required architecture here
-        profile: Nexus 6
-        script: |
-            ./gradlew connectedCheck --stacktrace
+  emulator-setup:
+    needs: build-and-test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Add avdmanager and sdkmanager to system PATH
+        run: |
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/${{ env.ANDROID_BUILD_TOOLS_VERSION }}" >> $GITHUB_PATH
+
+      - name: Install Sdk
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager --install "system-images;android-33;google_apis_playstore;x86_64" "platforms;android-33" "build-tools;33.0.2" "platform-tools" "emulator"
+
+      - name: Build emulator
+        run: |
+          echo "no" | avdmanager --verbose create avd --force -n emulator -k "system-images;android-33;google_apis_playstore;x86_64" --abi google_apis_playstore/x86_64 --device "pixel"
+
+      - name: Launch emulator
+        run: chmod +x ./start_emu_headless.sh && ./start_emu_headless.sh
