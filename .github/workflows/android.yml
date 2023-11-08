@@ -40,14 +40,11 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
 
-    # Setup Android SDK
-    - name: Install Android SDK
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y lib32stdc++6 lib32z1
-        echo "y" | sudo sdkmanager "platforms;android-34" "build-tools;30.0.3" # Adjust build-tools version as necessary
-        echo "y" | sudo sdkmanager --licenses
+    # Set up Android SDK
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
 
+    # Setup Android Emulator and run tests
     - name: Create and start emulator
       run: |
         echo "y" | sdkmanager "system-images;android-34;default;x86" # Use "x86_64" or "google_apis;x86" if "x86" is not available
