@@ -1,19 +1,28 @@
 package com.example.softwaresolutionssquad;
 
+import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.Is.is;
 
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import androidx.test.espresso.intent.Intents;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -23,17 +32,19 @@ import java.util.Map;
 @RunWith(AndroidJUnit4.class)
 public class LoginTest {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final String TESTUSER = "UiTestUser";
-    private final String PASSWORD = "UiTestPass";
-    private final Map<String, Object> userData = new HashMap() {
-        { put("username", TESTUSER); put("password", Utils.hashPassword(PASSWORD)); put("displayName", "UI Test"); }
-    };
+    private static final String TEST_USER = "UiTestUser";
+    private static final String PASSWORD = "UiTestPass";
+    private final Map<String, Object> userData = new HashMap<String, Object>() {{
+        put("username", TEST_USER);
+        put("password", Utils.hashPassword(PASSWORD));
+        put("displayName", "UI Test");
+    }};
+
     @Rule
-    public ActivityScenarioRule<LoginActivity> scenario = new
-            ActivityScenarioRule<>(LoginActivity.class);
+    public ActivityScenarioRule<LoginActivity> activityScenarioRule = new ActivityScenarioRule<>(LoginActivity.class);
 
     @Test
-    public void TestCreateAccount() {
+    public void testCreateAccount() {
         // Arrange
         Intents.init();
         // Act
@@ -45,18 +56,46 @@ public class LoginTest {
     }
 
     @Test
-    public void TestLogin() {
+    public void testLoginButtonWithEmptyFields() {
+        onView(withId(R.id.login_page_login_button)).perform(click());
+        onView(withId(R.id.login_page_error_message)).check(matches(withText("Please enter both username and password.")));
+    }
+
+    @Test
+    public void testLoginButtonWithEmailOnly() {
+        onView(withId(R.id.login_page_login_email_edittext)).perform(typeText(TEST_USER));
+        onView(withId(R.id.login_page_login_button)).perform(click());
+        onView(withId(R.id.login_page_error_message)).check(matches(withText("Please enter both username and password.")));
+    }
+
+    @Test
+    public void testLoginButtonWithPasswordOnly() {
+        onView(withId(R.id.login_page_login_password_edittext)).perform(typeText(PASSWORD));
+        onView(withId(R.id.login_page_login_button)).perform(click());
+        onView(withId(R.id.login_page_error_message)).check(matches(withText("Please enter both username and password.")));
+    }
+
+    @Test
+    public void testLoginWithInvalidCredentials() {
+        onView(withId(R.id.login_page_login_email_edittext)).perform(typeText("invalidUser"));
+        onView(withId(R.id.login_page_login_password_edittext)).perform(typeText("invalidPass"));
+        onView(withId(R.id.login_page_login_button)).perform(click());
+        onView(withId(R.id.login_page_error_message)).check(matches(withText("Login failed. Please try again later.")));
+    }
+
+    @Test
+    public void testLogin() {
         // Arrange
         Intents.init();
-        db.collection("User").document(TESTUSER).set(userData);
+        db.collection("User").document(TEST_USER).set(userData);
         // Act
-        onView(withId(R.id.login_page_login_email_edittext)).perform(typeText(TESTUSER));
+        onView(withId(R.id.login_page_login_email_edittext)).perform(typeText(TEST_USER));
         onView(withId(R.id.login_page_login_password_edittext)).perform(typeText(PASSWORD));
         onView(withId(R.id.login_page_login_button)).perform(click());
         // Assert
         intended(hasComponent(MainActivity.class.getName()));
         // Clean
-        db.collection("User").document(TESTUSER).delete();
+        db.collection("User").document(TEST_USER).delete();
         Intents.release();
     }
 }

@@ -1,7 +1,9 @@
 package com.example.softwaresolutionssquad;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,7 +27,9 @@ public class SignupActivity extends AppCompatActivity {
     private EditText nameInput;
     private EditText usernameInput;
     private EditText passwordInput;
+    private TextView errorMessageTextView;
 
+    @SuppressLint("MissingInflatedId")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
@@ -38,6 +42,7 @@ public class SignupActivity extends AppCompatActivity {
         nameInput = findViewById(R.id.signup_page_name_edittext);
         usernameInput = findViewById(R.id.signup_page_signup_email_edittext);
         passwordInput = findViewById(R.id.signup_page_signup_password_edittext);
+        errorMessageTextView = findViewById(R.id.signup_page_error_message);
 
         loginButton.setOnClickListener(v -> {
             Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
@@ -53,7 +58,7 @@ public class SignupActivity extends AppCompatActivity {
         String name = nameInput.getText().toString().trim();
 
         if (username.isEmpty() || password.isEmpty() || name.isEmpty()) {
-            Toast.makeText(SignupActivity.this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+            showError("Please fill in all fields.");
             return;
         }
 
@@ -63,7 +68,7 @@ public class SignupActivity extends AppCompatActivity {
             if (task.isSuccessful()) {
                 DocumentSnapshot user = task.getResult();
                 if (user != null && user.exists()) {
-                    Toast.makeText(SignupActivity.this, "Username already exists. Please try a different one.", Toast.LENGTH_SHORT).show();
+                    showError("Username already exists. Please try a different one.");
                 } else {
                     // Hash the password before storing it
                     String hashedPassword = Utils.hashPassword(password);
@@ -84,15 +89,21 @@ public class SignupActivity extends AppCompatActivity {
                             startActivity(intent);
                             finish();
                         }).addOnFailureListener(e -> {
-                            Toast.makeText(SignupActivity.this, "Sign up failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            showError("Sign up failed: " + e.getMessage());
                         });
                     } else {
+                        showError("An error occurred during password hashing.");
                         Toast.makeText(SignupActivity.this, "An error occurred during password hashing.", Toast.LENGTH_SHORT).show();
                     }
                 }
             } else {
-                Toast.makeText(SignupActivity.this, "Failed to check existing users. Try again.", Toast.LENGTH_SHORT).show();
+                showError("Failed to check existing users. Try again.");
             }
         });
+    }
+
+    private void showError(String error) {
+        errorMessageTextView.setText(error);
+        errorMessageTextView.setVisibility(View.VISIBLE);
     }
 }
