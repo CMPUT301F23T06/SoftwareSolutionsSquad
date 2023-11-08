@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,6 +76,7 @@ public class AddItemFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the fragment's layout
         View view = inflater.inflate(R.layout.fragment_add_item, container, false);
         initializeUiElements(view);
         setOnClickListeners();
@@ -106,7 +108,6 @@ public class AddItemFragment extends Fragment {
     private void setOnClickListeners() {
         purchaseDateEditText.setOnClickListener(v -> showDatePicker());
         nextButton.setOnClickListener(v -> saveItem());
-        cancelButton.setOnClickListener(v -> closeFragment());
     }
 
     /**
@@ -144,7 +145,6 @@ public class AddItemFragment extends Fragment {
             } else {
                 listener.onOKPressed(itemToSave);
             }
-            closeFragment();
         }
     }
 
@@ -232,13 +232,6 @@ public class AddItemFragment extends Fragment {
         }
     }
 
-    private void closeFragment() {
-        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-        fragmentManager.beginTransaction().remove(this).commit();
-        fragmentManager.popBackStack();
-        FrameLayout fragmentContainer = requireActivity().findViewById(R.id.frag_container);
-        fragmentContainer.setVisibility(View.GONE);
-    }
 
     /**
      * Interface for communicating with the activity when an item is saved.

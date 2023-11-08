@@ -1,311 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.MainActivity"
-    android:orientation="vertical"
-    >
+    tools:context=".MainActivity">
+
     <FrameLayout
         android:id="@+id/frag_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/navigation_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         android:visibility="gone"
-        >
-        <!-- other UI components can be here -->
-    </FrameLayout>
-    <TextView
-        android:id="@+id/Welcome"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigation_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:text="Welcome User!"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        android:textStyle="bold"></TextView>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="16dp"
-        android:weightSum="4">
+        android:layout_height="75dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:itemBackground="@drawable/nav_background"
+        app:itemIconTint="@color/nav_item"
+        app:itemTextColor="@color/nav_item"
+        app:itemActiveIndicatorStyle="@color/nav_item"
+        app:menu="@menu/bottom_nav_menu"/>
 
-        <!-- Define a dimension for the size of the TextViews. -->
-        <TextView
-            android:id="@+id/date_btn"
-            android:layout_width="@dimen/circle_size"
-            android:layout_height="@dimen/circle_size"
-            android:layout_weight="1"
-            android:background="@drawable/circle"
-            android:gravity="center"
-            android:text="Date" />
-
-        <TextView
-            android:id="@+id/keyword_btn"
-            android:layout_width="@dimen/circle_size"
-            android:layout_height="@dimen/circle_size"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Keywords"
-            android:background="@drawable/circle" />
-
-        <TextView
-            android:id="@+id/make_btn"
-            android:layout_width="@dimen/circle_size"
-            android:layout_height="@dimen/circle_size"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Make"
-            android:background="@drawable/circle" />
-
-        <TextView
-            android:id="@+id/tag_btn"
-            android:layout_width="@dimen/circle_size"
-            android:layout_height="@dimen/circle_size"
-            android:layout_weight="1"
-            android:background="@drawable/circle"
-            android:gravity="center"
-            android:text="Tags" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/date_filter"
-        android:padding="10sp"
-        android:visibility="gone">
-        <EditText
-            android:id="@+id/dateStart"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Start Date"
-            android:layout_weight="1"
-            android:focusable="false"
-            android:clickable="true"/>
-        <EditText
-            android:id="@+id/dateEnd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="End Date"
-            android:layout_weight="1"
-            android:focusable="false"
-            android:clickable="true"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/keyword_filter"
-        android:padding="10sp"
-        android:visibility="gone">
-        <EditText
-            android:id="@+id/keywords"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Keywords"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/make_filter"
-        android:padding="10sp"
-        android:visibility="gone">
-        <TextView
-            android:id="@+id/make"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Select Make(s)"
-            android:background="@android:drawable/editbox_background"
-            android:drawableRight="@android:drawable/arrow_down_float"
-            android:drawablePadding="16dp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/tag_filter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10sp"
-        android:visibility="gone">
-
-        <EditText
-            android:id="@+id/tag"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Tags" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:gravity="end"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_gravity="end"
-            android:src="@drawable/sort" />
-
-        <Spinner
-            android:id="@+id/spinner_order"
-            android:layout_width="110dp"
-            android:layout_height="25dp"
-            android:layout_gravity="end" />
-
-
-    </LinearLayout>
-
-
-    <ListView
-        android:id="@+id/inventory_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="325dp"
-        android:layout_weight="1" />
-
-    <!-- New LinearLayout for showing total estimated value -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
-
-        <!-- Button for deleting selected items -->
-        <Button
-            android:id="@+id/delete_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Delete"
-            android:layout_marginEnd="16dp"
-            android:visibility="gone" /> <!-- Initially hidden -->
-
-        <TextView
-            android:id="@+id/total_estimated_value_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Total Estimated Value:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/total_estimated_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="$0.00"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-    <!-- End of total value LinearLayout -->
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/gray_color"
-        android:gravity="bottom"
-        android:orientation="horizontal"
-        android:padding="10dp"
-        >
-        <!-- LinearLayout for Home Icon -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/home_icon"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:src="@drawable/home_icon" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Home" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
-        <!-- LinearLayout for Tag Icon -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/tag_icon"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:src="@drawable/tag" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tag" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
-        <!-- LinearLayout for Plus Icon -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/add_icon"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:src="@drawable/plus" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
-        <!-- LinearLayout for Profile Icon -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/profile_icon"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:src="@drawable/profile" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Profile" />
-        </LinearLayout>
-    </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
