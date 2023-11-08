@@ -45,6 +45,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Cache Android emulator system images
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.android/cache/
+          key: ${{ runner.os }}-android-emulator-cache-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-android-emulator-cache-
+
       - name: Add avdmanager and sdkmanager to system PATH
         run: |
           echo "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/${{ env.ANDROID_BUILD_TOOLS_VERSION }}" >> $GITHUB_PATH
@@ -54,9 +63,12 @@ jobs:
           yes | sdkmanager --licenses
           sdkmanager --install "system-images;android-33;google_apis_playstore;x86_64" "platforms;android-33" "build-tools;33.0.2" "platform-tools" "emulator"
 
-      - name: Build emulator
+      - name: Pre-launch emulator
         run: |
           echo "no" | avdmanager --verbose create avd --force -n emulator -k "system-images;android-33;google_apis_playstore;x86_64" --abi google_apis_playstore/x86_64 --device "pixel"
+          chmod +x ./.github/start_emu_headless.sh && ./.github/start_emu_headless.sh prelaunch
 
-      - name: Launch emulator
-        run: chmod +x ./.github/start_emu_headless.sh && ./.github/start_emu_headless.sh
+      - name: Run tests
+        run: |
+          # Add commands to run tests here
+          chmod +x ./.github/start_emu_headless.sh && ./.github/start_emu_headless.sh postlaunch
