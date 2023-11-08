@@ -35,8 +35,6 @@ public class LoginActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.login_page_login_password_edittext);
         createAccount = findViewById(R.id.login_page_create_account_click_text);
 
-        usernameInput.setOnFocusChangeListener((v,hasFocus) -> Utils.HideSoftInputOnFocusLost(v, hasFocus, getBaseContext()));
-        passwordInput.setOnFocusChangeListener((v,hasFocus) -> Utils.HideSoftInputOnFocusLost(v, hasFocus, getBaseContext()));
         createAccount.setOnClickListener(v -> {
             Intent signup = new Intent(this, SignupActivity.class);
             startActivity(signup);

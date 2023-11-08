@@ -8,12 +8,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Utils {
-    public static void HideSoftInputOnFocusLost(View v, boolean hasFocus, Context context) {
-        if (!hasFocus) {
-            InputMethodManager imm =  (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-        }
-    }
     public static String hashPassword(String passwordToHash) {
         try {
             // Create MessageDigest instance for SHA-256

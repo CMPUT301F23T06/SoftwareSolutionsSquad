@@ -1,6 +1,5 @@
 package com.example.softwaresolutionssquad;
 
-import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -22,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
-public class LoginSignupTest {
+public class LoginTest {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final String TESTUSER = "UiTestUser";
     private final String PASSWORD = "UiTestPass";
@@ -35,21 +34,29 @@ public class LoginSignupTest {
 
     @Test
     public void TestCreateAccount() {
+        // Arrange
         Intents.init();
+        // Act
         onView(withId(R.id.login_page_create_account_click_text)).perform(click());
+        // Assert
         intended(hasComponent(SignupActivity.class.getName()));
+        // Clean
         Intents.release();
     }
 
     @Test
     public void TestLogin() {
+        // Arrange
         Intents.init();
         db.collection("User").document(TESTUSER).set(userData);
+        // Act
         onView(withId(R.id.login_page_login_email_edittext)).perform(typeText(TESTUSER));
         onView(withId(R.id.login_page_login_password_edittext)).perform(typeText(PASSWORD));
-        onView(withId(R.id.login_page_login_textview)).perform(click());
         onView(withId(R.id.login_page_login_button)).perform(click());
+        // Assert
         intended(hasComponent(MainActivity.class.getName()));
+        // Clean
+        db.collection("User").document(TESTUSER).delete();
         Intents.release();
     }
 }

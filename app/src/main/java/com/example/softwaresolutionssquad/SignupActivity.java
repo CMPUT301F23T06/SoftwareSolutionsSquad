@@ -1,31 +1,21 @@
 package com.example.softwaresolutionssquad;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 
 public class SignupActivity extends AppCompatActivity {
     private FirebaseFirestore db;
@@ -49,7 +39,11 @@ public class SignupActivity extends AppCompatActivity {
         usernameInput = findViewById(R.id.signup_page_signup_email_edittext);
         passwordInput = findViewById(R.id.signup_page_signup_password_edittext);
 
-        loginButton.setOnClickListener(v -> { finish(); });
+        loginButton.setOnClickListener(v -> {
+            Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        });
         signupButton.setOnClickListener(v -> SignupListener());
     }
 
@@ -84,9 +78,10 @@ public class SignupActivity extends AppCompatActivity {
                         users.document(username).set(newUser).addOnSuccessListener(unused -> {
                             Toast.makeText(SignupActivity.this, "Sign up successful!", Toast.LENGTH_SHORT).show();
                             // Directing to login page or dashboard after sign up, based on your flow
-                            // For instance:
-                            // Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                            // startActivity(intent);
+                            // For instance, replace LoginActivity.this with MainActivity.this if we should
+                            // redirect to dashboard upon successful login.
+                            Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                            startActivity(intent);
                             finish();
                         }).addOnFailureListener(e -> {
                             Toast.makeText(SignupActivity.this, "Sign up failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
