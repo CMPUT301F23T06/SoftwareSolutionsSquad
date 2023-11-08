@@ -31,7 +31,6 @@
         android:paddingHorizontal="20dp">
 
         <EditText
-
             android:id="@+id/searchText"
             android:layout_width="0dp"
             android:layout_weight="1"
