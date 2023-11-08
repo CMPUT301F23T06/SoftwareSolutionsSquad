@@ -56,7 +56,7 @@ function launch_emulator() {
 function check_emulator_status() {
     printf "${G}==> ${BL}Checking emulator booting up status 🧐${NC}\n"
     start_time=$(date +%s)
-    timeout=${EMULATOR_TIMEOUT:-500}
+    timeout=${EMULATOR_TIMEOUT:-650}
     while true; do
         result=$(adb shell getprop sys.boot_completed 2>&1)
         if [[ "$result" == "1" ]]; then
