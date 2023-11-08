@@ -20,6 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import java.util.Collections;
+import java.util.Comparator;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
@@ -43,6 +45,10 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+
+
+
 
 // Define the MainActivity class which extends AppCompatActivity to inherit common app behaviors
 // and implements the OnNewItemSubmission interface for communication with AddItemFragment
@@ -94,6 +100,33 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // When an item is selected, perform sorting or other actions based on the selected item
+                switch (position) {
+                    case 0:
+                        sortInventoryItems(dateComparator, true); // Sort by date in ascending order
+                        break;
+                    case 1:
+                        sortInventoryItems(dateComparator, false); // Sort by date in descending order
+                        break;
+                    case 2:
+                        sortInventoryItems(descriptionComparator, true); // Sort by description in ascending order
+                        break;
+                    case 3:
+                        sortInventoryItems(descriptionComparator, false); // Sort by description in descending order
+                        break;
+                    case 4:
+                        sortInventoryItems(makeComparator, true); // Sort by make in ascending order
+                        break;
+                    case 5:
+                        sortInventoryItems(makeComparator, false); // Sort by make in descending order
+                        break;
+                    case 6:
+                        sortInventoryItems(estimatedValueComparator, true); // Sort by estimated value in ascending order
+                        break;
+                    case 7:
+                        sortInventoryItems(estimatedValueComparator, false); // Sort by estimated value in descending order
+                        break;
+                }
+
             }
 
             @Override
@@ -413,6 +446,52 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         });
 
     }
+
+    // Define comparators for different sorting criteria
+    private Comparator<InventoryItem> dateComparator = new Comparator<InventoryItem>() {
+        @Override
+        public int compare(InventoryItem item1, InventoryItem item2) {
+            // Compare items by date
+            return item1.getPurchaseDate().compareTo(item2.getPurchaseDate());
+        }
+    };
+
+    private Comparator<InventoryItem> descriptionComparator = new Comparator<InventoryItem>() {
+        @Override
+        public int compare(InventoryItem item1, InventoryItem item2) {
+            // Compare items by description
+            return item1.getDescription().compareTo(item2.getDescription());
+        }
+    };
+
+    private Comparator<InventoryItem> makeComparator = new Comparator<InventoryItem>() {
+        @Override
+        public int compare(InventoryItem item1, InventoryItem item2) {
+            // Compare items by make
+            return item1.getMake().compareTo(item2.getMake());
+        }
+    };
+
+    private Comparator<InventoryItem> estimatedValueComparator = new Comparator<InventoryItem>() {
+        @Override
+        public int compare(InventoryItem item1, InventoryItem item2) {
+            // Compare items by estimated value
+            return Double.compare(item1.getEstimatedValue(), item2.getEstimatedValue());
+        }
+    };
+
+    private void sortInventoryItems(Comparator<InventoryItem> comparator, boolean ascending) {
+        if (ascending) {
+            Collections.sort(inventoryItems, comparator);
+        } else {
+            // Reverse the order if sorting in descending order
+            Collections.sort(inventoryItems, Collections.reverseOrder(comparator));
+        }
+
+        // Notify the adapter that the data has changed
+        inventoryListAdapter.notifyDataSetChanged();
+    }
+
 
     // Method to show the delete button if any items are selected
     public void showDeleteButtonIfNeeded() {
