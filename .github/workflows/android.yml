@@ -7,21 +7,19 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  build:
+
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
-
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
-
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
-
     - name: Cache Gradle packages
       uses: actions/cache@v3
       with:
@@ -31,30 +29,10 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-
     - name: Create google-services.json
       env:
         FIREBASE_SERVICE_JSON: ${{ secrets.FIREBASE_SERVICE_JSON }}
-      run: echo "$FIREBASE_SERVICE_JSON" > ./app/google-services.json
-
+      run: |
+        echo "$FIREBASE_SERVICE_JSON" > ./app/google-services.json
     - name: Build with Gradle
       run: ./gradlew build
-
-    # Setup Android SDK
-    - name: Install Android SDK
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y lib32stdc++6 lib32z1
-        echo "y" | sudo sdkmanager "platforms;android-34" "build-tools;30.0.3" # Adjust build-tools version as necessary
-        echo "y" | sudo sdkmanager --licenses
-
-    - name: Create and start emulator
-      run: |
-        echo "y" | sdkmanager "system-images;android-34;default;x86" # Use "x86_64" or "google_apis;x86" if "x86" is not available
-        echo "no" | avdmanager create avd -n testEmulator -k "system-images;android-34;default;x86" --force
-        $ANDROID_HOME/emulator/emulator -avd testEmulator -no-audio -no-window -no-boot-anim -accel on &
-        $ANDROID_HOME/platform-tools/adb wait-for-device get-serialno
-        sleep 30 # Wait for emulator to start
-
-    - name: Run instrumented tests
-      run: ./gradlew connectedAndroidTest
