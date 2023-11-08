@@ -38,6 +38,7 @@ public class InventoryItem {
         this.comment = comment;
     }
 
+    public InventoryItem() { };
     // Accessor (getter) and mutator (setter) methods for each property
 
     public Date getPurchaseDate() {
