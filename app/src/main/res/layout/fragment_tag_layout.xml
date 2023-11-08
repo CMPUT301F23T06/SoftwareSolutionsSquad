@@ -31,6 +31,7 @@
         android:paddingHorizontal="20dp">
 
         <EditText
+
             android:id="@+id/searchText"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -43,7 +44,7 @@
             android:layout_gravity="center_vertical"
             android:autofillHints=""
             android:inputType="text" />
-            />
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/searchButton"
             android:layout_width="wrap_content"

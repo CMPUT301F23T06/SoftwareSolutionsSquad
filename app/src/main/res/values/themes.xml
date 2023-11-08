@@ -16,6 +16,7 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+<<<<<<< HEAD
 
 
     <style name="CustomAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
@@ -24,4 +25,6 @@
     </style>
 
 
+=======
+>>>>>>> 6215a5f (Created Tag Manager Pag and added Delete functionality)
 </resources>
