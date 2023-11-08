@@ -44,6 +44,7 @@ public class InventoryItem implements Serializable {
     public InventoryItem() {
     }
 
+    public InventoryItem() { };
     // Accessor (getter) and mutator (setter) methods for each property
 
     public Date getPurchaseDate() {
