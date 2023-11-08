@@ -38,3 +38,19 @@ jobs:
       run: ./gradlew build
     - name: Run unit tests
       run: ./gradlew test
+
+    # Set up Android SDK
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
+
+    # Setup Android Emulator and run tests
+    - name: Create and start emulator
+      run: |
+        echo "y" | sdkmanager "system-images;android-34;default;x86" # Use "x86_64" or "google_apis;x86" if "x86" is not available
+        echo "no" | avdmanager create avd -n testEmulator -k "system-images;android-34;default;x86" --force
+        $ANDROID_HOME/emulator/emulator -avd testEmulator -no-audio -no-window -no-boot-anim -accel on &
+        $ANDROID_HOME/platform-tools/adb wait-for-device get-serialno
+        sleep 30 # Wait for emulator to start
+
+    - name: Run instrumented tests
+      run: ./gradlew connectedAndroidTest
