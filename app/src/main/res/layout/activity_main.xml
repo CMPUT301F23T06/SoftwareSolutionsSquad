@@ -40,7 +40,9 @@
             android:layout_weight="1"
             android:background="@drawable/circle"
             android:gravity="center"
-            android:text="Date" />
+            android:text="Date"
+            android:clickable="true"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/keyword_btn"
@@ -49,7 +51,9 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Keywords"
-            android:background="@drawable/circle" />
+            android:background="@drawable/circle"
+            android:clickable="true"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/make_btn"
@@ -58,7 +62,9 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Make"
-            android:background="@drawable/circle" />
+            android:background="@drawable/circle"
+            android:clickable="true"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/tag_btn"
@@ -67,7 +73,9 @@
             android:layout_weight="1"
             android:background="@drawable/circle"
             android:gravity="center"
-            android:text="Tags" />
+            android:text="Tags"
+            android:clickable="true"
+            android:focusable="true" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -122,18 +130,20 @@
             android:drawableRight="@android:drawable/arrow_down_float"
             android:drawablePadding="16dp"/>
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/tag_filter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/tag_filter"
         android:padding="10sp"
         android:visibility="gone">
+
         <EditText
             android:id="@+id/tag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tags"/>
+            android:hint="Tags" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
