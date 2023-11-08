@@ -53,31 +53,6 @@ public class SignupActivity extends AppCompatActivity {
         signupButton.setOnClickListener(v -> SignupListener());
     }
 
-    private String hashPassword(String passwordToHash) {
-        try {
-            // Create MessageDigest instance for SHA-256
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-
-            // Add password bytes to digest
-            md.update(passwordToHash.getBytes());
-
-            // Get the hash's bytes
-            byte[] bytes = md.digest();
-
-            // This bytes[] has bytes in decimal format. Convert it to hexadecimal format
-            StringBuilder sb = new StringBuilder();
-            for (byte aByte : bytes) {
-                sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
-            }
-
-            // Get complete hashed password in hex format
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     private void SignupListener() {
         String username = usernameInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
@@ -97,7 +72,7 @@ public class SignupActivity extends AppCompatActivity {
                     Toast.makeText(SignupActivity.this, "Username already exists. Please try a different one.", Toast.LENGTH_SHORT).show();
                 } else {
                     // Hash the password before storing it
-                    String hashedPassword = hashPassword(password);
+                    String hashedPassword = Utils.hashPassword(password);
 
                     if (hashedPassword != null) {
                         // create user
@@ -125,5 +100,4 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
     }
-
 }
