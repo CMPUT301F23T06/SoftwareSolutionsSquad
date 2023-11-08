@@ -70,5 +70,6 @@ jobs:
 
       - name: Run tests
         run: |
+          # Add commands to run tests here
           chmod +x ./.github/start_emu_headless.sh && ./.github/start_emu_headless.sh postlaunch
           ./gradlew connectedAndroidTest
