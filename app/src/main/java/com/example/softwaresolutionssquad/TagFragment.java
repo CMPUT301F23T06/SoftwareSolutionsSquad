@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,6 +29,10 @@ import java.util.Arrays;
 public class TagFragment extends Fragment {
     androidx.appcompat.widget.AppCompatButton createBtn;
     androidx.appcompat.widget.AppCompatButton deleteBtn;
+
+    androidx.appcompat.widget.AppCompatButton searchBtn;
+
+    EditText searchText;
 
     ArrayList<String> tagDataList;
     ArrayAdapter<String> tagAdapter;
@@ -52,9 +57,13 @@ public class TagFragment extends Fragment {
         tagDataList = new ArrayList<String>();
         deleteBtn = view.findViewById(R.id.deleteButton);
         createBtn = view.findViewById(R.id.createButton);
+        searchBtn = view.findViewById(R.id.searchButton);
+        searchText = view.findViewById(R.id.searchText);
 
         String[] tags = {"Test", "Test2"};
         tagDataList.addAll(Arrays.asList(tags));
+        ArrayList<String> originalTagDataList = new ArrayList<>(Arrays.asList(tags));
+
         tagAdapter = new TagListAdapter(context, tagDataList);
         tagsList.setAdapter(tagAdapter);
 
@@ -86,7 +95,29 @@ public class TagFragment extends Fragment {
             }
         });
 
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String searchTextStr = searchText.getText().toString().toLowerCase();
 
+                if (searchTextStr.isEmpty()) {
+                    // If the search text is empty, restore the original tag list
+                    tagDataList.clear();
+                    tagDataList.addAll(originalTagDataList);
+                } else {
+                    // Filter the tags based on the search text
+                    tagDataList.clear();
+                    for (String tag : originalTagDataList) {
+                        if (tag.toLowerCase().contains(searchTextStr)) {
+                            tagDataList.add(tag);
+                        }
+                    }
+                }
+
+                // Notify the adapter that the data has changed
+                tagAdapter.notifyDataSetChanged();
+            }
+        });
 
         tagsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -139,4 +170,6 @@ public class TagFragment extends Fragment {
         }
         return false; // Disable the delete button
     }
+
+
 }

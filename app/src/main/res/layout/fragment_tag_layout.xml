@@ -6,7 +6,10 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     android:background="@color/light_grey"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    >
 
     <TextView
         android:layout_width="match_parent"
@@ -28,7 +31,7 @@
         android:paddingHorizontal="20dp">
 
         <EditText
-            android:id="@+id/searchEditText"
+            android:id="@+id/searchText"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -39,7 +42,8 @@
             android:textSize="16sp"
             android:layout_gravity="center_vertical"
 
-            />
+            android:autofillHints=""
+            android:inputType="text" />
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/searchButton"
             android:layout_width="wrap_content"
