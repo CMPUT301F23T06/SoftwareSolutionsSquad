@@ -59,4 +59,4 @@ jobs:
           echo "no" | avdmanager --verbose create avd --force -n emulator -k "system-images;android-33;google_apis_playstore;x86_64" --abi google_apis_playstore/x86_64 --device "pixel"
 
       - name: Launch emulator
-        run: chmod +x ./start_emu_headless.sh && ./start_emu_headless.sh
+        run: chmod +x ./.github/start_emu_headless.sh && ./.github/start_emu_headless.sh
