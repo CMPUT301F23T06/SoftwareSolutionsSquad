@@ -3,6 +3,7 @@ package com.example.softwaresolutionssquad;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,6 +23,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView createAccount;
     private EditText usernameInput;
     private EditText passwordInput;
+    private TextView errorMessageTextView;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
         usernameInput = findViewById(R.id.login_page_login_email_edittext);
         passwordInput = findViewById(R.id.login_page_login_password_edittext);
         createAccount = findViewById(R.id.login_page_create_account_click_text);
+        errorMessageTextView = findViewById(R.id.login_page_error_message);
+
 
         createAccount.setOnClickListener(v -> {
             Intent signup = new Intent(this, SignupActivity.class);
@@ -47,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         String inputPassword = passwordInput.getText().toString().trim();
 
         if (username.isEmpty() || inputPassword.isEmpty()) {
-            Toast.makeText(LoginActivity.this, "Please enter both username and password.", Toast.LENGTH_SHORT).show();
+            showError("Please enter both username and password.");
             return;
         }
 
@@ -69,11 +74,17 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                 } else {
                     // incorrect password or user does not exist
-                    Toast.makeText(LoginActivity.this, "Incorrect username or password.", Toast.LENGTH_SHORT).show();
+                    showError("Login failed. Please try again later.");
                 }
             } else {
-                Toast.makeText(LoginActivity.this, "Login failed. Please try again later.", Toast.LENGTH_SHORT).show();
+                showError("Login failed. Please try again later.");
             }
         });
     }
+
+    private void showError(String error) {
+        errorMessageTextView.setText(error);
+        errorMessageTextView.setVisibility(View.VISIBLE);
+    }
 }
+

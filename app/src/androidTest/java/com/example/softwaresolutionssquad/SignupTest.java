@@ -7,7 +7,8 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
-import android.app.Activity;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -50,14 +51,80 @@ public class SignupTest {
     }
 
     @Test
+    public void TestEmptyUsername() {
+        // Arrange
+        Intents.init();
+        // Act
+        onView(withId(R.id.signup_page_name_edittext)).perform(typeText("TestName"));
+        onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD));
+        onView(withId(R.id.signup_page_signup_button)).perform(click());
+        // Assert
+        onView(withId(R.id.signup_page_error_message))
+                .check(matches(withText("Please fill in all fields.")));
+        // Clean
+        Intents.release();
+    }
+
+    @Test
+    public void TestEmptyPassword() {
+        // Arrange
+        Intents.init();
+        // Act
+        onView(withId(R.id.signup_page_name_edittext)).perform(typeText("TestName"));
+        onView(withId(R.id.signup_page_signup_email_edittext)).perform(typeText("test@example.com"));
+        // No password input
+        onView(withId(R.id.signup_page_signup_button)).perform(click());
+        // Assert
+        onView(withId(R.id.signup_page_error_message))
+                .check(matches(withText("Please fill in all fields.")));
+        // Clean
+        Intents.release();
+    }
+
+    @Test
+    public void TestEmptyEmail() {
+        // Arrange
+        Intents.init();
+        // Act
+        onView(withId(R.id.signup_page_name_edittext)).perform(typeText("TestName"));
+        onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD));
+        // No email (username) input
+        onView(withId(R.id.signup_page_signup_button)).perform(click());
+        // Assert
+        onView(withId(R.id.signup_page_error_message))
+                .check(matches(withText("Please fill in all fields.")));
+        // Clean
+        Intents.release();
+    }
+
+    @Test
+    public void TestExistingUsername() {
+        // Arrange
+        DocumentReference userRef = db.collection("User").document(TESTUSER);
+        userRef.set(userData); // Pre-populate the database with the test user
+        Intents.init();
+        // Act
+        onView(withId(R.id.signup_page_name_edittext)).perform(typeText("TestName"));
+        onView(withId(R.id.signup_page_signup_email_edittext)).perform(typeText(TESTUSER));
+        onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD));
+        onView(withId(R.id.signup_page_signup_button)).perform(click());
+        // Assert
+        onView(withId(R.id.signup_page_error_message))
+                .check(matches(withText("Username already exists. Please try a different one.")));
+        // Clean
+        db.collection("User").document(TESTUSER).delete();
+        Intents.release();
+    }
+
+    @Test
     public void TestSignup() {
         try {
             // Arrange
             Intents.init();
             // Act
+            onView(withId(R.id.signup_page_name_edittext)).perform(typeText(TESTUSER));
             onView(withId(R.id.signup_page_signup_email_edittext)).perform(typeText(TESTUSER));
             onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD));
-            onView(withId(R.id.signup_page_name_edittext)).perform(typeText(TESTUSER));
             onView(withId(R.id.signup_page_signup_button)).perform(click());
             // Assert
             // why sleep? LoginActivity is not instantaneous as it adds user to database
