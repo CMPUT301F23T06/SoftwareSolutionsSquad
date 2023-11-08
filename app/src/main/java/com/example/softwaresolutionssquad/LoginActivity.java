@@ -1,31 +1,19 @@
 package com.example.softwaresolutionssquad;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import org.w3c.dom.Text;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 
 public class LoginActivity extends AppCompatActivity {
     private FirebaseFirestore db;
@@ -63,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        String hashedPassword = hashPassword(inputPassword);
+        String hashedPassword = Utils.hashPassword(inputPassword);
         if (hashedPassword == null) {
             Toast.makeText(LoginActivity.this, "Error hashing password.", Toast.LENGTH_SHORT).show();
             return;
@@ -87,21 +75,5 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Login failed. Please try again later.", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private String hashPassword(String passwordToHash) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(passwordToHash.getBytes());
-            byte[] bytes = md.digest();
-            StringBuilder sb = new StringBuilder();
-            for (byte aByte : bytes) {
-                sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }
