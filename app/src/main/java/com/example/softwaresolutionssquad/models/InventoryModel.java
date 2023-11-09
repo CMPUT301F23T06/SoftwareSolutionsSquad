@@ -77,10 +77,7 @@ public class InventoryModel {
      */
     public List<InventoryItem> getItemsMarkedForDeletion() {
         return inventoryItems.stream()
-                .filter(InventoryItem::getSelected) // Change from getSelected to isSelected
+                .filter(InventoryItem::getSelected)
                 .collect(Collectors.toList());
     }
-
-
-    // Other data-related methods would go here.
 }
