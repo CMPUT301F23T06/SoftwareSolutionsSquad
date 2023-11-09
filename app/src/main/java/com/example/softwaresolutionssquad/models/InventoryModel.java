@@ -1,83 +1,86 @@
 package com.example.softwaresolutionssquad.models;
 
-import com.example.softwaresolutionssquad.models.InventoryItem;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Model representing the inventory containing a list of inventory items.
+ */
 public class InventoryModel {
 
-    private ArrayList<InventoryItem> inventoryItems; // This list holds inventory item objects
+    private ArrayList<InventoryItem> inventoryItems;
 
+    /**
+     * Constructs an InventoryModel with the specified list of inventory items.
+     *
+     * @param items The list of inventory items to initialize the model with.
+     */
+    public InventoryModel(ArrayList<InventoryItem> items) {
+        this.inventoryItems = items;
+    }
+
+    /**
+     * Returns the list of all inventory items.
+     *
+     * @return The current list of inventory items.
+     */
     public ArrayList<InventoryItem> getInventoryItems() {
         return inventoryItems;
     }
 
-    // Comparator examples
-    public Comparator<InventoryItem> dateComparator = new Comparator<InventoryItem>() {
-        @Override
-        public int compare(InventoryItem item1, InventoryItem item2) {
-            // Compare items by date
-            return item1.getPurchaseDate().compareTo(item2.getPurchaseDate());
-        }
-    };
-    public Comparator<InventoryItem> descriptionComparator = new Comparator<InventoryItem>() {
-        @Override
-        public int compare(InventoryItem item1, InventoryItem item2) {
-            // Compare items by description
-            return item1.getDescription().compareTo(item2.getDescription());
-        }
-    };
+    /**
+     * Comparator to sort inventory items by date of purchase.
+     */
+    public static final Comparator<InventoryItem> dateComparator = Comparator.comparing(InventoryItem::getPurchaseDate);
 
-    public Comparator<InventoryItem> estimatedValueComparator = new Comparator<InventoryItem>() {
-        @Override
-        public int compare(InventoryItem item1, InventoryItem item2) {
-            // Compare items by estimated value
-            return Double.compare(item1.getEstimatedValue(), item2.getEstimatedValue());
-        }
-    };
-    public Comparator<InventoryItem> makeComparator = new Comparator<InventoryItem>() {
-        @Override
-        public int compare(InventoryItem item1, InventoryItem item2) {
-            // Compare items by make
-            return item1.getMake().compareTo(item2.getMake());
-        }
-    };
-    public InventoryModel(ArrayList<InventoryItem> Items) {
-        inventoryItems = Items;
-        // Initialize the comparators and the inventory list
-        // This could also involve retrieving data from a database or API
-    }
+    /**
+     * Comparator to sort inventory items by description.
+     */
+    public static final Comparator<InventoryItem> descriptionComparator = Comparator.comparing(InventoryItem::getDescription);
 
-    // Getters for the comparators
+    /**
+     * Comparator to sort inventory items by their estimated value.
+     */
+    public static final Comparator<InventoryItem> estimatedValueComparator = Comparator.comparingDouble(InventoryItem::getEstimatedValue);
 
-    // ... other getters for comparators
+    /**
+     * Comparator to sort inventory items by make.
+     */
+    public static final Comparator<InventoryItem> makeComparator = Comparator.comparing(InventoryItem::getMake);
 
-    // Method to sort inventory items
+    /**
+     * Sorts the inventory items based on the provided comparator and order.
+     *
+     * @param comparator The comparator to define the sort order.
+     * @param isAscending A boolean flag for sorting in ascending order.
+     */
     public void sortInventoryItems(Comparator<InventoryItem> comparator, boolean isAscending) {
-        if(isAscending) {
-            Collections.sort(inventoryItems, comparator);
-        } else {
-            Collections.sort(inventoryItems, comparator.reversed());
-        }
-
-        // After sorting, you may need to update any observers/views that the data has changed
+        inventoryItems.sort(isAscending ? comparator : comparator.reversed());
     }
 
+    /**
+     * Removes a list of items from the inventory.
+     *
+     * @param itemsToRemove The list of items to remove from the inventory.
+     */
     public void removeItems(List<InventoryItem> itemsToRemove) {
-        for (InventoryItem item : itemsToRemove) {
-            inventoryItems.remove(item);
-        }
+        inventoryItems.removeAll(itemsToRemove);
     }
-    // Add a method to get selected items for deletion
+
+    /**
+     * Retrieves a list of inventory items that are marked for deletion.
+     *
+     * @return A list of items marked for deletion.
+     */
     public List<InventoryItem> getItemsMarkedForDeletion() {
         return inventoryItems.stream()
-                .filter(InventoryItem::getSelected)
+                .filter(InventoryItem::getSelected) // Change from getSelected to isSelected
                 .collect(Collectors.toList());
     }
 
-    // ... other data-related methods, like adding, removing items, etc.
+
+    // Other data-related methods would go here.
 }

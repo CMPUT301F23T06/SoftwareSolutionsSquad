@@ -318,6 +318,9 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         databaseController.updateItem(updatedItem, actionListener);
     }
 
+    /**
+     * Deletes all selected items from the inventory.
+     */
     private void deleteSelectedItems() {
         List<InventoryItem> itemsToRemove = inventoryItems.stream()
                 .filter(InventoryItem::getSelected)

@@ -1,43 +1,45 @@
 package com.example.softwaresolutionssquad.models;
 
-import com.example.softwaresolutionssquad.models.InventoryItem;
-
 import java.util.Comparator;
 
+/**
+ * Factory class for creating various comparators for InventoryItem objects.
+ */
 public class ComparatorFactory {
+
+    /**
+     * Creates a comparator for InventoryItem that compares by purchase date.
+     *
+     * @return Comparator for InventoryItem
+     */
     public static Comparator<InventoryItem> getDateComparator() {
-        return new Comparator<InventoryItem>() {
-            @Override
-            public int compare(InventoryItem item1, InventoryItem item2) {
-                return item1.getPurchaseDate().compareTo(item2.getPurchaseDate());
-            }
-        };
+        return Comparator.comparing(InventoryItem::getPurchaseDate);
     }
 
+    /**
+     * Creates a comparator for InventoryItem that compares by description.
+     *
+     * @return Comparator for InventoryItem
+     */
     public static Comparator<InventoryItem> getDescriptionComparator() {
-        return new Comparator<InventoryItem>() {
-            @Override
-            public int compare(InventoryItem item1, InventoryItem item2) {
-                return item1.getDescription().compareTo(item2.getDescription());
-            }
-        };
+        return Comparator.comparing(InventoryItem::getDescription);
     }
 
+    /**
+     * Creates a comparator for InventoryItem that compares by make.
+     *
+     * @return Comparator for InventoryItem
+     */
     public static Comparator<InventoryItem> getMakeComparator() {
-        return new Comparator<InventoryItem>() {
-            @Override
-            public int compare(InventoryItem item1, InventoryItem item2) {
-                return item1.getMake().compareTo(item2.getMake());
-            }
-        };
+        return Comparator.comparing(InventoryItem::getMake);
     }
 
+    /**
+     * Creates a comparator for InventoryItem that compares by estimated value.
+     *
+     * @return Comparator for InventoryItem
+     */
     public static Comparator<InventoryItem> getEstimatedValueComparator() {
-        return new Comparator<InventoryItem>() {
-            @Override
-            public int compare(InventoryItem item1, InventoryItem item2) {
-                return Double.compare(item1.getEstimatedValue(), item2.getEstimatedValue());
-            }
-        };
+        return Comparator.comparingDouble(InventoryItem::getEstimatedValue);
     }
 }
