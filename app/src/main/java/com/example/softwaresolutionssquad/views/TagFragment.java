@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+<<<<<<< HEAD:app/src/main/java/com/example/softwaresolutionssquad/views/TagFragment.java
 
 import com.example.softwaresolutionssquad.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -280,4 +281,5 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
                     }
                 });
     }
+
 }
