@@ -72,11 +72,11 @@ jobs:
       - name: Install Sdk
         run: |
           yes | sdkmanager --licenses
-          sdkmanager --install "system-images;android-33;google_apis_playstore;x86_64" "platforms;android-33" "build-tools;33.0.2" "platform-tools" "emulator"
+          sdkmanager --install "system-images;android-34;x86_64" "platforms;android-34" "build-tools;34.0.0" "platform-tools" "emulator"
 
       - name: Pre-launch emulator
         run: |
-          echo "no" | avdmanager --verbose create avd --force -n emulator -k "system-images;android-33;google_apis_playstore;x86_64" --abi google_apis_playstore/x86_64 --device "pixel"
+          echo "no" | avdmanager --verbose create avd --force -n emulator -k "system-images;android-34;x86_64" --abi google_apis_playstore/x86_64 --device "pixel"
           chmod +x ./.github/start_emu_headless.sh && ./.github/start_emu_headless.sh prelaunch
 
       - name: Run tests
