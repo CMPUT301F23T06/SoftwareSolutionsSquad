@@ -19,18 +19,18 @@ import androidx.core.view.ViewCompat;
  */
 public class FilterController {
 
-    private View dateFilter;
-    private View makeFilter;
-    private View tagFilter;
-    private View keyFilter;
-    private TextView dateButton;
-    private TextView makeButton;
-    private TextView tagButton;
-    private TextView keywordButton;
-    private ListView inventoryListView;
-    private ListAdapter inventoryListAdapter;
-    private EditText keywords;
-    private Context context;
+    private final View dateFilter;
+    private final View makeFilter;
+    private final View tagFilter;
+    private final View keyFilter;
+    private final TextView dateButton;
+    private final TextView makeButton;
+    private final TextView tagButton;
+    private final TextView keywordButton;
+    private final ListView inventoryListView;
+    private final ListAdapter inventoryListAdapter;
+    private final EditText keywords;
+    private final Context context;
 
     /**
      * Constructs a FilterController with references to UI components and the application context.

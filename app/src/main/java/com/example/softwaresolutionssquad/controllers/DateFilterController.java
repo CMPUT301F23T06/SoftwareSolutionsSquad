@@ -26,21 +26,21 @@ import java.util.stream.Collectors;
  * Controller for filtering inventory items by date range.
  */
 public class DateFilterController {
-    private EditText startDateEditText;
-    private EditText endDateEditText;
-    private TextView dateFilterButton;
-    private TextView keywordFilterButton;
-    private TextView makeFilterButton;
-    private TextView tagFilterButton;
-    private LinearLayout dateFilterLayout;
-    private LinearLayout keywordFilterLayout;
-    private LinearLayout makeFilterLayout;
-    private LinearLayout tagFilterLayout;
-    private Context context;
-    private InventoryListAdapter inventoryListAdapter;
-    private ListView inventoryListView;
+    private final EditText startDateEditText;
+    private final EditText endDateEditText;
+    private final TextView dateFilterButton;
+    private final TextView keywordFilterButton;
+    private final TextView makeFilterButton;
+    private final TextView tagFilterButton;
+    private final LinearLayout dateFilterLayout;
+    private final LinearLayout keywordFilterLayout;
+    private final LinearLayout makeFilterLayout;
+    private final LinearLayout tagFilterLayout;
+    private final Context context;
+    private final InventoryListAdapter inventoryListAdapter;
+    private final ListView inventoryListView;
     private Predicate<InventoryItem> filterCondition;
-    private ArrayList<InventoryItem> inventoryItems;
+    private final ArrayList<InventoryItem> inventoryItems;
 
     /**
      * Constructs a new DateFilterController.

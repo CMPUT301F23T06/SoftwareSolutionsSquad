@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  */
 public class InventoryModel {
 
-    private ArrayList<InventoryItem> inventoryItems;
+    private final ArrayList<InventoryItem> inventoryItems;
 
     /**
      * Constructs an InventoryModel with the specified list of inventory items.

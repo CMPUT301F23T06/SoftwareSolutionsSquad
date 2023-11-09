@@ -31,7 +31,7 @@ import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
 public class SignupTest {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final String TESTUSER = "UiTestUser";
     private final String PASSWORD = "UiTestPass";
     private final Map<String, Object> userData = new HashMap() {

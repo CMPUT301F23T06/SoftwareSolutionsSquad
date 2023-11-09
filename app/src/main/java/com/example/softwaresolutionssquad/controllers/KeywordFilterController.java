@@ -25,13 +25,19 @@ import java.util.stream.Collectors;
  * Controller for managing keyword filters in the inventory list.
  */
 public class KeywordFilterController {
-    private EditText keywords;
-    private TextView keywordButton, dateButton, makeButton, tagButton;
-    private LinearLayout keyFilter, dateFilter, makeFilter, tagFilter;
-    private Context context;
+    private final EditText keywords;
+    private final TextView keywordButton;
+    private final TextView dateButton;
+    private final TextView makeButton;
+    private final TextView tagButton;
+    private final LinearLayout keyFilter;
+    private final LinearLayout dateFilter;
+    private final LinearLayout makeFilter;
+    private final LinearLayout tagFilter;
+    private final Context context;
     private InventoryListAdapter inventoryListAdapter;
-    private ListView inventoryListView;
-    private ArrayList<InventoryItem> inventoryItems;
+    private final ListView inventoryListView;
+    private final ArrayList<InventoryItem> inventoryItems;
 
     /**
      * Constructs a KeywordFilterController.

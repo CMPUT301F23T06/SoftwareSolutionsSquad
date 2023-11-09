@@ -35,28 +35,28 @@ public class InventoryController {
     public void sortInventory(int position) {
         switch (position) {
             case 0:
-                inventoryModel.sortInventoryItems(inventoryModel.dateComparator, true);
+                inventoryModel.sortInventoryItems(InventoryModel.dateComparator, true);
                 break;
             case 1:
-                inventoryModel.sortInventoryItems(inventoryModel.dateComparator, false);
+                inventoryModel.sortInventoryItems(InventoryModel.dateComparator, false);
                 break;
             case 2:
-                inventoryModel.sortInventoryItems(inventoryModel.descriptionComparator, true);
+                inventoryModel.sortInventoryItems(InventoryModel.descriptionComparator, true);
                 break;
             case 3:
-                inventoryModel.sortInventoryItems(inventoryModel.descriptionComparator, false);
+                inventoryModel.sortInventoryItems(InventoryModel.descriptionComparator, false);
                 break;
             case 4:
-                inventoryModel.sortInventoryItems(inventoryModel.makeComparator, true);
+                inventoryModel.sortInventoryItems(InventoryModel.makeComparator, true);
                 break;
             case 5:
-                inventoryModel.sortInventoryItems(inventoryModel.makeComparator, false);
+                inventoryModel.sortInventoryItems(InventoryModel.makeComparator, false);
                 break;
             case 6:
-                inventoryModel.sortInventoryItems(inventoryModel.estimatedValueComparator, true);
+                inventoryModel.sortInventoryItems(InventoryModel.estimatedValueComparator, true);
                 break;
             case 7:
-                inventoryModel.sortInventoryItems(inventoryModel.estimatedValueComparator, false);
+                inventoryModel.sortInventoryItems(InventoryModel.estimatedValueComparator, false);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid position: " + position);

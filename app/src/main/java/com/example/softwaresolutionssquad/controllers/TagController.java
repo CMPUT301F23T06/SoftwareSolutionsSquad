@@ -17,16 +17,16 @@ import com.example.softwaresolutionssquad.R;
  */
 public class TagController {
 
-    private Context context;
-    private ArrayAdapter<InventoryItem> inventoryListAdapter;
-    private ListView inventoryListView;
-    private View keyFilter;
-    private View makeFilter;
-    private View dateFilter;
-    private TextView dateButton;
-    private TextView makeButton;
-    private TextView keywordButton;
-    private TextView tagButton;
+    private final Context context;
+    private final ArrayAdapter<InventoryItem> inventoryListAdapter;
+    private final ListView inventoryListView;
+    private final View keyFilter;
+    private final View makeFilter;
+    private final View dateFilter;
+    private final TextView dateButton;
+    private final TextView makeButton;
+    private final TextView keywordButton;
+    private final TextView tagButton;
 
     /**
      * Constructs a new TagController.

@@ -34,7 +34,10 @@ public class MakeFilterController {
     private final ArrayList<String> allMakesList;
     private final ArrayList<Integer> selectedMakesIndices;
     private Predicate<InventoryItem> filterCondition;
-    private TextView keywordButton, dateButton, makeButton, tagButton;
+    private final TextView keywordButton;
+    private final TextView dateButton;
+    private final TextView makeButton;
+    private final TextView tagButton;
 
     /**
      * Constructs a MakeFilterController.

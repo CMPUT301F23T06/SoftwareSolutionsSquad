@@ -26,8 +26,8 @@ import java.util.Locale;
  * Extends ArrayAdapter to leverage its functionality for item management and view recycling.
  */
 public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
-    private ArrayList<InventoryItem> items;
-    private Context context;
+    private final ArrayList<InventoryItem> items;
+    private final Context context;
 
     /**
      * Constructor for InventoryListAdapter.
