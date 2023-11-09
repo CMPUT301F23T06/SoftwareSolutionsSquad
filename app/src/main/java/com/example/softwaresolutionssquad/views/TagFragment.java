@@ -28,6 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.example.softwaresolutionssquad.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,6 +38,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
 
 
 import java.util.ArrayList;
@@ -88,6 +90,7 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
 
         db = FirebaseFirestore.getInstance();
         tagsRef = db.collection("Tags");
+
 
         tagDataList = new ArrayList<>();
         originalTagDataList = new ArrayList<>();
@@ -286,3 +289,4 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
                 });
     }
 }
+
