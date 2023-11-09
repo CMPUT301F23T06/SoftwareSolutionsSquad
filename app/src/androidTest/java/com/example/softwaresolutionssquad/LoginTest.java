@@ -30,7 +30,7 @@ import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
 public class LoginTest {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TEST_USER = "UiTestUser";
     private static final String PASSWORD = "UiTestPass";
     private final Map<String, Object> userData = new HashMap<String, Object>() {{

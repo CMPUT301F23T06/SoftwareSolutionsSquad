@@ -1,33 +1,38 @@
 package com.example.softwaresolutionssquad.controllers;
 
-import android.content.Context;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Utility class for common operations needed across the application.
+ */
 public class Utils {
+
+    /**
+     * Generates a SHA-256 hash of the provided password.
+     *
+     * @param passwordToHash The password to be hashed.
+     * @return A string representing the hashed password in hexadecimal format or {@code null} if the algorithm is not found.
+     */
     public static String hashPassword(String passwordToHash) {
         try {
-            // Create MessageDigest instance for SHA-256
+            // Create MessageDigest instance for SHA-256 encryption
             MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-            // Add password bytes to digest
+            // Perform the hash operation on input password
             md.update(passwordToHash.getBytes());
-
-            // Get the hash's bytes
             byte[] bytes = md.digest();
 
-            // This bytes[] has bytes in decimal format. Convert it to hexadecimal format
+            // Convert the hashed bytes to hexadecimal format
             StringBuilder sb = new StringBuilder();
             for (byte aByte : bytes) {
                 sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
             }
 
-            // Get complete hashed password in hex format
+            // Return the hashed password in hex format
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
+            // Log the exception (ideally, this should use a logging framework)
             e.printStackTrace();
             return null;
         }

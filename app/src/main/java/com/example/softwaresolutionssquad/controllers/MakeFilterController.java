@@ -20,20 +20,39 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * Controller class for managing filter operations based on the make of inventory items.
+ */
 public class MakeFilterController {
 
     private final Context context;
     private final TextView makesTextView;
-    private TextView keywordButton, dateButton, makeButton, tagButton;
-    private LinearLayout makeFilter;
+    private final LinearLayout makeFilter;
     private final InventoryListAdapter inventoryListAdapter;
     private final ListView inventoryListView;
     private final List<InventoryItem> inventoryItems;
     private final ArrayList<String> allMakesList;
     private final ArrayList<Integer> selectedMakesIndices;
     private Predicate<InventoryItem> filterCondition;
+    private final TextView keywordButton;
+    private final TextView dateButton;
+    private final TextView makeButton;
+    private final TextView tagButton;
 
-
+    /**
+     * Constructs a MakeFilterController.
+     *
+     * @param context                The current context.
+     * @param makesTextView          The text view to display selected makes.
+     * @param makeFilter             The layout containing the make filter controls.
+     * @param keywordButton          The button for keyword filtering.
+     * @param dateButton             The button for date filtering.
+     * @param makeButton             The button for make filtering.
+     * @param tagButton              The button for tag filtering.
+     * @param inventoryListAdapter   The adapter for the inventory list view.
+     * @param inventoryListView      The list view for displaying inventory items.
+     * @param inventoryItems         The list of inventory items.
+     */
     public MakeFilterController(Context context,
                                 TextView makesTextView,
                                 LinearLayout makeFilter,
@@ -56,120 +75,132 @@ public class MakeFilterController {
         this.makeButton = makeButton;
         this.tagButton = tagButton;
         this.makeFilter = makeFilter;
-        setUpMakeButton();
+        initializeMakeButton();
     }
 
-    private void setUpMakeButton() {
-        makesTextView.setOnClickListener(v -> {
-            // Logic to display makes selection dialog
-            // Populate allMakesList if empty
-            if (allMakesList.isEmpty()) {
-                for (InventoryItem item : inventoryItems) {
-                    String make = item.getMake().trim();
-                    if (!allMakesList.contains(make)) {
-                        allMakesList.add(make);
-                    }
-                }
-            }
-
-            // Convert ArrayList of makes to an Array for the dialog
-            String[] allMakesArray = allMakesList.toArray(new String[0]);
-            boolean[] selected = new boolean[allMakesArray.length];
-
-            // Create and show the dialog
-            showMakesSelectionDialog(allMakesArray, selected);
-        });
+    /**
+     * Initializes the make button and sets its on click listener.
+     */
+    private void initializeMakeButton() {
+        makesTextView.setOnClickListener(v -> showMakesSelectionDialog());
     }
 
-    private void showMakesSelectionDialog(String[] allMakesArray, boolean[] selected) {
+    /**
+     * Shows a multi-choice dialog for selecting makes to filter inventory items.
+     */
+    private void showMakesSelectionDialog() {
+        populateMakesListIfNeeded();
+        String[] allMakesArray = allMakesList.toArray(new String[0]);
+        boolean[] selected = new boolean[allMakesList.size()];
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Select Make(s)");
-        builder.setCancelable(false);
-        // Reset dialog to be fully unselected
-        selectedMakesIndices.clear();
-
-        builder.setMultiChoiceItems(allMakesArray, selected, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                // If the make is checked, save its index
-                if (isChecked) {
-                    selectedMakesIndices.add(which);
-                    // If the make is unselected, do not save its index
-                } else {
-                    selectedMakesIndices.remove(which);
-                }
-            }
-        });
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                StringBuilder stringBuilder = new StringBuilder();
-                ArrayList<String> selectedMakesList = new ArrayList<>();
-                for (int i = 0; i < selectedMakesIndices.size(); i++) {
-                    // Get the names of the makes from the indices
-                    selectedMakesList.add(allMakesArray[selectedMakesIndices.get(i)]);
-                    // Attach the names of the selected makes to a string
-                    stringBuilder.append(allMakesArray[selectedMakesIndices.get(i)]);
-                    if (i != selectedMakesIndices.size() - 1) {
-                        stringBuilder.append(", ");
-                    }
-                }
-                // Display the selected makes in the dropdown bar
-                makesTextView.setText(stringBuilder.toString());
-
-                // Create predicate to filter the full list of items by makes selected
-                filterCondition = item -> selectedMakesList.contains(item.getMake());
-                // Display the filtered list of items
-                filteredResults(filterCondition);
-
-            }
-        });
-        // Remove dialog when cancelled
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        builder.show();
+        builder.setTitle("Select Make(s)")
+                .setCancelable(false)
+                .setMultiChoiceItems(allMakesArray, selected, this::onMakeSelected)
+                .setPositiveButton("OK", this::onMakesDialogPositive)
+                .setNegativeButton("Cancel", this::onMakesDialogNegative)
+                .show();
     }
 
-    public void toggleMakeFilterVisibility() {
-        if (makeFilter.getVisibility() == View.GONE) {
-            makeFilter.setVisibility(View.VISIBLE);
-
-            ViewCompat.setBackgroundTintList(keywordButton, null);
-            ViewCompat.setBackgroundTintList(dateButton, null);
-            ViewCompat.setBackgroundTintList(tagButton, null);
-            ViewCompat.setBackgroundTintList(makeButton,
-                    ColorStateList.valueOf(getColor(R.color.app_blue)));
-
-            // Reset ListView to default, unfiltered list of items
-            inventoryListView.setAdapter(inventoryListAdapter);
-            // Clear the TextView
-            makesTextView.setText("");
-            // Save all the makes that are present in the list of items
-            ArrayList<String> allMakesList = new ArrayList<>();
-            // Save all the indices of the items selected to filter by
-            ArrayList<Integer> selectedMakesIndices = new ArrayList<>();
-            // Additional logic to reset views and set background colors
-        } else {
-            makeFilter.setVisibility(View.GONE);
-            inventoryListView.setAdapter(inventoryListAdapter);
-            // Reset background tint for makeButton if needed
+    /**
+     * Populates the allMakesList if it is currently empty.
+     */
+    private void populateMakesListIfNeeded() {
+        if (allMakesList.isEmpty()) {
+            for (InventoryItem item : inventoryItems) {
+                String make = item.getMake().trim();
+                if (!allMakesList.contains(make)) {
+                    allMakesList.add(make);
+                }
+            }
         }
     }
 
+    /**
+     * Handles make selection within the dialog.
+     *
+     * @param dialog    The dialog where the selection was made.
+     * @param which     The index of the selected item.
+     * @param isChecked The new checked state of the item.
+     */
+    private void onMakeSelected(DialogInterface dialog, int which, boolean isChecked) {
+        if (isChecked) {
+            if (!selectedMakesIndices.contains(which)) {
+                selectedMakesIndices.add(which);
+            }
+        } else {
+            selectedMakesIndices.remove(Integer.valueOf(which));
+        }
+    }
+
+    /**
+     * Handles the positive action of the makes selection dialog.
+     *
+     * @param dialog The dialog interface.
+     * @param which  The button that was clicked.
+     */
+    private void onMakesDialogPositive(DialogInterface dialog, int which) {
+        StringBuilder stringBuilder = new StringBuilder();
+        ArrayList<String> selectedMakesList = new ArrayList<>();
+        for (int index : selectedMakesIndices) {
+            selectedMakesList.add(allMakesList.get(index));
+            stringBuilder.append(allMakesList.get(index));
+            if (index < selectedMakesIndices.size() - 1) {
+                stringBuilder.append(", ");
+            }
+        }
+        makesTextView.setText(stringBuilder.toString());
+        filterCondition = item -> selectedMakesList.contains(item.getMake());
+        filteredResults(filterCondition);
+    }
+
+    /**
+     * Handles the negative action of the makes selection dialog.
+     *
+     * @param dialog The dialog interface.
+     * @param which  The button that was clicked.
+     */
+    private void onMakesDialogNegative(DialogInterface dialog, int which) {
+        dialog.dismiss();
+    }
+
+    /**
+     * Toggles the visibility of the make filter layout.
+     */
+    public void toggleMakeFilterVisibility() {
+        if (makeFilter.getVisibility() == View.GONE) {
+            makeFilter.setVisibility(View.VISIBLE);
+            ViewCompat.setBackgroundTintList(keywordButton, null);
+            ViewCompat.setBackgroundTintList(dateButton, null);
+            ViewCompat.setBackgroundTintList(tagButton, null);
+            ViewCompat.setBackgroundTintList(makeButton, ColorStateList.valueOf(context.getResources().getColor(R.color.app_blue, null)));
+            inventoryListView.setAdapter(inventoryListAdapter);
+            makesTextView.setText("");
+            selectedMakesIndices.clear();
+        } else {
+            makeFilter.setVisibility(View.GONE);
+            ViewCompat.setBackgroundTintList(makeButton, null);
+        }
+    }
+
+    /**
+     * Filters the results based on the specified condition and updates the list view.
+     *
+     * @param condition The predicate to apply as the filter condition.
+     */
     private void filteredResults(Predicate<InventoryItem> condition) {
-        ArrayList<InventoryItem> filteredResults = inventoryItems.stream()
+        List<InventoryItem> filteredResults = inventoryItems.stream()
                 .filter(condition)
-                .collect(Collectors.toCollection(ArrayList::new));
-        InventoryListAdapter filterListAdapter = new InventoryListAdapter(context, filteredResults);
+                .collect(Collectors.toList());
+        InventoryListAdapter filterListAdapter = new InventoryListAdapter(context, new ArrayList<>(filteredResults));
         inventoryListView.setAdapter(filterListAdapter);
     }
 
+    /**
+     * Retrieves a color from the resource.
+     *
+     * @param colorId The resource ID of the color to retrieve.
+     * @return The resolved color value.
+     */
     private int getColor(int colorId) {
         return context.getResources().getColor(colorId, null);
     }

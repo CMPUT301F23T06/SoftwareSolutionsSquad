@@ -1,20 +1,11 @@
 package com.example.softwaresolutionssquad.views;
 
-import com.example.softwaresolutionssquad.R;
-
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -23,39 +14,25 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.Collections;
-import java.util.Comparator;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentTransaction;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
+import com.example.softwaresolutionssquad.R;
 import com.example.softwaresolutionssquad.controllers.DatabaseController;
 import com.example.softwaresolutionssquad.controllers.DateFilterController;
 import com.example.softwaresolutionssquad.controllers.KeywordFilterController;
 import com.example.softwaresolutionssquad.controllers.MakeFilterController;
 import com.example.softwaresolutionssquad.controllers.SortController;
 import com.example.softwaresolutionssquad.models.InventoryItem;
-import com.example.softwaresolutionssquad.views.AddItemFragment;
-import com.example.softwaresolutionssquad.views.InventoryListAdapter;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 // Define the MainActivity class which extends AppCompatActivity to inherit common app behaviors
@@ -104,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
 
         // Set the listener for when an item is selected in the Spinner
         spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            SortController sortController = new SortController(inventoryListAdapter, inventoryItems);
+            final SortController sortController = new SortController(inventoryListAdapter, inventoryItems);
 
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -273,6 +250,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         });
 
     }
+
     // Define comparators for different sorting criteria
     public void showDeleteButtonIfNeeded() {
         deleteButton.setVisibility(inventoryItems.stream().anyMatch(InventoryItem::getSelected) ? View.VISIBLE : View.GONE);
@@ -318,6 +296,9 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         databaseController.updateItem(updatedItem, actionListener);
     }
 
+    /**
+     * Deletes all selected items from the inventory.
+     */
     private void deleteSelectedItems() {
         List<InventoryItem> itemsToRemove = inventoryItems.stream()
                 .filter(InventoryItem::getSelected)

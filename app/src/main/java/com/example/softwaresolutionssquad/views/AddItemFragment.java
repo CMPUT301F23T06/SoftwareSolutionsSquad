@@ -1,6 +1,5 @@
 package com.example.softwaresolutionssquad.views;
 
-// Import statements for necessary Android components
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.app.AlertDialog;
@@ -27,34 +26,40 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * A fragment for adding a new item to the inventory or editing an existing one.
+ */
 public class AddItemFragment extends Fragment {
 
-    // Declare private member variables for UI elements
-    private EditText edtPurchaseDate;
-    private EditText edtDescription;
-    private EditText edtMake;
-    private EditText edtModel;
-    private EditText edtSerialNumber;
-    private EditText edtEstimatedValue;
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final String ITEM_KEY = "item";
 
-    private EditText comment;
-    private Button btnNext;
-    private Button btnCancel;
-
+    private EditText purchaseDateEditText;
+    private EditText descriptionEditText;
+    private EditText makeEditText;
+    private EditText modelEditText;
+    private EditText serialNumberEditText;
+    private EditText estimatedValueEditText;
+    private EditText commentEditText;
+    private Button nextButton;
+    private Button cancelButton;
     private InventoryItem currentItem;
-
     private OnNewItemSubmission listener;
+    private final LocalDate currentDate = LocalDate.now();
 
-    // Initialize a Calendar instance to manage dates
-    final LocalDate currentDate = LocalDate.now();
+    public AddItemFragment() {
+        // Required empty public constructor
+    }
 
-    public AddItemFragment(){}
-
-    // Static method to create a new instance of AddItemFragment
+    /**
+     * Creates a new instance of AddItemFragment with an InventoryItem pre-populated if provided.
+     * @param item InventoryItem to be edited, null if it's a new item.
+     * @return A new instance of fragment AddItemFragment.
+     */
     public static AddItemFragment newInstance(InventoryItem item) {
         AddItemFragment fragment = new AddItemFragment();
         Bundle args = new Bundle();
-        args.putSerializable("item", item);
+        args.putSerializable(ITEM_KEY, item);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,140 +68,158 @@ public class AddItemFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            currentItem = (InventoryItem) getArguments().getSerializable("item");
+            currentItem = (InventoryItem) getArguments().getSerializable(ITEM_KEY);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        // Inflate the fragment's layout
         View view = inflater.inflate(R.layout.fragment_add_item, container, false);
-
-        // Initialize UI elements
-        edtPurchaseDate = view.findViewById(R.id.edtPurchaseDate);
-        edtDescription = view.findViewById(R.id.edtDescription);
-        edtMake = view.findViewById(R.id.edtMake);
-        edtModel = view.findViewById(R.id.edtModel);
-        edtSerialNumber = view.findViewById(R.id.edtSerialNumber);
-        edtEstimatedValue = view.findViewById(R.id.editTextNumberDecimal);
-        comment = view.findViewById(R.id.edtCommentTitle);
-        btnNext = view.findViewById(R.id.btnNext);
-        btnCancel = view.findViewById(R.id.btnCancel);
-
-
-        // Set an onClickListener for the purchase date EditText to show a date picker
-        edtPurchaseDate.setOnClickListener(v -> {
-            new DatePickerDialog(getContext(), date, currentDate.getYear(),
-                    currentDate.getMonthValue(),
-                    currentDate.getDayOfMonth()).show();
-        });
-
-        // Set an onClickListener for the Next button
-        btnNext.setOnClickListener(v -> {
-                // TODO: Logic for saving the data and transitioning to the next screen
-
-                // Extract data from UI elements
-                String date = edtPurchaseDate.getText().toString().trim();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Replace with your date format
-                Date officialDate = null;
-                try {
-                    officialDate = dateFormat.parse(date);
-                } catch (ParseException e) {
-                    officialDate = null;
-                }
-                String description = edtDescription.getText().toString().trim();
-
-                String make = edtMake.getText().toString().trim();
-                String model = edtModel.getText().toString().trim();
-                String serialNumber = edtSerialNumber.getText().toString().trim();
-                String estimated_val = edtEstimatedValue.getText().toString().trim();
-
-                // Validate data
-                if (officialDate == null || estimated_val.equals("")) { // Use .equals() for string comparison
-                    // Show an alert dialog if validation fails
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Alert Title"); // Optional title
-                    builder.setMessage("Please at least fill in the value and date!");
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-                    return;
-                }
-                Double official_estimated_value = Double.parseDouble(estimated_val);
-                String comm = comment.getText().toString().trim();
-                String documentID = retrieveDocId(currentItem);
-
-                InventoryItem itemToSave;
-                if(currentItem != null) {
-                    // Update the existing item's properties
-                    currentItem.setPurchaseDate(officialDate);
-                    currentItem.setDescription(description);
-                    currentItem.setMake(make);
-                    currentItem.setModel(model);
-                    currentItem.setSerialNumber(serialNumber);
-                    currentItem.setEstimatedValue(official_estimated_value);
-                    currentItem.setComment(comm);
-                    currentItem.setDocId(documentID);
-                    itemToSave = currentItem;
-                    listener.onUpdatePressed(itemToSave);
-                } else {
-                    // It's a new item
-                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID);
-                    listener.onOKPressed(itemToSave);
-                }
-
-            // Close the fragment
-            closeFragment();
-        });
-
-        // Set an onClickListener for the Cancel button
-        btnCancel.setOnClickListener(v -> closeFragment());
-
-        // Prepopulate fields if currentItem is not null (i.e., we're editing an existing item)
+        initializeUiElements(view);
+        setOnClickListeners();
         if (currentItem != null) {
             prepopulateFields(currentItem);
         }
-
         return view;
     }
 
-    private String retrieveDocId(InventoryItem currentItem) {
+    /**
+     * Initializes the UI elements of the fragment.
+     * @param view The inflated view of the fragment.
+     */
+    private void initializeUiElements(View view) {
+        purchaseDateEditText = view.findViewById(R.id.edtPurchaseDate);
+        descriptionEditText = view.findViewById(R.id.edtDescription);
+        makeEditText = view.findViewById(R.id.edtMake);
+        modelEditText = view.findViewById(R.id.edtModel);
+        serialNumberEditText = view.findViewById(R.id.edtSerialNumber);
+        estimatedValueEditText = view.findViewById(R.id.editTextNumberDecimal);
+        commentEditText = view.findViewById(R.id.edtCommentTitle);
+        nextButton = view.findViewById(R.id.btnNext);
+        cancelButton = view.findViewById(R.id.btnCancel);
+    }
+
+    /**
+     * Sets on click listeners for interactive UI elements.
+     */
+    private void setOnClickListeners() {
+        purchaseDateEditText.setOnClickListener(v -> showDatePicker());
+        nextButton.setOnClickListener(v -> saveItem());
+        cancelButton.setOnClickListener(v -> closeFragment());
+    }
+
+    /**
+     * Shows a date picker dialog for selecting a purchase date.
+     */
+    private void showDatePicker() {
+        new DatePickerDialog(getContext(), dateSetListener, currentDate.getYear(),
+                currentDate.getMonthValue() - 1, // Month is 0-indexed in DatePickerDialog
+                currentDate.getDayOfMonth()).show();
+    }
+
+    /**
+     * Saves the item to the inventory, either by creating a new entry or updating an existing one.
+     */
+    private void saveItem() {
+        String date = purchaseDateEditText.getText().toString().trim();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        Date officialDate = null;
+        try {
+            officialDate = dateFormat.parse(date);
+        } catch (ParseException e) {
+            // Handle the error state
+        }
+
+        if (officialDate == null || estimatedValueEditText.getText().toString().trim().isEmpty()) {
+            showAlertDialog("Error", "Please fill in the value and date!");
+            return;
+        }
+
+        Double estimatedValue = Double.parseDouble(estimatedValueEditText.getText().toString().trim());
+        InventoryItem itemToSave = createOrUpdateItem(officialDate, estimatedValue);
+        if (itemToSave != null) {
+            if (currentItem != null) {
+                listener.onUpdatePressed(itemToSave);
+            } else {
+                listener.onOKPressed(itemToSave);
+            }
+            closeFragment();
+        }
+    }
+
+    /**
+     * Shows an alert dialog with a specified title and message.
+     * @param title   The title of the alert dialog.
+     * @param message The message of the alert dialog.
+     */
+    private void showAlertDialog(String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(title);
+        builder.setMessage(message);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
+     * Creates or updates an InventoryItem with the provided details.
+     * @param officialDate    The official purchase date of the item.
+     * @param estimatedValue  The estimated value of the item.
+     * @return The created or updated InventoryItem.
+     */
+    private InventoryItem createOrUpdateItem(Date officialDate, double estimatedValue) {
+        String description = descriptionEditText.getText().toString().trim();
+        String make = makeEditText.getText().toString().trim();
+        String model = modelEditText.getText().toString().trim();
+        String serialNumber = serialNumberEditText.getText().toString().trim();
+        String comment = commentEditText.getText().toString().trim();
+        String documentID = retrieveDocId(currentItem);
+
         if (currentItem != null) {
-            // This means we're updating an existing item, so we should use the existing document ID.
-            return currentItem.getDocId();
+            // Update the existing item's properties
+            currentItem.setPurchaseDate(officialDate);
+            currentItem.setDescription(description);
+            currentItem.setMake(make);
+            currentItem.setModel(model);
+            currentItem.setSerialNumber(serialNumber);
+            currentItem.setEstimatedValue(estimatedValue);
+            currentItem.setComment(comment);
+            currentItem.setDocId(documentID);
+            return currentItem;
         } else {
-            // This is a new item, so generate a new document ID.
-            // The actual generation of the document ID will be handled by Firestore when we add the item.
+            // It's a new item
+            return new InventoryItem(officialDate, description, make, model, serialNumber, estimatedValue, comment, documentID);
+        }
+    }
+
+    private String retrieveDocId(InventoryItem item) {
+        if (item != null) {
+            return item.getDocId();
+        } else {
             DocumentReference newDocRef = ((MainActivity)getActivity()).getDb().collection("Item").document();
             return newDocRef.getId();
         }
     }
 
     private void prepopulateFields(InventoryItem item) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        edtPurchaseDate.setText(sdf.format(item.getPurchaseDate()));
-        edtDescription.setText(item.getDescription());
-        edtMake.setText(item.getMake());
-        edtModel.setText(item.getModel());
-        edtSerialNumber.setText(item.getSerialNumber());
-        edtEstimatedValue.setText(String.valueOf(item.getEstimatedValue()));
-        comment.setText(item.getComment());
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        purchaseDateEditText.setText(sdf.format(item.getPurchaseDate()));
+        descriptionEditText.setText(item.getDescription());
+        makeEditText.setText(item.getMake());
+        modelEditText.setText(item.getModel());
+        serialNumberEditText.setText(item.getSerialNumber());
+        estimatedValueEditText.setText(String.valueOf(item.getEstimatedValue()));
+        commentEditText.setText(item.getComment());
     }
 
-    // Listener for date selection in the DatePickerDialog
-    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(android.widget.DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-            LocalDate dateSet = LocalDate.of(year, monthOfYear, dayOfMonth);
-            updateLabel(dateSet);
-        }
+    private final DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+        LocalDate dateSet = LocalDate.of(year, monthOfYear + 1, dayOfMonth);
+        updateLabel(dateSet);
     };
 
     private void updateLabel(LocalDate dateSet) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        edtPurchaseDate.setText(dateSet.format(dtf));
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE_FORMAT);
+        purchaseDateEditText.setText(dateSet.format(dtf));
     }
 
     @Override
@@ -205,19 +228,21 @@ public class AddItemFragment extends Fragment {
         if (context instanceof OnNewItemSubmission) {
             listener = (OnNewItemSubmission) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnNewItemSubmission");
+            throw new RuntimeException(context + " must implement OnNewItemSubmission");
         }
     }
 
     private void closeFragment() {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        fragmentManager.beginTransaction().remove(AddItemFragment.this).commit();
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction().remove(this).commit();
         fragmentManager.popBackStack();
-        FrameLayout fragmentContainer = getActivity().findViewById(R.id.frag_container);
+        FrameLayout fragmentContainer = requireActivity().findViewById(R.id.frag_container);
         fragmentContainer.setVisibility(View.GONE);
     }
 
+    /**
+     * Interface for communicating with the activity when an item is saved.
+     */
     public interface OnNewItemSubmission {
         void onOKPressed(InventoryItem newItem);
         void onUpdatePressed(InventoryItem updatedItem);

@@ -9,15 +9,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import androidx.core.view.ViewCompat;
-
 import com.example.softwaresolutionssquad.R;
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.example.softwaresolutionssquad.views.InventoryListAdapter;
-
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -26,171 +22,203 @@ import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * Controller for filtering inventory items by date range.
+ */
 public class DateFilterController {
-    private EditText startDate, endDate;
-    private TextView dateButton, keywordButton, makeButton, tagButton;
-
-    private LinearLayout dateFilter, keyFilter, makeFilter, tagFilter;
-
-    private Context context; // Context is needed for resources, etc.
-    private InventoryListAdapter inventoryListAdapter;
-    private ListView inventoryListView;
-
+    private final EditText startDateEditText;
+    private final EditText endDateEditText;
+    private final TextView dateFilterButton;
+    private final TextView keywordFilterButton;
+    private final TextView makeFilterButton;
+    private final TextView tagFilterButton;
+    private final LinearLayout dateFilterLayout;
+    private final LinearLayout keywordFilterLayout;
+    private final LinearLayout makeFilterLayout;
+    private final LinearLayout tagFilterLayout;
+    private final Context context;
+    private final InventoryListAdapter inventoryListAdapter;
+    private final ListView inventoryListView;
     private Predicate<InventoryItem> filterCondition;
-    private ArrayList<InventoryItem> InventoryItems;
+    private final ArrayList<InventoryItem> inventoryItems;
 
+    /**
+     * Constructs a new DateFilterController.
+     *
+     * @param context              the current context
+     * @param dateFilterLayout     layout containing date filter controls
+     * @param startDateEditText    text field for start date input
+     * @param endDateEditText      text field for end date input
+     * @param dateFilterButton     button to apply date filter
+     * @param keywordFilterButton  button to apply keyword filter
+     * @param makeFilterButton     button to apply make filter
+     * @param tagFilterButton      button to apply tag filter
+     * @param keywordFilterLayout  layout containing keyword filter controls
+     * @param makeFilterLayout     layout containing make filter controls
+     * @param tagFilterLayout      layout containing tag filter controls
+     * @param inventoryListAdapter adapter for the inventory list
+     * @param inventoryListView    view representing the list of inventory items
+     * @param inventoryItems       list of all inventory items
+     */
     public DateFilterController(Context context,
-                                LinearLayout dateFilter,
-                                EditText startDate,
-                                EditText endDate,
-                                TextView dateButton,
-                                TextView keywordButton,
-                                TextView makeButton,
-                                TextView tagButton,
-                                LinearLayout keyFilter,
-                                LinearLayout makeFilter,
-                                LinearLayout tagFilter,
+                                LinearLayout dateFilterLayout,
+                                EditText startDateEditText,
+                                EditText endDateEditText,
+                                TextView dateFilterButton,
+                                TextView keywordFilterButton,
+                                TextView makeFilterButton,
+                                TextView tagFilterButton,
+                                LinearLayout keywordFilterLayout,
+                                LinearLayout makeFilterLayout,
+                                LinearLayout tagFilterLayout,
                                 InventoryListAdapter inventoryListAdapter,
                                 ListView inventoryListView,
-                                ArrayList<InventoryItem> InventoryItems
-                                ) {
+                                ArrayList<InventoryItem> inventoryItems) {
         this.context = context;
-        this.dateFilter = dateFilter;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.dateButton = dateButton;
-        this.keywordButton = keywordButton;
-        this.makeButton = makeButton;
-        this.tagButton = tagButton;
-        this.keyFilter = keyFilter;
-        this.makeFilter = makeFilter;
-        this.tagFilter = tagFilter;
+        this.dateFilterLayout = dateFilterLayout;
+        this.startDateEditText = startDateEditText;
+        this.endDateEditText = endDateEditText;
+        this.dateFilterButton = dateFilterButton;
+        this.keywordFilterButton = keywordFilterButton;
+        this.makeFilterButton = makeFilterButton;
+        this.tagFilterButton = tagFilterButton;
+        this.keywordFilterLayout = keywordFilterLayout;
+        this.makeFilterLayout = makeFilterLayout;
+        this.tagFilterLayout = tagFilterLayout;
         this.inventoryListAdapter = inventoryListAdapter;
         this.inventoryListView = inventoryListView;
-        this.InventoryItems = InventoryItems;
-        setupDateFilter();
+        this.inventoryItems = inventoryItems;
+        initializeDateFilter();
     }
 
-    private void setupDateFilter() {
-        dateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleFilters();
-            }
-        });
-
-        startDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePicker(startDate, endDate, true);
-            }
-        });
-
-        endDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePicker(endDate, startDate, false);
-            }
-        });
+    /**
+     * Initializes date filter by setting up listeners for date input fields and buttons.
+     */
+    private void initializeDateFilter() {
+        dateFilterButton.setOnClickListener(view -> toggleFilters());
+        startDateEditText.setOnClickListener(view -> showDatePicker(startDateEditText, endDateEditText, true));
+        endDateEditText.setOnClickListener(view -> showDatePicker(endDateEditText, startDateEditText, false));
     }
 
+    /**
+     * Toggles visibility of filter layouts and resets filter conditions.
+     */
     private void toggleFilters() {
-        // The actual implementation of your hide/show logic
-        // Update this logic according to your requirements
-        keyFilter.setVisibility(View.GONE);
-        makeFilter.setVisibility(View.GONE);
-        tagFilter.setVisibility(View.GONE);
+        // Hide other filters when date filter is active
+        keywordFilterLayout.setVisibility(View.GONE);
+        makeFilterLayout.setVisibility(View.GONE);
+        tagFilterLayout.setVisibility(View.GONE);
+        resetButtonBackgrounds();
 
-        ViewCompat.setBackgroundTintList(keywordButton, null);
-        ViewCompat.setBackgroundTintList(makeButton, null);
-        ViewCompat.setBackgroundTintList(tagButton, null);
-        ViewCompat.setBackgroundTintList(dateButton,
-                ColorStateList.valueOf(getColor(R.color.app_blue)));
-
-        if (dateFilter.getVisibility() == View.GONE) {
-            // Show the LinearLayout with the necessary filtering elements
-            dateFilter.setVisibility(View.VISIBLE);
-
-            // Reset ListView to default, unfiltered list of items
-            inventoryListView.setAdapter(inventoryListAdapter);
-            // Set default start and end date when filter is enabled
-            startDate.setText("1900-01-01");
-            endDate.setText(LocalDate.now().toString());
-
-            // Let the user select a start date for filtering
-            startDate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showDatePicker(startDate, endDate, true);
-                }
-            });
-
-            // Let the user select an end date for filtering
-            endDate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showDatePicker(endDate, startDate, false);
-                }
-            });
+        // Toggle the visibility of the date filter layout
+        if (dateFilterLayout.getVisibility() == View.GONE) {
+            dateFilterLayout.setVisibility(View.VISIBLE);
+            setButtonActiveBackground(dateFilterButton);
+            resetListViewAdapter();
+            setDefaultDates();
         } else {
-            // Disable the date filter if the button is clicked while filter if visible
-            dateFilter.setVisibility(View.GONE);
-            // Reset ListView to default, unfiltered list of items
-            inventoryListView.setAdapter(inventoryListAdapter);
-            ViewCompat.setBackgroundTintList(dateButton, null);
+            dateFilterLayout.setVisibility(View.GONE);
+            resetListViewAdapter();
+            resetButtonBackground(dateFilterButton);
         }
     }
 
-    private void showDatePicker(final EditText changedDate, final EditText unchangedDate, final Boolean isStart) {
-        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                // Set the date selected to the EditText
-                LocalDate date = LocalDate.of(year, month+1, dayOfMonth);
-                changedDate.setText(date.toString());
-
-                if (isStart) {
-                    // Start date was changed
-                    dateFilterUpdate(changedDate, unchangedDate);
-                } else {
-                    // End date was changed
-                    dateFilterUpdate(unchangedDate, changedDate);
-                }
+    /**
+     * Displays date picker dialog and updates date fields accordingly.
+     *
+     * @param selectedDateEditText the EditText to update with the selected date
+     * @param otherDateEditText    the other date EditText that is not being updated
+     * @param isStartDate          flag to indicate if the start date is being set
+     */
+    private void showDatePicker(final EditText selectedDateEditText, final EditText otherDateEditText, final boolean isStartDate) {
+        DatePickerDialog.OnDateSetListener dateSetListener = (view, year, month, dayOfMonth) -> {
+            LocalDate date = LocalDate.of(year, month + 1, dayOfMonth);
+            selectedDateEditText.setText(date.toString());
+            if (isStartDate) {
+                updateDateFilter(selectedDateEditText, otherDateEditText);
+            } else {
+                updateDateFilter(otherDateEditText, selectedDateEditText);
             }
         };
 
-        // Set the default date on the DatePicker
-        LocalDate cDate = LocalDate.now();
-        DatePickerDialog datePickerDialog = new DatePickerDialog(context, dateSetListener, cDate.getYear(), cDate.getMonthValue()-1, cDate.getDayOfMonth());
+        LocalDate currentDate = LocalDate.now();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(context, dateSetListener, currentDate.getYear(), currentDate.getMonthValue() - 1, currentDate.getDayOfMonth());
         datePickerDialog.show();
     }
 
-    private void dateFilterUpdate(EditText startDate, EditText endDate) {
-        // Retrieve start and end dates from strings inside EditText objects
+    /**
+     * Updates the list based on the selected date range.
+     *
+     * @param startDateEditText the EditText containing the start date
+     * @param endDateEditText   the EditText containing the end date
+     */
+    private void updateDateFilter(EditText startDateEditText, EditText endDateEditText) {
+        Date startDate = convertStringToDate(startDateEditText.getText().toString());
+        Date endDate = convertStringToDate(endDateEditText.getText().toString());
+        filterCondition = item -> !item.getPurchaseDate().before(startDate) && !item.getPurchaseDate().after(endDate);
+        displayFilteredResults(filterCondition);
+    }
+
+    /**
+     * Helper method to convert a date string to a Date object.
+     *
+     * @param dateString the date string to convert
+     * @return the Date object
+     */
+    private Date convertStringToDate(String dateString) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        LocalDate startLD = LocalDate.parse(startDate.getText().toString());
-        LocalDate endLD = LocalDate.parse(endDate.getText().toString());
-        Date sDate = Date.from(startLD.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date eDate = Date.from(endLD.atTime(23,59,59)
-                .toInstant(ZoneId.systemDefault().getRules().getOffset(Instant.now())));
-        // Create predicate to filter results to an inclusive range of the start and end date
-        filterCondition = obj -> !obj.getPurchaseDate().before(sDate) && !obj.getPurchaseDate().after(eDate);
-        // Display the filtered list of items
-        filteredResults(filterCondition);
-    }
-    private int getColor(int colorId) {
-        // Helper method to get color
-
-        return context.getResources().getColor(colorId, null);
-    }
-    private void filteredResults(Predicate<InventoryItem> condition) {
-        // Filter the full list of items based on the provided conditions
-        ArrayList<InventoryItem> filteredResults = InventoryItems.stream()
-                .filter(filterCondition)
-                .collect(Collectors.toCollection(ArrayList::new));
-        // Create an adapter to set the ListView to, while maintaining the unfiltered ListView
-        InventoryListAdapter filterListAdapter = new InventoryListAdapter(context, filteredResults);
-        inventoryListView.setAdapter(filterListAdapter);
+        return Date.from(LocalDate.parse(dateString).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
+    /**
+     * Filters the inventory list based on the provided condition and updates the ListView.
+     *
+     * @param condition the condition to filter the list
+     */
+    private void displayFilteredResults(Predicate<InventoryItem> condition) {
+        ArrayList<InventoryItem> filteredResults = inventoryItems.stream().filter(condition).collect(Collectors.toCollection(ArrayList::new));
+        inventoryListView.setAdapter(new InventoryListAdapter(context, filteredResults));
+    }
+
+    /**
+     * Helper method to set the background of a button to indicate it is active.
+     *
+     * @param button the button to update
+     */
+    private void setButtonActiveBackground(TextView button) {
+        ViewCompat.setBackgroundTintList(button, ColorStateList.valueOf(context.getResources().getColor(R.color.app_blue, null)));
+    }
+
+    /**
+     * Helper method to reset the background of a button to the default state.
+     *
+     * @param button the button to reset
+     */
+    private void resetButtonBackground(TextView button) {
+        ViewCompat.setBackgroundTintList(button, null);
+    }
+
+    /**
+     * Resets the ListView adapter to display all items and clears any filter conditions.
+     */
+    private void resetListViewAdapter() {
+        inventoryListView.setAdapter(inventoryListAdapter);
+    }
+
+    /**
+     * Sets default dates in the date filter fields when the filter is first activated.
+     */
+    private void setDefaultDates() {
+        startDateEditText.setText("1900-01-01"); // Default start date
+        endDateEditText.setText(LocalDate.now().toString()); // Current date as default end date
+    }
+
+    /**
+     * Resets the backgrounds of all filter buttons to default state.
+     */
+    private void resetButtonBackgrounds() {
+        resetButtonBackground(keywordFilterButton);
+        resetButtonBackground(makeFilterButton);
+        resetButtonBackground(tagFilterButton);
+    }
 }
