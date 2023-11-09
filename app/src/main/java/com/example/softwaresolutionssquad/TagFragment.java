@@ -11,6 +11,10 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStore;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,6 +61,8 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
     private FirebaseFirestore db;
     private CollectionReference tagsRef;
 
+    private String userName;
+
     private Context context;
     public TagFragment() {
         // Required empty public constructor
@@ -76,6 +82,10 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
         createBtn = view.findViewById(R.id.createButton);
         searchBtn = view.findViewById(R.id.searchButton);
         searchText = view.findViewById(R.id.searchText);
+
+        MyApp myApp = (MyApp) requireActivity().getApplication();
+        UserViewModel userViewModel = myApp.getUserViewModel();
+        userName = userViewModel.getUsername();
 
         db = FirebaseFirestore.getInstance();
         tagsRef = db.collection("Tags");
@@ -202,14 +212,19 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
                     searchText.setText("");
                     for (QueryDocumentSnapshot doc: value) {
                         String tag = doc.getString("tag");
-                        originalTagDataList.add(tag);
-                        tagDataList.add(tag);
+
+                        String user = doc.getString("user");
+                        if (user != null && user.equals(userName)) {
+                            originalTagDataList.add(tag);
+                            tagDataList.add(tag);
+                        }
                     }
                     tagAdapter.notifyDataSetChanged();
 
                 }
             }
         });
+
 
 
         return view;
@@ -235,10 +250,12 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
 
         } else {
 
+            String tagDocumentName = tag + userName;
             Map<String, Object> tagData = new HashMap<>();
             tagData.put("tag", tag);
+            tagData.put("user", userName);
 
-            tagsRef.document(tag).set(tagData).addOnFailureListener(new OnFailureListener() {
+            tagsRef.document(tagDocumentName).set(tagData).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     // Handle the error here (e.g., show an error message)
@@ -252,7 +269,8 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
 
     private void deleteTagFromFirestore(String tagName) {
         // Assuming you have a "tagsRef" that refers to your Firestore collection
-        tagsRef.document(tagName).delete()
+        String tagDocumentName = tagName + userName;
+        tagsRef.document(tagDocumentName).delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
