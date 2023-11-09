@@ -8,15 +8,29 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Controller for handling sorting operations on the inventory list.
+ */
 public class SortController {
     private InventoryListAdapter inventoryListAdapter;
     private List<InventoryItem> inventoryItems;
 
+    /**
+     * Constructs a SortController with the specified adapter and inventory items.
+     *
+     * @param inventoryListAdapter the adapter for the inventory list
+     * @param inventoryItems       the list of inventory items to be sorted
+     */
     public SortController(InventoryListAdapter inventoryListAdapter, List<InventoryItem> inventoryItems) {
         this.inventoryListAdapter = inventoryListAdapter;
         this.inventoryItems = inventoryItems;
     }
 
+    /**
+     * Handles item selection for sorting the inventory list.
+     *
+     * @param position the position of the selected sorting option
+     */
     public void onItemSelected(int position) {
         Comparator<InventoryItem> comparator;
 
@@ -58,6 +72,12 @@ public class SortController {
         }
     }
 
+    /**
+     * Sorts inventory items according to the given comparator and order.
+     *
+     * @param comparator the comparator to define the sort order
+     * @param ascending  true if the sort should be in ascending order, false for descending
+     */
     private void sortInventoryItems(Comparator<InventoryItem> comparator, boolean ascending) {
         if (ascending) {
             Collections.sort(inventoryItems, comparator);
