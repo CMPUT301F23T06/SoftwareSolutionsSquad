@@ -54,6 +54,7 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
 
     ListView tagsList;
 
+    private FirebaseFirestore db;
     private CollectionReference tagsRef;
 
     private String userName;
@@ -84,7 +85,11 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
         userName = userViewModel.getUsername();
 
 
+
         tagsRef = ((MainActivity) getActivity()).getDb().collection("Tags");
+
+        db = FirebaseFirestore.getInstance();
+
 
         tagDataList = new ArrayList<>();
         originalTagDataList = new ArrayList<>();
