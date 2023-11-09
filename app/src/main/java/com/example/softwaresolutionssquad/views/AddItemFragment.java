@@ -1,4 +1,4 @@
-package com.example.softwaresolutionssquad;
+package com.example.softwaresolutionssquad.views;
 
 // Import statements for necessary Android components
 import android.app.DatePickerDialog;
@@ -16,14 +16,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.softwaresolutionssquad.models.InventoryItem;
+import com.example.softwaresolutionssquad.R;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 

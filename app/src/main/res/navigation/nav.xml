@@ -7,11 +7,11 @@
 
     <activity
         android:id="@+id/mainActivity"
-        android:name="com.example.softwaresolutionssquad.MainActivity"
+        android:name="com.example.softwaresolutionssquad.views.MainActivity"
         android:label="activity_main"
         tools:layout="@layout/activity_main" />
     <fragment
         android:id="@+id/addItemFragment"
-        android:name="com.example.softwaresolutionssquad.AddItemFragment"
+        android:name="com.example.softwaresolutionssquad.views.AddItemFragment"
         android:label="AddItemFragment" />
 </navigation>

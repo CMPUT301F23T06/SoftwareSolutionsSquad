@@ -1,5 +1,5 @@
-package com.example.softwaresolutionssquad;
-
+package com.example.softwaresolutionssquad.views;
+import com.example.softwaresolutionssquad.R;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -41,6 +41,12 @@ import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.example.softwaresolutionssquad.controllers.DateFilterController;
+import com.example.softwaresolutionssquad.controllers.KeywordFilterController;
+import com.example.softwaresolutionssquad.controllers.MakeFilterController;
+import com.example.softwaresolutionssquad.models.InventoryItem;
+import com.example.softwaresolutionssquad.views.AddItemFragment;
+import com.example.softwaresolutionssquad.views.InventoryListAdapter;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -189,233 +195,65 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         keyFilter = findViewById(R.id.keyword_filter);
         makeFilter = findViewById(R.id.make_filter);
         tagFilter = findViewById(R.id.tag_filter);
+        EditText startDate = findViewById(R.id.dateStart);
+        EditText endDate = findViewById(R.id.dateEnd);
+        EditText keywords = findViewById(R.id.keywords);
+
 
         // Allow user to filter all items in an inputted date range
-        dateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Disable all other filters that may be present
-                keyFilter.setVisibility(View.GONE);
-                makeFilter.setVisibility(View.GONE);
-                tagFilter.setVisibility(View.GONE);
+        DateFilterController dateFilterController = new DateFilterController(
+                this, // Context
+                dateFilter,
+                startDate,
+                endDate,
+                dateButton,
+                keywordButton,
+                makeButton,
+                tagButton,
+                keyFilter,
+                makeFilter,
+                tagFilter,
+                inventoryListAdapter,
+                inventoryListView,
+                inventoryItems // The data list
+        );
 
-                ViewCompat.setBackgroundTintList(keywordButton, null);
-                ViewCompat.setBackgroundTintList(makeButton, null);
-                ViewCompat.setBackgroundTintList(tagButton, null);
-                ViewCompat.setBackgroundTintList(dateButton,
-                        ColorStateList.valueOf(getColor(R.color.app_blue)));
-
-                // Enable filter if button is clicked while filter is not visible
-                if (dateFilter.getVisibility() == View.GONE) {
-                    // Show the LinearLayout with the necessary filtering elements
-                    dateFilter.setVisibility(View.VISIBLE);
-
-                    EditText startDate = findViewById(R.id.dateStart);
-                    EditText endDate = findViewById(R.id.dateEnd);
-
-                    // Reset ListView to default, unfiltered list of items
-                    inventoryListView.setAdapter(inventoryListAdapter);
-                    // Set default start and end date when filter is enabled
-                    startDate.setText("1900-01-01");
-                    endDate.setText(LocalDate.now().toString());
-
-                    // Let the user select a start date for filtering
-                    startDate.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showDatePicker(startDate, endDate, true);
-                        }
-                    });
-
-                    // Let the user select an end date for filtering
-                    endDate.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showDatePicker(endDate, startDate, false);
-                        }
-                    });
-                } else {
-                    // Disable the date filter if the button is clicked while filter if visible
-                    dateFilter.setVisibility(View.GONE);
-                    // Reset ListView to default, unfiltered list of items
-                    inventoryListView.setAdapter(inventoryListAdapter);
-                    ViewCompat.setBackgroundTintList(dateButton, null);
-                }
-            }
-        });
-
+        KeywordFilterController keywordFilterController = new KeywordFilterController(
+                this, // context
+                keyFilter,
+                keywords,
+                keywordButton,
+                dateButton,
+                makeButton,
+                tagButton,
+                dateFilter,
+                makeFilter,
+                tagFilter,
+                inventoryListAdapter,
+                inventoryListView,
+                inventoryItems
+        );
         // Allow user to filter items based on the presence of keywords in description
-        keywordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Disable all other filters that may be present
-                dateFilter.setVisibility(View.GONE);
-                makeFilter.setVisibility(View.GONE);
-                tagFilter.setVisibility(View.GONE);
-
-                // Enable filter if button is pressed while filters are not visible
-                if (keyFilter.getVisibility() == View.GONE) {
-                    // Show the LinearLayout with the necessary filtering elements
-                    keyFilter.setVisibility(View.VISIBLE);
-
-                    ViewCompat.setBackgroundTintList(dateButton, null);
-                    ViewCompat.setBackgroundTintList(makeButton, null);
-                    ViewCompat.setBackgroundTintList(tagButton, null);
-                    ViewCompat.setBackgroundTintList(keywordButton,
-                            ColorStateList.valueOf(getColor(R.color.app_blue)));
-
-                    EditText keywords = findViewById(R.id.keywords);
-
-                    // Reset ListView to default, unfiltered list of items
-                    inventoryListView.setAdapter(inventoryListAdapter);
-                    // Reset text box
-                    keywords.setText("");
-
-                    // Allow user to type in space-separated keywords and filter
-                    keywords.addTextChangedListener(new TextWatcher() {
-                        // Not used
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                        // Not used
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {}
-                        // When text is entered into the text box, the ListView is updated with
-                        // items that have matching keywords in descriptions
-                        @Override
-                        public void afterTextChanged(Editable s) {
-                            // Users can enter multiple space-separated keywords to search for
-                            String[] keywords = s.toString().split(" ");
-                            // Create a predicate to filter all items by the specified keywords above
-                            filterCondition = obj -> Arrays.stream(keywords).anyMatch(word ->
-                                    obj.getDescription().toLowerCase().contains(word.toLowerCase()));
-                            // Display the filtered list of items to the user
-                            filteredResults(filterCondition);
-                        }
-                    });
-                } else {
-                    // Disable the filter when button is clicked while filter is visible
-                    keyFilter.setVisibility(View.GONE);
-                    // Reset ListView to default, unfiltered list of items
-                    inventoryListView.setAdapter(inventoryListAdapter);
-
-                    ViewCompat.setBackgroundTintList(keywordButton, null);
-                }
-            }
-        });
-
+        TextView makes = findViewById(R.id.make);
+        MakeFilterController makeFilterController = new MakeFilterController(
+                this,
+                makes,
+                makeFilter,
+                keywordButton,
+                dateButton,
+                makeButton,
+                tagButton,
+                inventoryListAdapter,
+                inventoryListView,
+                inventoryItems
+        );
         // Allow user to filter items based on specified makes
-        makeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Disable all other filters that may be present
-                keyFilter.setVisibility(View.GONE);
-                dateFilter.setVisibility(View.GONE);
-                tagFilter.setVisibility(View.GONE);
-
-                // Enable filter if button is pressed while filters are not visible
-                if (makeFilter.getVisibility() == View.GONE) {
-                    // Show the LinearLayout with the necessary filtering elements
-                    makeFilter.setVisibility(View.VISIBLE);
-
-                    ViewCompat.setBackgroundTintList(keywordButton, null);
-                    ViewCompat.setBackgroundTintList(dateButton, null);
-                    ViewCompat.setBackgroundTintList(tagButton, null);
-                    ViewCompat.setBackgroundTintList(makeButton,
-                            ColorStateList.valueOf(getColor(R.color.app_blue)));
-
-                    TextView makes = findViewById(R.id.make);
-
-                    // Reset ListView to default, unfiltered list of items
-                    inventoryListView.setAdapter(inventoryListAdapter);
-                    // Clear the TextView
-                    makes.setText("");
-                    // Save all the makes that are present in the list of items
-                    ArrayList<String> allMakesList = new ArrayList<>();
-                    // Save all the indices of the items selected to filter by
-                    ArrayList<Integer> selectedMakesIndices = new ArrayList<>();
-
-                    // Allow user to select the make(s) they would like to filter by
-                    makes.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // Get every make present in the inventory
-                            for (InventoryItem item: inventoryItems) {
-                                String make = item.getMake().trim();
-                                if (!allMakesList.contains(make)) {
-                                    allMakesList.add(make);
-                                }
-                            }
-
-                            // Convert ArrayList of makes to an Array to be used with setMultiChoiceItems()
-                            String[] allMakesArray = allMakesList.toArray(new String[allMakesList.size()]);
-                            // Store whether a make is selected or not
-                            boolean[] selected = new boolean[allMakesArray.length];
-
-                            // Create a multi-selection dialog for user to select makes
-                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                            builder.setTitle("Select Make(s)");
-                            builder.setCancelable(false);
-                            // Reset dialog to be fully unselected
-                            selectedMakesIndices.clear();
-
-                            builder.setMultiChoiceItems(allMakesArray, selected, new DialogInterface.OnMultiChoiceClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                                    // If the make is checked, save its index
-                                    if (isChecked) {
-                                        selectedMakesIndices.add(which);
-                                        // If the make is unselected, do not save its index
-                                    } else {
-                                        selectedMakesIndices.remove(which);
-                                    }
-                                }
-                            });
-
-                            // Filter list of items when user confirms selection
-                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    StringBuilder stringBuilder = new StringBuilder();
-                                    ArrayList<String> selectedMakesList = new ArrayList<>();
-                                    for (int i = 0; i < selectedMakesIndices.size(); i++) {
-                                        // Get the names of the makes from the indices
-                                        selectedMakesList.add(allMakesArray[selectedMakesIndices.get(i)]);
-                                        // Attach the names of the selected makes to a string
-                                        stringBuilder.append(allMakesArray[selectedMakesIndices.get(i)]);
-                                        if (i != selectedMakesIndices.size() - 1) {
-                                            stringBuilder.append(", ");
-                                        }
-                                    }
-                                    // Display the selected makes in the dropdown bar
-                                    makes.setText(stringBuilder.toString());
-
-                                    // Create predicate to filter the full list of items by makes selected
-                                    filterCondition = item -> selectedMakesList.contains(item.getMake());
-                                    // Display the filtered list of items
-                                    filteredResults(filterCondition);
-
-                                }
-                            });
-                            // Remove dialog when cancelled
-                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-
-                            builder.show();
-                        }
-                    });
-                } else {
-                    // Disable the filter when button is clicked while filter is visible
-                    makeFilter.setVisibility(View.GONE);
-                    // Reset ListView to default, unfiltered list of items
-                    inventoryListView.setAdapter(inventoryListAdapter);
-                }
-            }
+        TextView makeButton = findViewById(R.id.make_btn);
+        makeButton.setOnClickListener(v -> {
+            // Hide other filters here if they are part of MainActivity
+            // ...
+            makeFilterController.toggleMakeFilterVisibility();
         });
-
         // Allow user to filter items based on tags associated with items
         tagButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -493,6 +331,12 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     }
 
 
+    // Set the listener for the make button
+//    makeButton.(v -> {
+//        // Hide other filters here if they are part of MainActivity
+//        // ...
+//        makeFilterController.toggleMakeFilterVisibility();
+//    });
     // Method to show the delete button if any items are selected
     public void showDeleteButtonIfNeeded() {
         deleteButton.setVisibility(inventoryItems.stream().anyMatch(InventoryItem::getSelected) ? View.VISIBLE : View.GONE);
@@ -612,45 +456,11 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
 
     // This method gathers the start and end date specified by the user when choosing to filter by
     // date and retrieves all entries within the inclusive range of these dates.
-    private void dateFilterUpdate(EditText startDate, EditText endDate) {
-        // Retrieve start and end dates from strings inside EditText objects
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        LocalDate startLD = LocalDate.parse(startDate.getText().toString());
-        LocalDate endLD = LocalDate.parse(endDate.getText().toString());
-        Date sDate = Date.from(startLD.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date eDate = Date.from(endLD.atTime(23,59,59)
-                .toInstant(ZoneId.systemDefault().getRules().getOffset(Instant.now())));
-        // Create predicate to filter results to an inclusive range of the start and end date
-        filterCondition = obj -> !obj.getPurchaseDate().before(sDate) && !obj.getPurchaseDate().after(eDate);
-        // Display the filtered list of items
-        filteredResults(filterCondition);
-    }
+
 
     // This method displays a DatePicker to the user when they attempt to set start and end dates
     // for the date filter. Then it calls dateFilterUpdate to retrieve the matching items.
-    private void showDatePicker(final EditText changedDate, final EditText unchangedDate, final Boolean isStart) {
-        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                // Set the date selected to the EditText
-                LocalDate date = LocalDate.of(year, month+1, dayOfMonth);
-                changedDate.setText(date.toString());
 
-                if (isStart) {
-                    // Start date was changed
-                    dateFilterUpdate(changedDate, unchangedDate);
-                } else {
-                    // End date was changed
-                    dateFilterUpdate(unchangedDate, changedDate);
-                }
-            }
-        };
-
-        // Set the default date on the DatePicker
-        LocalDate cDate = LocalDate.now();
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, cDate.getYear(), cDate.getMonthValue()-1, cDate.getDayOfMonth());
-        datePickerDialog.show();
-    }
 
     // This method determines gathers all the items that match the conditions of any of the filters
     // created by the user. It sets the ListView object to the resulting list of items for the

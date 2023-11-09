@@ -14,6 +14,9 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.example.softwaresolutionssquad.controllers.Utils;
+import com.example.softwaresolutionssquad.views.LoginActivity;
+import com.example.softwaresolutionssquad.views.SignupActivity;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;

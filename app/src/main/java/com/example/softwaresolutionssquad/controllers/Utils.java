@@ -1,4 +1,4 @@
-package com.example.softwaresolutionssquad;
+package com.example.softwaresolutionssquad.controllers;
 
 import android.content.Context;
 import android.view.View;
