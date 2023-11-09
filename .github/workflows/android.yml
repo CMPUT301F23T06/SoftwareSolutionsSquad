@@ -51,6 +51,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Create google-services.json
+        env:
+          FIREBASE_SERVICE_JSON: ${{ secrets.FIREBASE_SERVICE_JSON }}
+        run: echo "$FIREBASE_SERVICE_JSON" > ./app/google-services.json
+
       - name: Cache Android emulator system images
         uses: actions/cache@v3
         with:
