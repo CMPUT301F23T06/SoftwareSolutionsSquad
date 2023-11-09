@@ -1,4 +1,4 @@
-package com.example.softwaresolutionssquad;
+package com.example.softwaresolutionssquad.models;
 
 import java.io.Serializable;
 import java.util.Date;

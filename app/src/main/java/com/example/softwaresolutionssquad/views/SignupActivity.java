@@ -1,4 +1,4 @@
-package com.example.softwaresolutionssquad;
+package com.example.softwaresolutionssquad.views;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.softwaresolutionssquad.R;
+import com.example.softwaresolutionssquad.controllers.Utils;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;

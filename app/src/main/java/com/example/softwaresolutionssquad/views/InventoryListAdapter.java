@@ -1,5 +1,5 @@
 // Package declaration aligning with Java package naming conventions.
-package com.example.softwaresolutionssquad;
+package com.example.softwaresolutionssquad.views;
 
 // Import statements for necessary Android and Java classes.
 import android.content.Context;
@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.softwaresolutionssquad.R;
+import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
