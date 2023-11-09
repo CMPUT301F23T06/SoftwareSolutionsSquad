@@ -1,5 +1,7 @@
 package com.example.softwaresolutionssquad.views;
+
 import com.example.softwaresolutionssquad.R;
+
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -20,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -41,6 +44,7 @@ import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.example.softwaresolutionssquad.controllers.DatabaseController;
 import com.example.softwaresolutionssquad.controllers.DateFilterController;
 import com.example.softwaresolutionssquad.controllers.KeywordFilterController;
 import com.example.softwaresolutionssquad.controllers.MakeFilterController;
@@ -54,9 +58,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 
-
-
-
 // Define the MainActivity class which extends AppCompatActivity to inherit common app behaviors
 // and implements the OnNewItemSubmission interface for communication with AddItemFragment
 public class MainActivity extends AppCompatActivity implements AddItemFragment.OnNewItemSubmission, InventoryListAdapter.OnDeleteButtonShowListener {
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     private FirebaseFirestore db;
     private ListView inventoryListView;
     private ArrayList<InventoryItem> inventoryItems;
+    private DatabaseController databaseController;
+
     private InventoryListAdapter inventoryListAdapter;
     private CollectionReference itemsRef;
     private Button deleteButton;
@@ -89,9 +92,6 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         inventoryListAdapter = new InventoryListAdapter(this, inventoryItems);
         inventoryListView = findViewById(R.id.inventory_list_view);
         inventoryListView.setAdapter(inventoryListAdapter);
-
-        populateInitialItems();     // Populate the ArrayList with initial items
-
         updateTotalValue();     // Update the total estimated value
 
         Spinner spinnerOrder = findViewById(R.id.spinner_order); // init Spinner to sort items
@@ -133,7 +133,20 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
                 transaction.commit();       // Commit the transaction
             }
         });
+        databaseController = new DatabaseController(inventoryListAdapter, inventoryItems);
 
+        // Populate the initial items with a callback to update UI upon completion
+        databaseController.loadInitialItems(new DatabaseController.DatabaseActionListener() {
+            @Override
+            public void onSuccess() {
+                updateTotalValue();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                // Handle error
+            }
+        });
         inventoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -260,79 +273,13 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         });
 
     }
-
     // Define comparators for different sorting criteria
-
-
-
-
-
-    // Set the listener for the make button
-//    makeButton.(v -> {
-//        // Hide other filters here if they are part of MainActivity
-//        // ...
-//        makeFilterController.toggleMakeFilterVisibility();
-//    });
-    // Method to show the delete button if any items are selected
     public void showDeleteButtonIfNeeded() {
         deleteButton.setVisibility(inventoryItems.stream().anyMatch(InventoryItem::getSelected) ? View.VISIBLE : View.GONE);
     }
 
-    // Method to delete selected items
-    private void deleteSelectedItems() {
-        // Collect all items that are marked for deletion
-        List<InventoryItem> itemsToRemove = inventoryItems.stream()
-                .filter(InventoryItem::getSelected)
-                .collect(Collectors.toList());
-
-        // If no items are selected, simply return
-        if(itemsToRemove.isEmpty()) {
-            Log.d("DeleteItem", "No items selected for deletion");
-            return;
-        }
-
-        // Delete each selected item from Firestore and remove it from the local list
-        for (InventoryItem item : itemsToRemove) {
-            // Delete from Firestore
-            itemsRef.document(item.getDocId()).delete()
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d("DeleteItem", "DocumentSnapshot successfully deleted!");
-                        // Remove from the local list and update the list adapter
-                        inventoryItems.remove(item);
-                        inventoryListAdapter.notifyDataSetChanged();
-                        showDeleteButtonIfNeeded(); // Hide delete button if no items are selected
-                        updateTotalValue(); // Update total value display
-                    })
-                    .addOnFailureListener(e -> Log.w("DeleteItem", "Error deleting document", e));
-        }
-    }
-
+    // Method to delete selected item
     // Helper method to add initial InventoryItem objects to the inventoryItems list
-    private void populateInitialItems() {
-        // Check if adapter is initialized
-        if (inventoryListAdapter != null) {
-            // Fetch all documents from Firestore and add them to the local list
-            itemsRef.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful() && task.getResult() != null) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        InventoryItem item = document.toObject(InventoryItem.class);
-                        item.setDocId(document.getId()); // Ensure the document ID is set on the item
-                        inventoryItems.add(item);
-                    }
-                    // Notify adapter about data set changes inside the success block
-                    runOnUiThread(() -> {
-                        inventoryListAdapter.notifyDataSetChanged();
-                        updateTotalValue(); // Update total value after items are loaded
-                    });
-                } else {
-                    Log.d("populateInitialItems", "Error getting documents: ", task.getException());
-                }
-            });
-        } else {
-            // Handle the case where the adapter is not initialized
-            Log.e("populateInitialItems", "InventoryListAdapter is not initialized.");
-        }
-    }
 
     // Method to update total estimated value of InventoryItems
     private void updateTotalValue() {
@@ -344,70 +291,40 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
 
     // This method is called when the OK button is pressed in the AddItemFragment
     // It adds the new item to the inventory list and updates the adapter
-    @Override
-    public void onOKPressed(InventoryItem newItem) {
-        // Get a new document reference from Firestore, which has an auto-generated ID
-        DocumentReference newDocRef = itemsRef.document();
-
-        // Set the document ID inside the new item object
-        newItem.setDocId(newDocRef.getId()); // Make sure InventoryItem has a method to set its ID
-
-        // Set the new item in the Firestore document
-        newDocRef.set(newItem)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("AddItem", "DocumentSnapshot written with ID: " + newDocRef.getId());
-                    // Add the new item to the local list and notify the adapter
-                    inventoryItems.add(newItem);
-                    inventoryListAdapter.notifyDataSetChanged();
-                    updateTotalValue();
-                })
-                .addOnFailureListener(e -> Log.w("AddItem", "Error adding document", e));
-
-//        inventoryItems.add(newItem);
-//        inventoryListAdapter.notifyDataSetChanged();
-//        updateTotalValue();
-    }
-
-    // This method updates an existing inventory item
-    public void onUpdatePressed(InventoryItem updatedItem) {
-        // Use the ID from the updatedItem to reference the Firestore document
-        itemsRef.document(updatedItem.getDocId()).set(updatedItem)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("UpdateItem", "DocumentSnapshot successfully updated!");
-
-                    // Update the item in the local list and notify the adapter
-                    int itemIndex = inventoryItems.indexOf(updatedItem);
-                    if (itemIndex != -1) {
-                        inventoryItems.set(itemIndex, updatedItem);
-                        inventoryListAdapter.notifyDataSetChanged();
-                        updateTotalValue();
-                    }
-                })
-                .addOnFailureListener(e -> Log.w("UpdateItem", "Error updating document", e));
-    }
 
     public FirebaseFirestore getDb() {
         return db;
     }
 
-    // This method gathers the start and end date specified by the user when choosing to filter by
-    // date and retrieves all entries within the inclusive range of these dates.
 
+    private final DatabaseController.DatabaseActionListener actionListener = new DatabaseController.DatabaseActionListener() {
+        @Override
+        public void onSuccess() {
+            updateTotalValue();
+        }
 
-    // This method displays a DatePicker to the user when they attempt to set start and end dates
-    // for the date filter. Then it calls dateFilterUpdate to retrieve the matching items.
+        @Override
+        public void onFailure(Exception e) {
+            // Handle error
+        }
+    };
 
+    @Override
+    public void onOKPressed(InventoryItem newItem) {
+        databaseController.addNewItem(newItem, actionListener);
+    }
 
-    // This method determines gathers all the items that match the conditions of any of the filters
-    // created by the user. It sets the ListView object to the resulting list of items for the
-    // filter.
-    private void filteredResults(Predicate<InventoryItem> condition) {
-        // Filter the full list of items based on the provided conditions
-        ArrayList<InventoryItem> filteredResults = inventoryItems.stream()
-                .filter(filterCondition)
-                .collect(Collectors.toCollection(ArrayList::new));
-        // Create an adapter to set the ListView to, while maintaining the unfiltered ListView
-        InventoryListAdapter filterListAdapter = new InventoryListAdapter(this, filteredResults);
-        inventoryListView.setAdapter(filterListAdapter);
+    public void onUpdatePressed(InventoryItem updatedItem) {
+        databaseController.updateItem(updatedItem, actionListener);
+    }
+
+    private void deleteSelectedItems() {
+        List<InventoryItem> itemsToRemove = inventoryItems.stream()
+                .filter(InventoryItem::getSelected)
+                .collect(Collectors.toList());
+
+        if (!itemsToRemove.isEmpty()) {
+            databaseController.deleteItems(itemsToRemove, actionListener);
+        }
     }
 }
