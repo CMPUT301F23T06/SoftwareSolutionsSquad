@@ -4,4 +4,13 @@
         <item name="android:background">@color/black_overlay</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
+    <style name="AlertDialogPositiveButtonStyle">
+        <item name="android:textColor">@color/button_blue_color</item>
+        <!-- Add other button style attributes here -->
+    </style>
+
+    <style name="AlertDialogNegativeButtonStyle">
+        <item name="android:textColor">@color/button_blue_color</item>
+        <!-- Add other button style attributes here -->
+    </style>
 </resources>

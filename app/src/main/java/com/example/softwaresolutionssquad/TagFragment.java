@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -24,8 +25,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TagFragment extends Fragment implements AddTagFragment.OnFragmentInteractionListener {
     androidx.appcompat.widget.AppCompatButton createBtn;
@@ -40,6 +53,9 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
     ArrayAdapter<String> tagAdapter;
 
     ListView tagsList;
+
+    private FirebaseFirestore db;
+    private CollectionReference tagsRef;
 
     private Context context;
     public TagFragment() {
@@ -56,11 +72,13 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tag_layout, container, false);
         tagsList = view.findViewById(R.id.tag_list);
-        tagDataList = new ArrayList<String>();
         deleteBtn = view.findViewById(R.id.deleteButton);
         createBtn = view.findViewById(R.id.createButton);
         searchBtn = view.findViewById(R.id.searchButton);
         searchText = view.findViewById(R.id.searchText);
+
+        db = FirebaseFirestore.getInstance();
+        tagsRef = db.collection("Tags");
 
         tagDataList = new ArrayList<>();
         originalTagDataList = new ArrayList<>();
@@ -80,7 +98,6 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<String> tagsToRemove = new ArrayList<>();
 
                 // Iterate through the tagDataList to find tags with a non-white background
                 for (int i = 0; i < tagsList.getCount(); i++) {
@@ -88,15 +105,23 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
                     TextView tagName = tag.findViewById(R.id.tagName);
                     int bgColor = ((ColorDrawable) tagName.getBackground()).getColor();
                     if (bgColor != Color.WHITE) {
-                        tagsToRemove.add(tagDataList.get(i));
+                        deleteTagFromFirestore(tagDataList.get(i));
                     }
                 }
 
-                // Remove the tags with a non-white background from the tagDataList
-                tagDataList.removeAll(tagsToRemove);
+                for (int i = 0; i < tagsList.getCount(); i++) {
+                    View tag = tagsList.getChildAt(i);
+                    TextView tagName = tag.findViewById(R.id.tagName);
+                    ImageView tagImage = tag.findViewById(R.id.tagImage);
+                    CardView tagLayout = tag.findViewById(R.id.tag);
 
-                // Notify the adapter that the data has changed
-                tagAdapter.notifyDataSetChanged();
+                    tagLayout.setCardBackgroundColor(Color.WHITE);
+                    tagName.setBackgroundColor(Color.WHITE);
+                    tagName.setTextColor(ContextCompat.getColor(context, R.color.button_blue_color));
+                    tagImage.setColorFilter(ContextCompat.getColor(context, R.color.button_blue_color));
+                }
+
+
 
                 // Disable the delete button after removing the tags
                 deleteBtn.setEnabled(false);
@@ -165,6 +190,27 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
             }
         });
 
+        tagsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e("FireStore", error.toString());
+                    return;
+                } else {
+                    tagDataList.clear();
+                    originalTagDataList.clear();
+                    searchText.setText("");
+                    for (QueryDocumentSnapshot doc: value) {
+                        String tag = doc.getString("tag");
+                        originalTagDataList.add(tag);
+                        tagDataList.add(tag);
+                    }
+                    tagAdapter.notifyDataSetChanged();
+
+                }
+            }
+        });
+
 
         return view;
     }
@@ -186,12 +232,40 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
         if (originalTagDataList.contains(tag)) {
             // Tag already exists, show an error toast
             Toast.makeText(context, "Tag already exists", Toast.LENGTH_SHORT).show();
+
         } else {
-            // Tag is unique, add it to the list
-            originalTagDataList.add(tag);
-            tagDataList.add(tag);
-            // Notify the adapter that the data has changed
-            tagAdapter.notifyDataSetChanged();
+
+            Map<String, Object> tagData = new HashMap<>();
+            tagData.put("tag", tag);
+
+            tagsRef.document(tag).set(tagData).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Handle the error here (e.g., show an error message)
+                    Log.e("Firestore", "Error adding/updating document: " + e.getMessage());
+                    Toast.makeText(context, "An error occurred. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
+    }
+
+    private void deleteTagFromFirestore(String tagName) {
+        // Assuming you have a "tagsRef" that refers to your Firestore collection
+        tagsRef.document(tagName).delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Tag deleted successfully
+                        Log.d("Firestore", "Tag deleted: " + tagName);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle the failure to delete the tag
+                        Log.e("Firestore", "Error deleting tag: " + e.getMessage());
+                    }
+                });
     }
 }
