@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-<<<<<<< HEAD:app/src/main/java/com/example/softwaresolutionssquad/views/TagFragment.java
 
 import com.example.softwaresolutionssquad.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -54,6 +53,7 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
 
     ListView tagsList;
 
+    private FirebaseFirestore db;
     private CollectionReference tagsRef;
 
     private String userName;
@@ -82,8 +82,8 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
         UserViewModel userViewModel = myApp.getUserViewModel();
         userName = userViewModel.getUsername();
 
-
-        tagsRef = ((MainActivity)getActivity()).getDb().collection("Tags");
+        db = FirebaseFirestore.getInstance();
+        tagsRef = db.collection("Tags");
 
         tagDataList = new ArrayList<>();
         originalTagDataList = new ArrayList<>();
@@ -281,5 +281,4 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
                     }
                 });
     }
-
 }

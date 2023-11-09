@@ -22,8 +22,5 @@
         <item name="android:buttonBarButtonStyle">@style/AlertDialogPositiveButtonStyle</item>
         <item name="android:buttonBarNegativeButtonStyle">@style/AlertDialogNegativeButtonStyle</item>
     </style>
-=======
->>>>>>> 9c6508e (Refactored Fragment Structure and recreated navbar)
-=======
->>>>>>> eee1ce8 (Created Tag Manager Pag and added Delete functionality)
+
 </resources>
