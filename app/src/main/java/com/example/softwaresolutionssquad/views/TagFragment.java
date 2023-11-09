@@ -11,10 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStore;
-import androidx.lifecycle.ViewModelStoreOwner;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +24,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.example.softwaresolutionssquad.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -38,7 +33,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 
 
 import java.util.ArrayList;
@@ -90,7 +84,6 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
 
         db = FirebaseFirestore.getInstance();
         tagsRef = db.collection("Tags");
-
 
         tagDataList = new ArrayList<>();
         originalTagDataList = new ArrayList<>();
@@ -289,4 +282,3 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
                 });
     }
 }
-

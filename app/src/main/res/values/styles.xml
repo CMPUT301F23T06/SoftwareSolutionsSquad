@@ -13,5 +13,8 @@
         <item name="android:textColor">@color/button_blue_color</item>
         <!-- Add other button style attributes here -->
     </style>
+<<<<<<< HEAD
 
+=======
+>>>>>>> da9516a (Completed FireStore Integration)
 </resources>
