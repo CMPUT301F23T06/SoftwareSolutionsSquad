@@ -22,11 +22,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TagFragment extends Fragment {
+public class TagFragment extends Fragment implements AddTagFragment.OnFragmentInteractionListener {
     androidx.appcompat.widget.AppCompatButton createBtn;
     androidx.appcompat.widget.AppCompatButton deleteBtn;
 
@@ -35,6 +36,7 @@ public class TagFragment extends Fragment {
     EditText searchText;
 
     ArrayList<String> tagDataList;
+    ArrayList<String> originalTagDataList;
     ArrayAdapter<String> tagAdapter;
 
     ListView tagsList;
@@ -60,12 +62,20 @@ public class TagFragment extends Fragment {
         searchBtn = view.findViewById(R.id.searchButton);
         searchText = view.findViewById(R.id.searchText);
 
-        String[] tags = {"Test", "Test2"};
-        tagDataList.addAll(Arrays.asList(tags));
-        ArrayList<String> originalTagDataList = new ArrayList<>(Arrays.asList(tags));
+        tagDataList = new ArrayList<>();
+        originalTagDataList = new ArrayList<>();
 
         tagAdapter = new TagListAdapter(context, tagDataList);
         tagsList.setAdapter(tagAdapter);
+
+        createBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddTagFragment addTagFragment = new AddTagFragment();
+                addTagFragment.setListener(TagFragment.this); // Set the listener to the current TagFragment
+                addTagFragment.show(getActivity().getSupportFragmentManager(), "ADD_TAG");
+            }
+        });
 
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,5 +181,17 @@ public class TagFragment extends Fragment {
         return false; // Disable the delete button
     }
 
-
+    @Override
+    public void onOkPressed(String tag) {
+        if (originalTagDataList.contains(tag)) {
+            // Tag already exists, show an error toast
+            Toast.makeText(context, "Tag already exists", Toast.LENGTH_SHORT).show();
+        } else {
+            // Tag is unique, add it to the list
+            originalTagDataList.add(tag);
+            tagDataList.add(tag);
+            // Notify the adapter that the data has changed
+            tagAdapter.notifyDataSetChanged();
+        }
+    }
 }
