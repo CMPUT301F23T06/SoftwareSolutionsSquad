@@ -1,4 +1,4 @@
-package com.example.softwaresolutionssquad;
+package com.example.softwaresolutionssquad.views;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,6 +13,8 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import com.example.softwaresolutionssquad.R;
 
 public class AddTagFragment extends DialogFragment {
     private EditText tagName;

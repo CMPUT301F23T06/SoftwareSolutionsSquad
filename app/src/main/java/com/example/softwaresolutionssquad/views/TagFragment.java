@@ -1,4 +1,4 @@
-package com.example.softwaresolutionssquad;
+package com.example.softwaresolutionssquad.views;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -11,10 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStore;
-import androidx.lifecycle.ViewModelStoreOwner;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,13 +18,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.softwaresolutionssquad.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -40,7 +36,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +53,6 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
 
     ListView tagsList;
 
-    private FirebaseFirestore db;
     private CollectionReference tagsRef;
 
     private String userName;
@@ -87,8 +81,8 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
         UserViewModel userViewModel = myApp.getUserViewModel();
         userName = userViewModel.getUsername();
 
-        db = FirebaseFirestore.getInstance();
-        tagsRef = db.collection("Tags");
+
+        tagsRef = ((MainActivity)getActivity()).getDb().collection("Tags");
 
         tagDataList = new ArrayList<>();
         originalTagDataList = new ArrayList<>();

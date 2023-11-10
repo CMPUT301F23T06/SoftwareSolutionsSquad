@@ -80,6 +80,95 @@ public class AddItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_item, container, false);
         initializeUiElements(view);
         setOnClickListeners();
+
+        // Initialize UI elements
+        purchaseDateEditText = view.findViewById(R.id.edtPurchaseDate);
+        descriptionEditText = view.findViewById(R.id.edtDescription);
+        makeEditText = view.findViewById(R.id.edtMake);
+        modelEditText = view.findViewById(R.id.edtModel);
+        serialNumberEditText = view.findViewById(R.id.edtSerialNumber);
+        estimatedValueEditText = view.findViewById(R.id.editTextNumberDecimal);
+        commentEditText = view.findViewById(R.id.edtCommentTitle);
+        nextButton = view.findViewById(R.id.btnNext);
+        cancelButton = view.findViewById(R.id.btnCancel);
+
+
+        // Set an onClickListener for the purchase date EditText to show a date picker
+        purchaseDateEditText.setOnClickListener(v -> {
+            new DatePickerDialog(getContext(), dateSetListener, currentDate.getYear(),
+                    currentDate.getMonthValue(),
+                    currentDate.getDayOfMonth()).show();
+        });
+
+        // Set an onClickListener for the Next button
+        nextButton.setOnClickListener(v -> {
+                // TODO: Logic for saving the data and transitioning to the next screen
+
+                // Extract data from UI elements
+                String date = purchaseDateEditText.getText().toString().trim();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Replace with your date format
+                Date officialDate = null;
+                try {
+                    officialDate = dateFormat.parse(date);
+                } catch (ParseException e) {
+                    officialDate = null;
+                }
+                String description = descriptionEditText.getText().toString().trim();
+
+                String make = makeEditText.getText().toString().trim();
+                String model = modelEditText.getText().toString().trim();
+                String serialNumber = serialNumberEditText.getText().toString().trim();
+                String estimated_val = estimatedValueEditText.getText().toString().trim();
+
+                // Validate data
+                if (officialDate == null || estimated_val.equals("")) { // Use .equals() for string comparison
+                    // Show an alert dialog if validation fails
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Alert Title"); // Optional title
+                    builder.setMessage("Please at least fill in the value and date!");
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                    return;
+                }
+                Double official_estimated_value = Double.parseDouble(estimated_val);
+                String comm = commentEditText.getText().toString().trim();
+                String documentID = retrieveDocId(currentItem);
+
+                InventoryItem itemToSave;
+                if(currentItem != null) {
+                    // Update the existing item's properties
+                    currentItem.setPurchaseDate(officialDate);
+                    currentItem.setDescription(description);
+                    currentItem.setMake(make);
+                    currentItem.setModel(model);
+                    currentItem.setSerialNumber(serialNumber);
+                    currentItem.setEstimatedValue(official_estimated_value);
+                    currentItem.setComment(comm);
+                    currentItem.setDocId(documentID);
+                    itemToSave = currentItem;
+                    listener.onUpdatePressed(itemToSave);
+                } else {
+                    // It's a new item
+                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID);
+                    listener.onOKPressed(itemToSave);
+                }
+
+            // Close the fragment
+            closeFragment();
+        });
+
+        // Set an onClickListener for the Cancel button
+        cancelButton.setOnClickListener(v -> {
+
+
+            // Show the HomeFragment
+            if (getActivity() instanceof MainActivity) {
+                HomeFragment homeFragment = new HomeFragment();
+                ((MainActivity) getActivity()).setFragment(homeFragment);
+            }
+        });
+
+        // Prepopulate fields if currentItem is not null (i.e., we're editing an existing item)
         if (currentItem != null) {
             prepopulateFields(currentItem);
         }
@@ -222,14 +311,17 @@ public class AddItemFragment extends Fragment {
         purchaseDateEditText.setText(dateSet.format(dtf));
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof OnNewItemSubmission) {
-            listener = (OnNewItemSubmission) context;
-        } else {
-            throw new RuntimeException(context + " must implement OnNewItemSubmission");
-        }
+
+    public void setListener(AddItemFragment.OnNewItemSubmission listener) {
+        this.listener = listener;
+    }
+
+    private void closeFragment() {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction().remove(AddItemFragment.this).commit();
+        fragmentManager.popBackStack();
+        FrameLayout fragmentContainer = getActivity().findViewById(R.id.frag_container);
+        fragmentContainer.setVisibility(View.GONE);
     }
 
 

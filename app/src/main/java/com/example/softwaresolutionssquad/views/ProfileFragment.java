@@ -1,4 +1,4 @@
-package com.example.softwaresolutionssquad;// Dummy fragment for the "Profile" page
+package com.example.softwaresolutionssquad.views;// Dummy fragment for the "Profile" page
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.softwaresolutionssquad.R;
 
 public class ProfileFragment extends Fragment {
 
