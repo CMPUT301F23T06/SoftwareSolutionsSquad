@@ -285,7 +285,7 @@ public class AddItemFragment extends Fragment {
             return currentItem;
         } else {
             // It's a new item
-            return new InventoryItem(officialDate, description, make, model, serialNumber, estimatedValue, comment, new ArrayList<String>(), documentID);
+            return new InventoryItem(officialDate, description, make, model, serialNumber, estimatedValue, comment, documentID);
         }
     }
 

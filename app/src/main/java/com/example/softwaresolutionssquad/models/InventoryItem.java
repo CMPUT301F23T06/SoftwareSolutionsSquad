@@ -35,8 +35,8 @@ public class InventoryItem implements Serializable {
      * @param tags           arraylist of tags on this item
      * @param docId          document identifier for the item
      */
-    public InventoryItem(Date purchaseDate, String description, String make, String model, String serialNumber,
-                         double estimatedValue, String comment, ArrayList<String> tags, String docId) {
+    public InventoryItem(Date purchaseDate, String description, String make, String model,
+                         String serialNumber, double estimatedValue, String comment, String docId) {
         this.purchaseDate = purchaseDate;
         this.description = description;
         this.make = make;
@@ -44,7 +44,7 @@ public class InventoryItem implements Serializable {
         this.serialNumber = serialNumber;
         this.estimatedValue = estimatedValue;
         this.comment = comment;
-        this.tags = tags;
+        this.tags = new ArrayList<String>();
         this.docId = docId;
     }
 
@@ -53,6 +53,7 @@ public class InventoryItem implements Serializable {
      */
     public InventoryItem() {
         // Default constructor
+        this.tags = new ArrayList<String>();
     }
 
     // Accessors and Mutators for each property
