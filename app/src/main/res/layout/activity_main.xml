@@ -4,11 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-<<<<<<< HEAD
     tools:context=".views.MainActivity">
-=======
-    tools:context=".MainActivity">
->>>>>>> 9c6508e (Refactored Fragment Structure and recreated navbar)
 
     <FrameLayout
         android:id="@+id/frag_container"
