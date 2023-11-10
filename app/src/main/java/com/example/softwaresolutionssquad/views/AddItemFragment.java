@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -284,7 +285,7 @@ public class AddItemFragment extends Fragment {
             return currentItem;
         } else {
             // It's a new item
-            return new InventoryItem(officialDate, description, make, model, serialNumber, estimatedValue, comment, documentID);
+            return new InventoryItem(officialDate, description, make, model, serialNumber, estimatedValue, comment, new ArrayList<String>(), documentID);
         }
     }
 

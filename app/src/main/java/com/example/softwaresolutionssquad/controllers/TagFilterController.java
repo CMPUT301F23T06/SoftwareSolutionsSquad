@@ -22,18 +22,18 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * Controller class for managing filter operations based on the make of inventory items.
+ * Controller class for managing filter operations based on the tags of inventory items.
  */
-public class MakeFilterController {
+public class TagFilterController {
 
     private final Context context;
-    private final TextView makesTextView;
-    private final LinearLayout makeFilter;
+    private final TextView tagsTextView;
+    private final LinearLayout tagFilter;
     private final InventoryListAdapter inventoryListAdapter;
     private final ListView inventoryListView;
     private final List<InventoryItem> inventoryItems;
-    private final ArrayList<String> allMakesList;
-    private final ArrayList<Integer> selectedMakesIndices;
+    private final ArrayList<String> allTagsList;
+    private final ArrayList<Integer> selectedTagsIndices;
     private Predicate<InventoryItem> filterCondition;
     private final TextView keywordButton;
     private final TextView dateButton;
@@ -41,11 +41,11 @@ public class MakeFilterController {
     private final TextView tagButton;
 
     /**
-     * Constructs a MakeFilterController.
+     * Constructs a TagFilterController.
      *
      * @param context                The current context.
-     * @param makesTextView          The text view to display selected makes.
-     * @param makeFilter             The layout containing the make filter controls.
+     * @param tagsTextView           The text view to display selected tags.
+     * @param tagFilter              The layout containing the tag filter controls.
      * @param keywordButton          The button for keyword filtering.
      * @param dateButton             The button for date filtering.
      * @param makeButton             The button for make filtering.
@@ -54,134 +54,133 @@ public class MakeFilterController {
      * @param inventoryListView      The list view for displaying inventory items.
      * @param inventoryItems         The list of inventory items.
      */
-    public MakeFilterController(Context context,
-                                TextView makesTextView,
-                                LinearLayout makeFilter,
-                                TextView keywordButton,
-                                TextView dateButton,
-                                TextView makeButton,
-                                TextView tagButton,
-                                InventoryListAdapter inventoryListAdapter,
-                                ListView inventoryListView,
-                                List<InventoryItem> inventoryItems) {
+    public TagFilterController(Context context,
+                               TextView tagsTextView,
+                               LinearLayout tagFilter,
+                               TextView keywordButton,
+                               TextView dateButton,
+                               TextView makeButton,
+                               TextView tagButton,
+                               InventoryListAdapter inventoryListAdapter,
+                               ListView inventoryListView,
+                               List<InventoryItem> inventoryItems) {
         this.context = context;
-        this.makesTextView = makesTextView;
+        this.tagsTextView = tagsTextView;
         this.inventoryListAdapter = inventoryListAdapter;
         this.inventoryListView = inventoryListView;
         this.inventoryItems = inventoryItems;
-        this.allMakesList = new ArrayList<>();
-        this.selectedMakesIndices = new ArrayList<>();
+        this.allTagsList = new ArrayList<>();
+        this.selectedTagsIndices = new ArrayList<>();
         this.keywordButton = keywordButton;
         this.dateButton = dateButton;
         this.makeButton = makeButton;
         this.tagButton = tagButton;
-        this.makeFilter = makeFilter;
-        initializeMakeButton();
+        this.tagFilter = tagFilter;
+        initializeTagButton();
     }
 
     /**
-     * Initializes the make button and sets its on click listener.
+     * Initializes the tag button and sets its on click listener.
      */
-    private void initializeMakeButton() {
-        makesTextView.setOnClickListener(v -> showMakesSelectionDialog());
+    private void initializeTagButton() {
+        tagsTextView.setOnClickListener(v -> showTagsSelectionDialog());
     }
 
     /**
-     * Shows a multi-choice dialog for selecting makes to filter inventory items.
+     * Shows a multi-choice dialog for selecting tags to filter inventory items.
      */
-    private void showMakesSelectionDialog() {
-        populateMakesListIfNeeded();
-        String[] allMakesArray = allMakesList.toArray(new String[0]);
-        boolean[] selected = new boolean[allMakesList.size()];
-        for (int i : selectedMakesIndices) {
+    private void showTagsSelectionDialog() {
+        populateTagsListIfNeeded();
+        String[] allTagsArray = allTagsList.toArray(new String[0]);
+        boolean[] selected = new boolean[allTagsList.size()];
+        for (int i : selectedTagsIndices) {
             selected[i] = true;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Select Make(s)")
+        builder.setTitle("Select Tag(s)")
                 .setCancelable(false)
-                .setMultiChoiceItems(allMakesArray, selected, this::onMakeSelected)
-                .setPositiveButton("OK", this::onMakesDialogPositive)
-                .setNegativeButton("Cancel", this::onMakesDialogNegative)
+                .setMultiChoiceItems(allTagsArray, selected, this::onTagSelected)
+                .setPositiveButton("OK", this::onTagsDialogPositive)
+                .setNegativeButton("Cancel", this::onTagsDialogNegative)
                 .show();
     }
 
     /**
-     * Populates the allMakesList if it is currently empty.
+     * Populates the allTagsList if it is currently empty.
      */
-    private void populateMakesListIfNeeded() {
-        if (allMakesList.isEmpty()) {
+    private void populateTagsListIfNeeded() {
+        if (allTagsList.isEmpty()) {
+            HashSet<String> tags = new HashSet<String>();
             for (InventoryItem item : inventoryItems) {
-                String make = item.getMake().trim();
-                if (!allMakesList.contains(make)) {
-                    allMakesList.add(make);
-                }
+                tags.addAll(item.getTags());
             }
+            allTagsList.addAll(tags);
         }
     }
 
     /**
-     * Handles make selection within the dialog.
+     * Handles tag selection within the dialog.
      *
      * @param dialog    The dialog where the selection was made.
      * @param which     The index of the selected item.
      * @param isChecked The new checked state of the item.
      */
-    private void onMakeSelected(DialogInterface dialog, int which, boolean isChecked) {
+    private void onTagSelected(DialogInterface dialog, int which, boolean isChecked) {
         if (isChecked) {
-            if (!selectedMakesIndices.contains(which)) {
-                selectedMakesIndices.add(which);
+            if (!selectedTagsIndices.contains(which)) {
+                selectedTagsIndices.add(which);
             }
         } else {
-            selectedMakesIndices.remove(Integer.valueOf(which));
+            selectedTagsIndices.remove(Integer.valueOf(which));
         }
     }
 
     /**
-     * Handles the positive action of the makes selection dialog.
+     * Handles the positive action of the tags selection dialog.
      *
      * @param dialog The dialog interface.
      * @param which  The button that was clicked.
      */
-    private void onMakesDialogPositive(DialogInterface dialog, int which) {
-        HashSet<String> selectedMakesList = new HashSet<>();
-        for (int index : selectedMakesIndices) {
-            selectedMakesList.add(allMakesList.get(index));
+    private void onTagsDialogPositive(DialogInterface dialog, int which) {
+        HashSet<String> selectedTagsList = new HashSet<>();
+        for (int index : selectedTagsIndices) {
+            selectedTagsList.add(allTagsList.get(index));
         }
-        makesTextView.setText(String.join(", ", selectedMakesList));
-        if (selectedMakesList.isEmpty()) {
+        tagsTextView.setText(String.join(", ", selectedTagsList));
+        if (selectedTagsList.isEmpty()) {
             inventoryListView.setAdapter(inventoryListAdapter);
         } else {
-            filterCondition = item -> selectedMakesList.contains(item.getMake());
+            filterCondition = item -> item.getTags().stream().anyMatch(tag -> selectedTagsList.contains(tag));
             filteredResults(filterCondition);
         }
     }
 
     /**
-     * Handles the negative action of the makes selection dialog.
+     * Handles the negative action of the tags selection dialog.
      *
      * @param dialog The dialog interface.
      * @param which  The button that was clicked.
      */
-    private void onMakesDialogNegative(DialogInterface dialog, int which) {
+    private void onTagsDialogNegative(DialogInterface dialog, int which) {
         dialog.dismiss();
     }
 
     /**
-     * Toggles the visibility of the make filter layout.
+     * Toggles the visibility of the tag filter layout.
      */
-    public void toggleMakeFilterVisibility() {
-        if (makeFilter.getVisibility() == View.GONE) {
-            makeFilter.setVisibility(View.VISIBLE);
+    public void toggleTagFilterVisibility() {
+        if (tagFilter.getVisibility() == View.GONE) {
+            tagFilter.setVisibility(View.VISIBLE);
             ViewCompat.setBackgroundTintList(keywordButton, null);
             ViewCompat.setBackgroundTintList(dateButton, null);
-            ViewCompat.setBackgroundTintList(tagButton, null);
-            ViewCompat.setBackgroundTintList(makeButton, ColorStateList.valueOf(context.getResources().getColor(R.color.app_blue, null)));
-            inventoryListView.setAdapter(inventoryListAdapter);
-            makesTextView.setText("");
-            selectedMakesIndices.clear();
-        } else {
-            makeFilter.setVisibility(View.GONE);
             ViewCompat.setBackgroundTintList(makeButton, null);
+            ViewCompat.setBackgroundTintList(tagButton, ColorStateList.valueOf(context.getResources().getColor(R.color.app_blue, null)));
+            inventoryListView.setAdapter(inventoryListAdapter);
+            tagsTextView.setText("");
+            selectedTagsIndices.clear();
+        } else {
+            tagFilter.setVisibility(View.GONE);
+            ViewCompat.setBackgroundTintList(tagButton, null);
         }
     }
 
