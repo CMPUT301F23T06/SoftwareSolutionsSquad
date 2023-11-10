@@ -4,7 +4,6 @@
 BL='\033[0;34m'
 G='\033[0;32m'
 RED='\033[0;31m'
-YE='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Emulator name variable
@@ -12,6 +11,7 @@ emulator_name=${EMULATOR_NAME:-"emulator"}
 
 # Function to check hardware acceleration
 function check_hardware_acceleration() {
+    echo "Checking hardware acceleration..."
     if [[ "$HW_ACCEL_OVERRIDE" != "" ]]; then
         hw_accel_flag="$HW_ACCEL_OVERRIDE"
     else
@@ -26,11 +26,13 @@ function check_hardware_acceleration() {
         hw_accel_flag=$HW_ACCEL_SUPPORT == 0 ? "-accel off" : "-accel on"
     fi
 
+    echo "Hardware acceleration flag set to: $hw_accel_flag"
     echo "$hw_accel_flag"
 }
 
 # Function to launch the emulator
 function launch_emulator() {
+    echo "Launching emulator..."
     adb devices | grep emulator | cut -f1 | xargs -I {} adb -s "{}" emu kill
     hw_accel_flag=$(check_hardware_acceleration)
     options="@${emulator_name} -no-window -no-snapshot -screen no-touch -noaudio -memory 1024 -no-boot-anim ${hw_accel_flag} -camera-back none"
@@ -50,6 +52,17 @@ function launch_emulator() {
         echo -e "${RED}Error launching emulator${NC}"
         exit 1
     fi
+
+    echo "Listing ADB devices..."
+    adb devices
+}
+
+# Function to unlock the emulator screen
+function unlock_screen() {
+    echo "Unlocking the emulator screen..."
+    adb shell input keyevent 82  # Menu key
+    adb shell input keyevent 66  # Enter key
+    adb shell input swipe 400 800 400 100  # Swipe to unlock
 }
 
 # Function to check the emulator status
@@ -63,10 +76,12 @@ function check_emulator_status() {
         if [[ "$result" == "1" ]]; then
             printf "${G}==> \u2713 Emulator is ready${NC}\n"
             adb devices -l
+            unlock_screen  # Unlock the screen
             ensure_emulator_focus
             break
         else
             printf "${RED}==> Emulator is not ready yet. Status: $result ${NC}\n"
+            echo "Emulator boot check, result: $result, elapsed time: $elapsed_time seconds"
             current_time=$(date +%s)
             elapsed_time=$((current_time - start_time))
             if [ $elapsed_time -ge $timeout ]; then
@@ -80,12 +95,14 @@ function check_emulator_status() {
 
 # Function to ensure the emulator has window focus
 function ensure_emulator_focus() {
+    echo "Ensuring emulator focus..."
     adb shell input keyevent 82  # Menu key
     adb shell input keyevent 66  # Enter key
 }
 
 # Function to disable animations on the emulator for faster testing
 function disable_animation() {
+    echo "Disabling animations on emulator..."
     adb shell "settings put global window_animation_scale 0.0"
     adb shell "settings put global transition_animation_scale 0.0"
     adb shell "settings put global animator_duration_scale 0.0"
@@ -93,6 +110,7 @@ function disable_animation() {
 
 # Function to handle hidden API policies (necessary for some Android versions)
 function hidden_policy() {
+    echo "Setting hidden API policies..."
     adb shell "settings put global hidden_api_policy_pre_p_apps 1"
     adb shell "settings put global hidden_api_policy_p_apps 1"
     adb shell "settings put global hidden_api_policy 1"
