@@ -105,56 +105,56 @@ public class AddItemFragment extends Fragment {
 
         // Set an onClickListener for the Next button
         nextButton.setOnClickListener(v -> {
-                // TODO: Logic for saving the data and transitioning to the next screen
+            // TODO: Logic for saving the data and transitioning to the next screen
 
-                // Extract data from UI elements
-                String date = purchaseDateEditText.getText().toString().trim();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Replace with your date format
-                Date officialDate = null;
-                try {
-                    officialDate = dateFormat.parse(date);
-                } catch (ParseException e) {
-                    officialDate = null;
-                }
-                String description = descriptionEditText.getText().toString().trim();
+            // Extract data from UI elements
+            String date = purchaseDateEditText.getText().toString().trim();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Replace with your date format
+            Date officialDate = null;
+            try {
+                officialDate = dateFormat.parse(date);
+            } catch (ParseException e) {
+                officialDate = null;
+            }
+            String description = descriptionEditText.getText().toString().trim();
 
-                String make = makeEditText.getText().toString().trim();
-                String model = modelEditText.getText().toString().trim();
-                String serialNumber = serialNumberEditText.getText().toString().trim();
-                String estimated_val = estimatedValueEditText.getText().toString().trim();
+            String make = makeEditText.getText().toString().trim();
+            String model = modelEditText.getText().toString().trim();
+            String serialNumber = serialNumberEditText.getText().toString().trim();
+            String estimated_val = estimatedValueEditText.getText().toString().trim();
 
-                // Validate data
-                if (officialDate == null || estimated_val.equals("")) { // Use .equals() for string comparison
-                    // Show an alert dialog if validation fails
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Alert Title"); // Optional title
-                    builder.setMessage("Please at least fill in the value and date!");
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-                    return;
-                }
-                Double official_estimated_value = Double.parseDouble(estimated_val);
-                String comm = commentEditText.getText().toString().trim();
-                String documentID = retrieveDocId(currentItem);
+            // Validate data
+            if (officialDate == null || estimated_val.equals("")) { // Use .equals() for string comparison
+                // Show an alert dialog if validation fails
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Alert Title"); // Optional title
+                builder.setMessage("Please at least fill in the value and date!");
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                return;
+            }
+            Double official_estimated_value = Double.parseDouble(estimated_val);
+            String comm = commentEditText.getText().toString().trim();
+            String documentID = retrieveDocId(currentItem);
 
-                InventoryItem itemToSave;
-                if(currentItem != null) {
-                    // Update the existing item's properties
-                    currentItem.setPurchaseDate(officialDate);
-                    currentItem.setDescription(description);
-                    currentItem.setMake(make);
-                    currentItem.setModel(model);
-                    currentItem.setSerialNumber(serialNumber);
-                    currentItem.setEstimatedValue(official_estimated_value);
-                    currentItem.setComment(comm);
-                    currentItem.setDocId(documentID);
-                    itemToSave = currentItem;
-                    listener.onUpdatePressed(itemToSave);
-                } else {
-                    // It's a new item
-                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID);
-                    createNewItem(itemToSave);
-                }
+            InventoryItem itemToSave;
+            if(currentItem != null) {
+                // Update the existing item's properties
+                currentItem.setPurchaseDate(officialDate);
+                currentItem.setDescription(description);
+                currentItem.setMake(make);
+                currentItem.setModel(model);
+                currentItem.setSerialNumber(serialNumber);
+                currentItem.setEstimatedValue(official_estimated_value);
+                currentItem.setComment(comm);
+                currentItem.setDocId(documentID);
+                itemToSave = currentItem;
+                listener.onUpdatePressed(itemToSave);
+            } else {
+                // It's a new item
+                itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID);
+                createNewItem(itemToSave);
+            }
 
             // Close the fragment
             // Show the HomeFragment
