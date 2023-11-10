@@ -7,10 +7,10 @@ import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,7 +33,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
 import static java.lang.Thread.sleep;
-
 import static kotlin.jvm.internal.Intrinsics.checkNotNull;
 
 import android.view.View;
@@ -42,6 +41,9 @@ import android.widget.DatePicker;
 import java.time.LocalDate;
 
 
+/**
+ * Tests for adding and editing inventory items in the MainActivity.
+ */
 @RunWith(AndroidJUnit4.class)
 public class ItemTest {
 
@@ -50,8 +52,9 @@ public class ItemTest {
     private String uniqueDescription, makeValue, modelValue;
     private Boolean editing = false;
 
-
-    // Set up method to navigate to the AddItemFragment
+    /**
+     * Sets up the test environment before each test.
+     */
     @Before
     public void setUp() throws InterruptedException {
         sleep(2500);
@@ -61,11 +64,14 @@ public class ItemTest {
         onView(withId(R.id.edtPurchaseDate)).check(matches(isDisplayed()));
     }
 
+    /**
+     * Tests adding a new item to the inventory.
+     */
+
     @Test
     public void testAddNewItem() throws InterruptedException {
         // Assume we have a unique description for each test run, for example using a timestamp
         uniqueDescription = "New Camera " + System.currentTimeMillis();
-
         makeValue = "Canon";
         modelValue = "EOS";
 
@@ -92,14 +98,17 @@ public class ItemTest {
 
         // Click the Next/Save button to save the item
         onView(withId(R.id.btnNext)).perform(click());
-        sleep(4000);
+        sleep(1000);
 
         // Now verify the item was added
-        onData(withItemContent(uniqueDescription)) // Custom matcher to find the item with the uniqueDescription
-                .inAdapterView(withId(R.id.inventory_list_view)) // Replace with your ListView id
-                .check(matches(isDisplayed())); // Check that the item is displayed
+        onData(withItemContent(uniqueDescription))
+                .inAdapterView(withId(R.id.inventory_list_view))
+                .check(matches(isDisplayed()));
     }
 
+    /**
+     * Tests editing an existing item in the inventory.
+     */
     @Test
     public void testEditItem() throws InterruptedException {
         // First add a new item
@@ -115,8 +124,8 @@ public class ItemTest {
         modelValue = "F20";
 
         // Edit the fields with new data
-        String newDescription = "Updated Camera " + System.currentTimeMillis();
-        onView(withId(R.id.edtDescription)).perform(clearText(), typeText(newDescription), ViewActions.closeSoftKeyboard());
+        uniqueDescription = "Updated Camera " + System.currentTimeMillis();
+        onView(withId(R.id.edtDescription)).perform(clearText(), typeText(uniqueDescription), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.edtMake)).perform(clearText(), typeText(makeValue), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.edtModel)).perform(clearText(), typeText(modelValue), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.edtSerialNumber)).perform(clearText(), typeText("987654321"), ViewActions.closeSoftKeyboard());
@@ -128,12 +137,32 @@ public class ItemTest {
         sleep(4000); // It's better to use Espresso's IdlingResource instead of sleep
 
         // Now verify the item was updated
-        onData(withItemContent(newDescription)) // Use the new description to find the updated item
+        onData(withItemContent(uniqueDescription))
                 .inAdapterView(withId(R.id.inventory_list_view))
-                .check(matches(isDisplayed())); // Check that the item is displayed with the new details
+                .check(matches(isDisplayed()));
     }
 
-    // Custom matcher method to find an item in the ListView with the given content
+    /**
+     * Cleans up after each test.
+     */
+    @After
+    public void cleanUp() throws InterruptedException {
+        onData(withItemContent(uniqueDescription))
+                .inAdapterView(withId(R.id.inventory_list_view))
+                .onChildView(withId(R.id.checkItem))
+                .perform(click());
+
+        sleep(1500);
+
+        // Click the delete button to delete the item
+        onView(withId(R.id.delete_button)).perform(click());
+    }
+
+    // filtering, date, keyword, model, make tests in progress
+
+    /**
+     * Custom matcher method to find an item in the ListView with the given content
+     */
     public static Matcher<Object> withItemContent(final String expectedContent) {
         checkNotNull(expectedContent);
         return new BoundedMatcher<Object, InventoryItem>(InventoryItem.class) {
@@ -150,8 +179,9 @@ public class ItemTest {
         };
     }
 
-
-    // Custom action to set the date in a DatePicker
+    /**
+     * Custom action to set the date in a DatePicker
+     */
     public static ViewAction setDate(final int year, final int monthOfYear, final int dayOfMonth) {
         return new ViewAction() {
             @Override
@@ -172,4 +202,3 @@ public class ItemTest {
         };
     }
 }
-
