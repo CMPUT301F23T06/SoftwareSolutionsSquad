@@ -81,7 +81,7 @@ jobs:
 
       - name: Pre-launch emulator
         run: |
-          echo "no" | avdmanager --verbose create avd --force -n emulator -k "system-images;android-34;google_apis_playstore;x86_64" --abi google_apis_playstore/x86_64 --device "pixel 3a"
+          echo "no" | avdmanager --verbose create avd --force -n emulator -k "system-images;android-34;google_apis_playstore;x86_64" --abi google_apis_playstore/x86_64 --device "pixel"
           chmod +x ./.github/start_emu_headless.sh && ./.github/start_emu_headless.sh prelaunch
 
       - name: Wait for emulator to be fully ready
