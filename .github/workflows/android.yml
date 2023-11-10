@@ -36,3 +36,5 @@ jobs:
         echo "$FIREBASE_SERVICE_JSON" > ./app/google-services.json
     - name: Build with Gradle
       run: ./gradlew build
+    - name: Run unit tests
+      run: ./gradlew test
