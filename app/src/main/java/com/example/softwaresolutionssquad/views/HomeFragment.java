@@ -353,31 +353,6 @@ public class HomeFragment extends Fragment implements AddItemFragment.OnNewItemS
         estimatedValue.setText(String.format(Locale.US, "%.2f", totalSum));
     }
 
-    // This method is called when the OK button is pressed in the AddItemFragment
-    // It adds the new item to the inventory list and updates the adapter
-    @Override
-    public void onOKPressed(InventoryItem newItem) {
-        // Get a new document reference from Firestore, which has an auto-generated ID
-        DocumentReference newDocRef = itemsRef.document();
-
-        // Set the document ID inside the new item object
-        newItem.setDocId(newDocRef.getId()); // Make sure InventoryItem has a method to set its ID
-
-        // Set the new item in the Firestore document
-        newDocRef.set(newItem)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("AddItem", "DocumentSnapshot written with ID: " + newDocRef.getId());
-                    // Add the new item to the local list and notify the adapter
-                    inventoryItems.add(newItem);
-                    inventoryListAdapter.notifyDataSetChanged();
-                    updateTotalValue();
-                })
-                .addOnFailureListener(e -> Log.w("AddItem", "Error adding document", e));
-
-//        inventoryItems.add(newItem);
-//        inventoryListAdapter.notifyDataSetChanged();
-//        updateTotalValue();
-    }
 
     // This method updates an existing inventory item
     public void onUpdatePressed(InventoryItem updatedItem) {

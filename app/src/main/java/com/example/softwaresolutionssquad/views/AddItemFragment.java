@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.example.softwaresolutionssquad.R;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.text.ParseException;
@@ -39,6 +40,8 @@ public class AddItemFragment extends Fragment {
     private EditText descriptionEditText;
     private EditText makeEditText;
     private EditText modelEditText;
+
+    private CollectionReference itemsRef;
     private EditText serialNumberEditText;
     private EditText estimatedValueEditText;
     private EditText commentEditText;
@@ -80,7 +83,7 @@ public class AddItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_item, container, false);
         initializeUiElements(view);
         setOnClickListeners();
-
+        itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");
         // Initialize UI elements
         purchaseDateEditText = view.findViewById(R.id.edtPurchaseDate);
         descriptionEditText = view.findViewById(R.id.edtDescription);
@@ -150,11 +153,15 @@ public class AddItemFragment extends Fragment {
                 } else {
                     // It's a new item
                     itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID);
-                    listener.onOKPressed(itemToSave);
+                    createNewItem(itemToSave);
                 }
 
             // Close the fragment
-            closeFragment();
+            // Show the HomeFragment
+            if (getActivity() instanceof MainActivity) {
+                HomeFragment homeFragment = new HomeFragment();
+                ((MainActivity) getActivity()).setFragment(homeFragment);
+            }
         });
 
         // Set an onClickListener for the Cancel button
@@ -232,7 +239,7 @@ public class AddItemFragment extends Fragment {
             if (currentItem != null) {
                 listener.onUpdatePressed(itemToSave);
             } else {
-                listener.onOKPressed(itemToSave);
+                createNewItem(itemToSave);
             }
         }
     }
@@ -312,16 +319,19 @@ public class AddItemFragment extends Fragment {
     }
 
 
-    public void setListener(AddItemFragment.OnNewItemSubmission listener) {
-        this.listener = listener;
-    }
 
-    private void closeFragment() {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        fragmentManager.beginTransaction().remove(AddItemFragment.this).commit();
-        fragmentManager.popBackStack();
-        FrameLayout fragmentContainer = getActivity().findViewById(R.id.frag_container);
-        fragmentContainer.setVisibility(View.GONE);
+    public void createNewItem(InventoryItem newItem) {
+        // Get a new document reference from Firestore, which has an auto-generated ID
+        DocumentReference newDocRef = itemsRef.document();
+
+        // Set the document ID inside the new item object
+        newItem.setDocId(newDocRef.getId()); // Make sure InventoryItem has a method to set its ID
+
+        // Set the new item in the Firestore document
+        newDocRef.set(newItem)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("AddItem", "DocumentSnapshot written with ID: " + newDocRef.getId());
+                });
     }
 
 
@@ -329,7 +339,9 @@ public class AddItemFragment extends Fragment {
      * Interface for communicating with the activity when an item is saved.
      */
     public interface OnNewItemSubmission {
-        void onOKPressed(InventoryItem newItem);
         void onUpdatePressed(InventoryItem updatedItem);
+    }
+    public void setListener(OnNewItemSubmission listener) {
+        this.listener = listener;
     }
 }
