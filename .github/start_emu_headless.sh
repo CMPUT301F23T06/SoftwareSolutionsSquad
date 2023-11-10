@@ -33,7 +33,7 @@ function check_hardware_acceleration() {
 function launch_emulator() {
     adb devices | grep emulator | cut -f1 | xargs -I {} adb -s "{}" emu kill
     hw_accel_flag=$(check_hardware_acceleration)
-    options="@${emulator_name} -no-window -no-snapshot -screen no-touch -noaudio -memory 2048 -no-boot-anim ${hw_accel_flag} -camera-back none"
+    options="@${emulator_name} -no-window -no-snapshot -screen no-touch -noaudio -memory 1024 -no-boot-anim ${hw_accel_flag} -camera-back none"
 
     if [[ "$OSTYPE" == *linux* ]]; then
         echo "${OSTYPE}: emulator ${options} -gpu off"
@@ -56,13 +56,14 @@ function launch_emulator() {
 function check_emulator_status() {
     printf "${G}==> ${BL}Checking emulator booting up status 🧐${NC}\n"
     start_time=$(date +%s)
-    timeout=${EMULATOR_TIMEOUT:-700}
+    timeout=${EMULATOR_TIMEOUT:-1200}  # Increased timeout to 1200 seconds
+    adb wait-for-device  # Wait for device to be recognized by ADB
     while true; do
         result=$(adb shell getprop sys.boot_completed 2>&1)
         if [[ "$result" == "1" ]]; then
             printf "${G}==> \u2713 Emulator is ready${NC}\n"
             adb devices -l
-            adb shell input keyevent 82
+            ensure_emulator_focus
             break
         else
             printf "${RED}==> Emulator is not ready yet. Status: $result ${NC}\n"
@@ -75,6 +76,12 @@ function check_emulator_status() {
             sleep 5
         fi
     done
+}
+
+# Function to ensure the emulator has window focus
+function ensure_emulator_focus() {
+    adb shell input keyevent 82  # Menu key
+    adb shell input keyevent 66  # Enter key
 }
 
 # Function to disable animations on the emulator for faster testing
