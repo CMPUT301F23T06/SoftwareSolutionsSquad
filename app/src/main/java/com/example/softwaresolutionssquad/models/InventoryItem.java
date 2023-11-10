@@ -32,7 +32,6 @@ public class InventoryItem implements Serializable {
      * @param serialNumber   the serial number of the item
      * @param estimatedValue the estimated value of the item
      * @param comment        additional comments about the item
-     * @param tags           arraylist of tags on this item
      * @param docId          document identifier for the item
      */
     public InventoryItem(Date purchaseDate, String description, String make, String model,
