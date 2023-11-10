@@ -103,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                 DocumentSnapshot user = task.getResult();
                 if (user != null && user.exists() && hashedPassword.equals(user.getString("password"))) {
                     navigateToMain();
+                    Utils.setCurrentUser(username);
                 } else {
                     showError("Invalid username or password.");
                 }

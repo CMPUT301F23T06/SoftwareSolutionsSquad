@@ -41,7 +41,7 @@ public class DatabaseController {
     public void addNewItem(InventoryItem newItem, DatabaseActionListener listener) {
         DocumentReference newDocRef = itemsRef.document();
         newItem.setDocId(newDocRef.getId());
-
+        newItem.setUsername(Utils.getCurrentUser());
         newDocRef.set(newItem)
                 .addOnSuccessListener(aVoid -> {
                     inventoryItems.add(newItem);
@@ -94,7 +94,7 @@ public class DatabaseController {
      * @param listener The listener to handle callbacks.
      */
     public void loadInitialItems(DatabaseActionListener listener) {
-        itemsRef.get().addOnCompleteListener(task -> {
+        itemsRef.whereEqualTo("username", Utils.getCurrentUser()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 inventoryItems.clear();
                 for (QueryDocumentSnapshot document : task.getResult()) {

@@ -21,6 +21,8 @@ public class InventoryItem implements Serializable {
     private ArrayList<String> tags;
     private String docId;
     private ArrayList<String> imageUrl;
+    // only used to include username when adding item to database
+    private String username;
     private boolean isSelected;
 
     /**
@@ -165,6 +167,10 @@ public class InventoryItem implements Serializable {
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
     }
+
+    public void setUsername(String username) { this.username = username; }
+
+    public String getUsername() { return username; }
 
     public String getDocId() {
         return docId;
