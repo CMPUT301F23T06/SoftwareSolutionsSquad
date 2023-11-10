@@ -1,33 +1,27 @@
 package com.example.softwaresolutionssquad;
 
-import androidx.test.espresso.Espresso;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.BoundedMatcher;
-import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.example.softwaresolutionssquad.models.InventoryItem;
-import com.example.softwaresolutionssquad.models.InventoryModel;
-import com.example.softwaresolutionssquad.views.InventoryListAdapter;
 import com.example.softwaresolutionssquad.views.MainActivity;
-import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
-
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -53,7 +47,8 @@ public class ItemTest {
 
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
-    private String uniqueDescription;
+    private String uniqueDescription, makeValue, modelValue;
+    private Boolean editing = false;
 
 
     // Set up method to navigate to the AddItemFragment
@@ -71,6 +66,9 @@ public class ItemTest {
         // Assume we have a unique description for each test run, for example using a timestamp
         uniqueDescription = "New Camera " + System.currentTimeMillis();
 
+        makeValue = "Canon";
+        modelValue = "EOS";
+
         // Input the item details into the AddItemFragment's EditText fields
         // Open the DatePickerDialog
         onView(withId(R.id.edtPurchaseDate)).perform(click());
@@ -86,8 +84,8 @@ public class ItemTest {
 
         // Confirm the date selection
         onView(withId(R.id.edtDescription)).perform(typeText(uniqueDescription), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.edtMake)).perform(typeText("Canon"), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.edtModel)).perform(typeText("EOS"), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.edtMake)).perform(typeText(makeValue), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.edtModel)).perform(typeText(modelValue), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.edtSerialNumber)).perform(typeText("123456789"), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.editTextNumberDecimal)).perform(typeText("999.99"), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.edtCommentTitle)).perform(typeText("Great condition!"), ViewActions.closeSoftKeyboard());
@@ -100,6 +98,39 @@ public class ItemTest {
         onData(withItemContent(uniqueDescription)) // Custom matcher to find the item with the uniqueDescription
                 .inAdapterView(withId(R.id.inventory_list_view)) // Replace with your ListView id
                 .check(matches(isDisplayed())); // Check that the item is displayed
+    }
+
+    @Test
+    public void testEditItem() throws InterruptedException {
+        // First add a new item
+        testAddNewItem();
+
+        // Click on the item in the list to edit
+        onData(withItemContent(uniqueDescription))
+                .inAdapterView(withId(R.id.inventory_list_view))
+                .perform(click());
+
+        editing = true;
+        makeValue = "Fuji";
+        modelValue = "F20";
+
+        // Edit the fields with new data
+        String newDescription = "Updated Camera " + System.currentTimeMillis();
+        onView(withId(R.id.edtDescription)).perform(clearText(), typeText(newDescription), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.edtMake)).perform(clearText(), typeText(makeValue), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.edtModel)).perform(clearText(), typeText(modelValue), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.edtSerialNumber)).perform(clearText(), typeText("987654321"), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.editTextNumberDecimal)).perform(clearText(), typeText("100"), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.edtCommentTitle)).perform(clearText(), typeText("Bad condition!"), ViewActions.closeSoftKeyboard());
+
+        // Click the "next" or "save" button to update the item
+        onView(withId(R.id.btnNext)).perform(click());
+        sleep(4000); // It's better to use Espresso's IdlingResource instead of sleep
+
+        // Now verify the item was updated
+        onData(withItemContent(newDescription)) // Use the new description to find the updated item
+                .inAdapterView(withId(R.id.inventory_list_view))
+                .check(matches(isDisplayed())); // Check that the item is displayed with the new details
     }
 
     // Custom matcher method to find an item in the ListView with the given content
