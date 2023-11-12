@@ -28,6 +28,7 @@ import com.example.softwaresolutionssquad.controllers.DatabaseController;
 import com.example.softwaresolutionssquad.controllers.DateFilterController;
 import com.example.softwaresolutionssquad.controllers.KeywordFilterController;
 import com.example.softwaresolutionssquad.controllers.MakeFilterController;
+import com.example.softwaresolutionssquad.controllers.TagFilterController;
 import com.example.softwaresolutionssquad.controllers.SortController;
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.google.firebase.firestore.CollectionReference;
@@ -107,15 +108,7 @@ public class HomeFragment extends Fragment implements AddItemFragment.OnNewItemS
                     inventoryItems.clear();
                     for (QueryDocumentSnapshot doc: value) {
                         Log.d("item", doc.getString("docId"));
-                        Date purchaseDate = doc.getDate("purchaseDate");
-                        String description = doc.getString("description");  // A brief description of the item
-                        String make = doc.getString("make");         // The make of the item
-                        String model = doc.getString("model");        // The model of the item
-                        String serialNumber = doc.getString("serialNumber"); // The serial number for the item
-                        double estimatedValue = doc.getDouble("estimatedValue"); // The estimated value of the item
-                        String comment = doc.getString("comment");      // A comment about the item
-                        String docId = doc.getString("docId");
-                        inventoryItems.add(new InventoryItem(purchaseDate, description, make, model, serialNumber, estimatedValue, comment, docId));
+                        inventoryItems.add(doc.toObject(InventoryItem.class));
                     }
                     updateTotalValue();
                     inventoryListAdapter.notifyDataSetChanged();
@@ -246,39 +239,35 @@ public class HomeFragment extends Fragment implements AddItemFragment.OnNewItemS
                 inventoryItems
         );
         // Allow user to filter items based on specified makes
-        TextView makeButton = view.findViewById(R.id.make_btn);
         makeButton.setOnClickListener(v -> {
             // Hide other filters here if they are part of MainActivity
+            dateFilter.setVisibility(View.GONE);
+            keyFilter.setVisibility(View.GONE);
+            tagFilter.setVisibility(View.GONE);
             // ...
             makeFilterController.toggleMakeFilterVisibility();
         });
         // Allow user to filter items based on tags associated with items
-        tagButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                keyFilter.setVisibility(View.GONE);
-                makeFilter.setVisibility(View.GONE);
-                dateFilter.setVisibility(View.GONE);
-
-                // Enable filter if button is pressed while filters are not visible
-                if (tagFilter.getVisibility() == View.GONE) {
-                    // Show the LinearLayout with the necessary filtering elements
-                    tagFilter.setVisibility(View.VISIBLE);
-
-                    ViewCompat.setBackgroundTintList(dateButton, null);
-                    ViewCompat.setBackgroundTintList(makeButton, null);
-                    ViewCompat.setBackgroundTintList(keywordButton, null);
-                    ViewCompat.setBackgroundTintList(tagButton,
-                            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.app_blue)));
-
-                    EditText tags = view.findViewById(R.id.tag);
-                } else {
-                    // Disable the filter when button is clicked while filter is visible
-                    tagFilter.setVisibility(View.GONE);
-                    // Reset ListView to default, unfiltered list of items
-                    inventoryListView.setAdapter(inventoryListAdapter);
-                }
-            }
+        TextView tags = view.findViewById(R.id.tag);
+        TagFilterController tagFilterController = new TagFilterController(
+                context,
+                tags,
+                tagFilter,
+                keywordButton,
+                dateButton,
+                makeButton,
+                tagButton,
+                inventoryListAdapter,
+                inventoryListView,
+                inventoryItems
+        );
+        tagButton.setOnClickListener(v -> {
+            // Hide other filters here if they are part of MainActivity
+            dateFilter.setVisibility(View.GONE);
+            keyFilter.setVisibility(View.GONE);
+            makeFilter.setVisibility(View.GONE);
+            // ...
+            tagFilterController.toggleTagFilterVisibility();
         });
         // Inflate the layout for this fragment
         return view;

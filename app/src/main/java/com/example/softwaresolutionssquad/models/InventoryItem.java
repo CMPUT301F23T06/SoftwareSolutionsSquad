@@ -1,7 +1,9 @@
 package com.example.softwaresolutionssquad.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 
 /**
  * Represents an item in an inventory with properties such as
@@ -16,11 +18,12 @@ public class InventoryItem implements Serializable {
     private String serialNumber;
     private double estimatedValue;
     private String comment;
+    private ArrayList<String> tags;
     private String docId;
     private boolean isSelected;
 
     /**
-     * Constructor for InventoryItem with initialization of all fields.
+     * Constructor for InventoryItem with initialization of all fields except tags.
      *
      * @param purchaseDate   the date the item was purchased
      * @param description    the description of the item
@@ -40,6 +43,33 @@ public class InventoryItem implements Serializable {
         this.serialNumber = serialNumber;
         this.estimatedValue = estimatedValue;
         this.comment = comment;
+        this.tags = new ArrayList<String>();
+        this.docId = docId;
+    }
+
+    /**
+     * Constructor for InventoryItem with initialization of all fields.
+     *
+     * @param purchaseDate   the date the item was purchased
+     * @param description    the description of the item
+     * @param make           the make of the item
+     * @param model          the model of the item
+     * @param serialNumber   the serial number of the item
+     * @param estimatedValue the estimated value of the item
+     * @param comment        additional comments about the item
+     * @param tags           array list of tags on the item
+     * @param docId          document identifier for the item
+     */
+    public InventoryItem(Date purchaseDate, String description, String make, String model, String serialNumber,
+             double estimatedValue, String comment, ArrayList<String> tags, String docId) {
+        this.purchaseDate = purchaseDate;
+        this.description = description;
+        this.make = make;
+        this.model = model;
+        this.serialNumber = serialNumber;
+        this.estimatedValue = estimatedValue;
+        this.comment = comment;
+        this.tags = tags;
         this.docId = docId;
     }
 
@@ -48,6 +78,7 @@ public class InventoryItem implements Serializable {
      */
     public InventoryItem() {
         // Default constructor
+        this.tags = new ArrayList<String>();
     }
 
     // Accessors and Mutators for each property
@@ -107,6 +138,16 @@ public class InventoryItem implements Serializable {
         this.comment = comment;
     }
 
+    public ArrayList<String> getTags() { return tags; }
+
+    public void addTag(String tag) {
+        if (!tags.contains(tag)) {
+            tags.add(tag);
+        }
+    }
+
+    public void deleteTag(String tag) { tags.remove(tag); }
+
     public boolean getSelected() {
         return isSelected;
     }
@@ -139,6 +180,7 @@ public class InventoryItem implements Serializable {
                 ", serialNumber='" + serialNumber + '\'' +
                 ", estimatedValue=" + estimatedValue +
                 ", comment='" + comment + '\'' +
+                ", tags='" + String.join("|", tags)  +'\'' +
                 ", isSelected=" + isSelected +
                 '}';
     }

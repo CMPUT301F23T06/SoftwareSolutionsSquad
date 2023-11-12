@@ -146,6 +146,7 @@ public class InventoryItemTest {
                 ", serialNumber='" + serialNumber + '\'' +
                 ", estimatedValue=" + estimatedValue +
                 ", comment='" + comment + '\'' +
+                ", tags=''" +
                 ", isSelected=" + isSelected +
                 '}';
         assertEquals(expectedString, item.toString());
