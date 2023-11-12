@@ -108,15 +108,7 @@ public class HomeFragment extends Fragment implements AddItemFragment.OnNewItemS
                     inventoryItems.clear();
                     for (QueryDocumentSnapshot doc: value) {
                         Log.d("item", doc.getString("docId"));
-                        Date purchaseDate = doc.getDate("purchaseDate");
-                        String description = doc.getString("description");  // A brief description of the item
-                        String make = doc.getString("make");         // The make of the item
-                        String model = doc.getString("model");        // The model of the item
-                        String serialNumber = doc.getString("serialNumber"); // The serial number for the item
-                        double estimatedValue = doc.getDouble("estimatedValue"); // The estimated value of the item
-                        String comment = doc.getString("comment");      // A comment about the item
-                        String docId = doc.getString("docId");
-                        inventoryItems.add(new InventoryItem(purchaseDate, description, make, model, serialNumber, estimatedValue, comment, docId));
+                        inventoryItems.add(doc.toObject(InventoryItem.class));
                     }
                     updateTotalValue();
                     inventoryListAdapter.notifyDataSetChanged();
@@ -256,9 +248,9 @@ public class HomeFragment extends Fragment implements AddItemFragment.OnNewItemS
             makeFilterController.toggleMakeFilterVisibility();
         });
         // Allow user to filter items based on tags associated with items
-        TextView tags = findViewById(R.id.tag);
+        TextView tags = view.findViewById(R.id.tag);
         TagFilterController tagFilterController = new TagFilterController(
-                this,
+                context,
                 tags,
                 tagFilter,
                 keywordButton,
