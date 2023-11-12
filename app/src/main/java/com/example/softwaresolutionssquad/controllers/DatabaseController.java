@@ -96,6 +96,7 @@ public class DatabaseController {
     public void loadInitialItems(DatabaseActionListener listener) {
         itemsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
+                inventoryItems.clear();
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     InventoryItem item = document.toObject(InventoryItem.class);
                     item.setDocId(document.getId());

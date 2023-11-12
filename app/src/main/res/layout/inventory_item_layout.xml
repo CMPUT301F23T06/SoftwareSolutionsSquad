@@ -8,7 +8,7 @@
 
     <CheckBox
         android:id="@+id/checkItem"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:focusable="false"
@@ -17,37 +17,44 @@
 
     <TextView
         android:id="@+id/date"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="3"
         android:padding="10dp"
         android:text="Date"
-        android:textAlignment="center"></TextView>
+        android:textAlignment="center">
+    </TextView>
 
     <TextView
         android:id="@+id/Description"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:padding="10dp"
-        android:text="Descr"
+        android:text="Desc"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textAlignment="center"></TextView>
 
     <TextView
         android:id="@+id/Make"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:padding="10dp"
         android:text="Make"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textAlignment="center"></TextView>
 
     <TextView
         android:id="@+id/EstimatedValue"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:padding="10dp"
         android:text="Value"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textAlignment="center"></TextView>
 </LinearLayout>

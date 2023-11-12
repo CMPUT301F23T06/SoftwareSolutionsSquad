@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.softwaresolutionssquad.R;
 import com.example.softwaresolutionssquad.controllers.Utils;
 import com.google.firebase.firestore.DocumentReference;
@@ -96,6 +97,9 @@ public class LoginActivity extends AppCompatActivity {
         DocumentReference userRef = db.collection("User").document(username);
         userRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                MyApp myApp = (MyApp) getApplication();
+                UserViewModel userViewModel = myApp.getUserViewModel();
+                userViewModel.setUsername(username);
                 DocumentSnapshot user = task.getResult();
                 if (user != null && user.exists() && hashedPassword.equals(user.getString("password"))) {
                     navigateToMain();

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.example.softwaresolutionssquad.R;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.text.ParseException;
@@ -38,6 +40,8 @@ public class AddItemFragment extends Fragment {
     private EditText descriptionEditText;
     private EditText makeEditText;
     private EditText modelEditText;
+
+    private CollectionReference itemsRef;
     private EditText serialNumberEditText;
     private EditText estimatedValueEditText;
     private EditText commentEditText;
@@ -75,9 +79,103 @@ public class AddItemFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the fragment's layout
         View view = inflater.inflate(R.layout.fragment_add_item, container, false);
         initializeUiElements(view);
         setOnClickListeners();
+        itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");
+        // Initialize UI elements
+        purchaseDateEditText = view.findViewById(R.id.edtPurchaseDate);
+        descriptionEditText = view.findViewById(R.id.edtDescription);
+        makeEditText = view.findViewById(R.id.edtMake);
+        modelEditText = view.findViewById(R.id.edtModel);
+        serialNumberEditText = view.findViewById(R.id.edtSerialNumber);
+        estimatedValueEditText = view.findViewById(R.id.editTextNumberDecimal);
+        commentEditText = view.findViewById(R.id.edtCommentTitle);
+        nextButton = view.findViewById(R.id.btnNext);
+        cancelButton = view.findViewById(R.id.btnCancel);
+
+
+        // Set an onClickListener for the purchase date EditText to show a date picker
+        purchaseDateEditText.setOnClickListener(v -> {
+            new DatePickerDialog(getContext(), dateSetListener, currentDate.getYear(),
+                    currentDate.getMonthValue(),
+                    currentDate.getDayOfMonth()).show();
+        });
+
+        // Set an onClickListener for the Next button
+        nextButton.setOnClickListener(v -> {
+                // TODO: Logic for saving the data and transitioning to the next screen
+
+                // Extract data from UI elements
+                String date = purchaseDateEditText.getText().toString().trim();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Replace with your date format
+                Date officialDate = null;
+                try {
+                    officialDate = dateFormat.parse(date);
+                } catch (ParseException e) {
+                    officialDate = null;
+                }
+                String description = descriptionEditText.getText().toString().trim();
+
+                String make = makeEditText.getText().toString().trim();
+                String model = modelEditText.getText().toString().trim();
+                String serialNumber = serialNumberEditText.getText().toString().trim();
+                String estimated_val = estimatedValueEditText.getText().toString().trim();
+
+                // Validate data
+                if (officialDate == null || estimated_val.equals("")) { // Use .equals() for string comparison
+                    // Show an alert dialog if validation fails
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Alert Title"); // Optional title
+                    builder.setMessage("Please at least fill in the value and date!");
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                    return;
+                }
+                Double official_estimated_value = Double.parseDouble(estimated_val);
+                String comm = commentEditText.getText().toString().trim();
+                String documentID = retrieveDocId(currentItem);
+
+                InventoryItem itemToSave;
+                if(currentItem != null) {
+                    // Update the existing item's properties
+                    currentItem.setPurchaseDate(officialDate);
+                    currentItem.setDescription(description);
+                    currentItem.setMake(make);
+                    currentItem.setModel(model);
+                    currentItem.setSerialNumber(serialNumber);
+                    currentItem.setEstimatedValue(official_estimated_value);
+                    currentItem.setComment(comm);
+                    currentItem.setDocId(documentID);
+                    itemToSave = currentItem;
+                    listener.onUpdatePressed(itemToSave);
+                } else {
+                    // It's a new item
+                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID);
+                    createNewItem(itemToSave);
+                }
+
+            // Close the fragment
+            // Show the HomeFragment
+            if (getActivity() instanceof MainActivity) {
+                HomeFragment homeFragment = new HomeFragment();
+                ((MainActivity) getActivity()).setFragment(homeFragment);
+            }
+        });
+
+        // Set an onClickListener for the Cancel button
+        cancelButton.setOnClickListener(v -> {
+
+
+            // Show the HomeFragment
+            if (getActivity() instanceof MainActivity) {
+                HomeFragment homeFragment = new HomeFragment();
+                ((MainActivity) getActivity()).setFragment(homeFragment);
+            }
+        });
+
+        // Prepopulate fields if currentItem is not null (i.e., we're editing an existing item)
         if (currentItem != null) {
             prepopulateFields(currentItem);
         }
@@ -106,7 +204,6 @@ public class AddItemFragment extends Fragment {
     private void setOnClickListeners() {
         purchaseDateEditText.setOnClickListener(v -> showDatePicker());
         nextButton.setOnClickListener(v -> saveItem());
-        cancelButton.setOnClickListener(v -> closeFragment());
     }
 
     /**
@@ -142,9 +239,8 @@ public class AddItemFragment extends Fragment {
             if (currentItem != null) {
                 listener.onUpdatePressed(itemToSave);
             } else {
-                listener.onOKPressed(itemToSave);
+                createNewItem(itemToSave);
             }
-            closeFragment();
         }
     }
 
@@ -222,29 +318,30 @@ public class AddItemFragment extends Fragment {
         purchaseDateEditText.setText(dateSet.format(dtf));
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof OnNewItemSubmission) {
-            listener = (OnNewItemSubmission) context;
-        } else {
-            throw new RuntimeException(context + " must implement OnNewItemSubmission");
-        }
+
+
+    public void createNewItem(InventoryItem newItem) {
+        // Get a new document reference from Firestore, which has an auto-generated ID
+        DocumentReference newDocRef = itemsRef.document();
+
+        // Set the document ID inside the new item object
+        newItem.setDocId(newDocRef.getId()); // Make sure InventoryItem has a method to set its ID
+
+        // Set the new item in the Firestore document
+        newDocRef.set(newItem)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("AddItem", "DocumentSnapshot written with ID: " + newDocRef.getId());
+                });
     }
 
-    private void closeFragment() {
-        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-        fragmentManager.beginTransaction().remove(this).commit();
-        fragmentManager.popBackStack();
-        FrameLayout fragmentContainer = requireActivity().findViewById(R.id.frag_container);
-        fragmentContainer.setVisibility(View.GONE);
-    }
 
     /**
      * Interface for communicating with the activity when an item is saved.
      */
     public interface OnNewItemSubmission {
-        void onOKPressed(InventoryItem newItem);
         void onUpdatePressed(InventoryItem updatedItem);
+    }
+    public void setListener(OnNewItemSubmission listener) {
+        this.listener = listener;
     }
 }

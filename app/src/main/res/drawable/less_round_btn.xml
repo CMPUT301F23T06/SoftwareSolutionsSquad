@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/button_blue_color"/> <!-- Button background color -->
+            <corners android:radius="4dp"/> <!-- Adjust the corner radius (e.g., 4dp) -->
+        </shape>
+    </item>
+</selector>
