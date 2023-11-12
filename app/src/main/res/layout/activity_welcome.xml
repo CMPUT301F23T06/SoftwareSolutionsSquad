@@ -8,18 +8,21 @@
         android:layout_width="match_parent"
         android:layout_height="60sp" />
 
-<!--    <ImageView-->
-<!--        android:id="@+id/welcome_page_image"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:src="@tools:sample/avatars" />-->
+    <ImageView
+        android:id="@+id/welcome_page_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="70dp"
+        android:src="@drawable/logo" />
+
 
     <TextView
         android:id="@+id/welcome_page_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="40sp"
+        android:layout_marginVertical="20sp"
         android:text="@string/welcome_header"
+        android:layout_marginHorizontal="40sp"
         android:textAlignment="center"
         android:textSize="26sp"
         android:textStyle="bold" />
@@ -28,17 +31,17 @@
         android:id="@+id/welcome_page_subtext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50sp"
-        android:layout_marginEnd="50sp"
+        android:layout_marginStart="80sp"
+        android:layout_marginEnd="80sp"
         android:text="@string/welcome_subtext"
         android:textAlignment="center"
-        android:textSize="12sp" />
+        android:textSize="14sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="40sp"
-        android:layout_marginTop="40sp"
+        android:layout_marginTop="80sp"
         android:layout_marginEnd="40sp"
         android:orientation="horizontal">
 
