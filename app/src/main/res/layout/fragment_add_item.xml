@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#39CECECE"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#39CECECE"
+        android:orientation="vertical"
+        android:padding="16dp">
 
     <!-- Main content section -->
     <TextView
@@ -26,23 +32,26 @@
         android:layout_weight="0"
         android:orientation="vertical"
         android:paddingBottom="25dp">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Date of Purchase/Acquisition"
             android:textStyle="bold" />
+
         <EditText
             android:id="@+id/edtPurchaseDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusable="false"
-            android:layout_marginBottom="25dp" />
+            android:layout_marginBottom="25dp"
+            android:focusable="false" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Brief Description"
             android:textStyle="bold" />
+
         <EditText
             android:id="@+id/edtDescription"
             android:layout_width="match_parent"
@@ -59,16 +68,16 @@
                 android:id="@+id/edtMake"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginBottom="25dp"
+                android:layout_weight="1"
                 android:hint="Make" />
 
             <EditText
                 android:id="@+id/edtModel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginBottom="25dp"
+                android:layout_weight="1"
                 android:hint="Model" />
 
         </LinearLayout>
@@ -78,6 +87,7 @@
             android:layout_height="wrap_content"
             android:text="Serial Number (If Applicable)"
             android:textStyle="bold" />
+
         <EditText
             android:id="@+id/edtSerialNumber"
             android:layout_width="match_parent"
@@ -110,6 +120,18 @@
             android:layout_marginBottom="25dp"
             android:inputType="text" />
 
+        <Button
+            android:id="@+id/btnSelectImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Image" />
+
+
+        <ImageView
+            android:id="@+id/itemPicture"
+            android:layout_width="89dp"
+            android:layout_height="83dp"
+            android:src="@android:drawable/ic_menu_gallery" />
 
     </LinearLayout>
 
@@ -141,4 +163,5 @@
             android:text="Cancel" />
     </LinearLayout>
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>
