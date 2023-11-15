@@ -23,6 +23,7 @@ import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
@@ -59,7 +60,7 @@ public class ItemTest {
     public void setUp() throws InterruptedException {
         sleep(2500);
         // Assuming the add button is visible on the MainActivity and has a specific ID
-        onView(withId(R.id.add_icon)).perform(click());
+        onView(withId(R.id.navigation_add)).perform(click());
         // We wait until the AddItemFragment is displayed
         onView(withId(R.id.edtPurchaseDate)).check(matches(isDisplayed()));
     }
@@ -97,7 +98,7 @@ public class ItemTest {
         onView(withId(R.id.edtCommentTitle)).perform(typeText("Great condition!"), ViewActions.closeSoftKeyboard());
 
         // Click the Next/Save button to save the item
-        onView(withId(R.id.btnNext)).perform(click());
+        onView(withId(R.id.btnNext)).perform(scrollTo(), click());
         sleep(1000);
 
         // Now verify the item was added
@@ -133,7 +134,7 @@ public class ItemTest {
         onView(withId(R.id.edtCommentTitle)).perform(clearText(), typeText("Bad condition!"), ViewActions.closeSoftKeyboard());
 
         // Click the "next" or "save" button to update the item
-        onView(withId(R.id.btnNext)).perform(click());
+        onView(withId(R.id.btnNext)).perform(scrollTo(), click());
         sleep(4000); // It's better to use Espresso's IdlingResource instead of sleep
 
         // Now verify the item was updated
