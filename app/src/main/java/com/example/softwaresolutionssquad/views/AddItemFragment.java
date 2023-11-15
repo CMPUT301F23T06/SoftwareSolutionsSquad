@@ -314,6 +314,10 @@ public class AddItemFragment extends Fragment {
      * Shows a date picker dialog for selecting a purchase date.
      */
     private void showDatePicker() {
+        if (currentItem != null && currentItem.getPurchaseDate() != null) {
+            currentItem.getPurchaseDate();
+        }
+
         new DatePickerDialog(getContext(), dateSetListener, currentDate.getYear(),
                 currentDate.getMonthValue() - 1, // Month is 0-indexed in DatePickerDialog
                 currentDate.getDayOfMonth()).show();
@@ -425,7 +429,7 @@ public class AddItemFragment extends Fragment {
     }
 
     private final DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
-        LocalDate dateSet = LocalDate.of(year, monthOfYear + 1, dayOfMonth);
+        LocalDate dateSet = LocalDate.of(year, monthOfYear, dayOfMonth);
         updateLabel(dateSet);
     };
 
