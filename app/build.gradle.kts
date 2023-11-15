@@ -43,6 +43,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.navigation:navigation-fragment:2.7.4")
     implementation("androidx.navigation:navigation-ui:2.7.4")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:4.0.0")
     androidTestImplementation("org.mockito:mockito-android:4.0.0")
