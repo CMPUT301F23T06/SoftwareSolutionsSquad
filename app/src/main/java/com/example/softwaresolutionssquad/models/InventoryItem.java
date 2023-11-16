@@ -3,7 +3,6 @@ package com.example.softwaresolutionssquad.models;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 
 /**
  * Represents an item in an inventory with properties such as
@@ -20,6 +19,7 @@ public class InventoryItem implements Serializable {
     private String comment;
     private ArrayList<String> tags;
     private String docId;
+    private String imageUrl;
     private boolean isSelected;
 
     /**
@@ -35,7 +35,7 @@ public class InventoryItem implements Serializable {
      * @param docId          document identifier for the item
      */
     public InventoryItem(Date purchaseDate, String description, String make, String model,
-                         String serialNumber, double estimatedValue, String comment, String docId) {
+                         String serialNumber, double estimatedValue, String comment, String docId, String imageUrl) {
         this.purchaseDate = purchaseDate;
         this.description = description;
         this.make = make;
@@ -45,6 +45,7 @@ public class InventoryItem implements Serializable {
         this.comment = comment;
         this.tags = new ArrayList<String>();
         this.docId = docId;
+        this.imageUrl = imageUrl;
     }
 
     /**
@@ -61,7 +62,7 @@ public class InventoryItem implements Serializable {
      * @param docId          document identifier for the item
      */
     public InventoryItem(Date purchaseDate, String description, String make, String model, String serialNumber,
-             double estimatedValue, String comment, ArrayList<String> tags, String docId) {
+             double estimatedValue, String comment, ArrayList<String> tags, String docId, String imageUrl) {
         this.purchaseDate = purchaseDate;
         this.description = description;
         this.make = make;
@@ -71,6 +72,7 @@ public class InventoryItem implements Serializable {
         this.comment = comment;
         this.tags = tags;
         this.docId = docId;
+        this.imageUrl = imageUrl;
     }
 
     /**
@@ -164,6 +166,14 @@ public class InventoryItem implements Serializable {
         this.docId = docId;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     /**
      * Returns a string representation of the InventoryItem.
      *
@@ -174,6 +184,7 @@ public class InventoryItem implements Serializable {
         return "InventoryItem{" +
                 "purchaseDate=" + purchaseDate +
                 ", docId='" + docId + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
                 ", description='" + description + '\'' +
                 ", make='" + make + '\'' +
                 ", model='" + model + '\'' +

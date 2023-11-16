@@ -1,25 +1,50 @@
 package com.example.softwaresolutionssquad.views;
 
+import android.Manifest;
+import android.app.Dialog;
+import android.content.pm.PackageManager;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+
+
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.bumptech.glide.Glide;
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.example.softwaresolutionssquad.R;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,6 +76,14 @@ public class AddItemFragment extends Fragment {
     private InventoryItem currentItem;
     private OnNewItemSubmission listener;
     private final LocalDate currentDate = LocalDate.now();
+
+    private static final int PICK_IMAGE_REQUEST = 1000;
+    private static final int PERMISSION_REQUEST_STORAGE = 2000;
+
+    private ImageView itemPicture;
+    private Button selectImage;
+    private Uri imageUri;
+    private StorageReference storageRef;
 
     public AddItemFragment() {
         // Required empty public constructor
@@ -96,6 +129,13 @@ public class AddItemFragment extends Fragment {
         nextButton = view.findViewById(R.id.btnNext);
         cancelButton = view.findViewById(R.id.btnCancel);
 
+        // Initialize the ImageView and Firebase Storage
+        itemPicture = view.findViewById(R.id.itemPicture);
+        selectImage = view.findViewById(R.id.btnSelectImage);
+        storageRef = FirebaseStorage.getInstance().getReference();
+
+        selectImage.setOnClickListener(v -> selectImage());
+
 
         // Set an onClickListener for the purchase date EditText to show a date picker
         purchaseDateEditText.setOnClickListener(v -> {
@@ -124,38 +164,40 @@ public class AddItemFragment extends Fragment {
             String serialNumber = serialNumberEditText.getText().toString().trim();
             String estimated_val = estimatedValueEditText.getText().toString().trim();
 
-            // Validate data
-            if (officialDate == null || estimated_val.equals("")) { // Use .equals() for string comparison
-                // Show an alert dialog if validation fails
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Alert Title"); // Optional title
-                builder.setMessage("Please at least fill in the value and date!");
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-                return;
-            }
-            Double official_estimated_value = Double.parseDouble(estimated_val);
-            String comm = commentEditText.getText().toString().trim();
-            String documentID = retrieveDocId(currentItem);
+                // Validate data
+                if (officialDate == null || estimated_val.equals("")) { // Use .equals() for string comparison
+                    // Show an alert dialog if validation fails
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Alert Title"); // Optional title
+                    builder.setMessage("Please at least fill in the value and date!");
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                    return;
+                }
+                Double official_estimated_value = Double.parseDouble(estimated_val);
+                String comm = commentEditText.getText().toString().trim();
+                String documentID = retrieveDocId(currentItem);
+                String imageUrl = imageUri != null ? imageUri.toString() : "";
 
-            InventoryItem itemToSave;
-            if(currentItem != null) {
-                // Update the existing item's properties
-                currentItem.setPurchaseDate(officialDate);
-                currentItem.setDescription(description);
-                currentItem.setMake(make);
-                currentItem.setModel(model);
-                currentItem.setSerialNumber(serialNumber);
-                currentItem.setEstimatedValue(official_estimated_value);
-                currentItem.setComment(comm);
-                currentItem.setDocId(documentID);
-                itemToSave = currentItem;
-                listener.onUpdatePressed(itemToSave);
-            } else {
-                // It's a new item
-                itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID);
-                createNewItem(itemToSave);
-            }
+                InventoryItem itemToSave;
+                if(currentItem != null) {
+                    // Update the existing item's properties
+                    currentItem.setPurchaseDate(officialDate);
+                    currentItem.setDescription(description);
+                    currentItem.setMake(make);
+                    currentItem.setModel(model);
+                    currentItem.setSerialNumber(serialNumber);
+                    currentItem.setEstimatedValue(official_estimated_value);
+                    currentItem.setComment(comm);
+                    currentItem.setDocId(documentID);
+                    currentItem.setImageUrl(imageUrl);
+                    itemToSave = currentItem;
+                    listener.onUpdatePressed(itemToSave);
+                } else {
+                    // It's a new item
+                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, imageUrl);
+                    createNewItem(itemToSave);
+                }
 
             // Close the fragment
             // Show the HomeFragment
@@ -182,6 +224,91 @@ public class AddItemFragment extends Fragment {
         }
         return view;
     }
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    selectImage();
+                } else {
+                    Toast.makeText(getContext(), "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+    private void selectImage() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickImageLauncher.launch(intent);
+    }
+
+    private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    imageUri = result.getData().getData();
+                    itemPicture.setImageURI(imageUri);
+
+                    // Add the OnClickListener here
+                    itemPicture.setOnClickListener(v -> showFullScreenImage(imageUri));
+
+
+                    uploadImageToFirebase(imageUri);
+                }
+            });
+
+    private void uploadImageToFirebase(Uri uri) {
+        if (uri != null) {
+            // Initialize Firebase Storage with the specific URL
+            FirebaseStorage storage = FirebaseStorage.getInstance("gs://softwaresolutionssquad.appspot.com");
+            StorageReference storageRef = storage.getReference();
+
+            // Create a unique filename for the image
+            String fileName = "images/" + System.currentTimeMillis() + "-" + getFileExtension(uri);
+            StorageReference fileRef = storageRef.child(fileName);
+
+            // Upload the file to Firebase Storage
+            fileRef.putFile(uri)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        // On successful upload, get the download URL
+                        fileRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                            // Here you get the image download URL
+                            String imageUrl = downloadUri.toString();
+
+                            // You can now use this URL to save it to Firestore or do other actions
+                            // For instance, you might want to set this URL to a class variable
+                            // that is later saved along with other item data to Firestore
+                        });
+                    })
+                    .addOnFailureListener(e -> {
+                        // Handle unsuccessful uploads
+                        // You can display a message or perform other actions
+                    })
+                    .addOnProgressListener(snapshot -> {
+                        // If you want, you can show upload progress here
+                    });
+        }
+    }
+
+    private String getFileExtension(Uri uri) {
+        ContentResolver cr = getContext().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cr.getType(uri));
+    }
+
+    private void showFullScreenImage(Uri imageUri) {
+        Dialog fullScreenDialog = new Dialog(getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        fullScreenDialog.setContentView(R.layout.fragment_view_item_photo);
+
+        ImageView imageView = fullScreenDialog.findViewById(R.id.fullscreenImageView);
+        ImageButton closeButton = fullScreenDialog.findViewById(R.id.closeButton);
+
+        Glide.with(this).load(imageUri).into(imageView);
+
+        closeButton.setOnClickListener(v -> fullScreenDialog.dismiss());
+        imageView.setOnClickListener(v -> fullScreenDialog.dismiss()); // Optional: allows closing by clicking the image
+
+        fullScreenDialog.show();
+    }
+
+
 
     /**
      * Initializes the UI elements of the fragment.
@@ -211,6 +338,10 @@ public class AddItemFragment extends Fragment {
      * Shows a date picker dialog for selecting a purchase date.
      */
     private void showDatePicker() {
+        if (currentItem != null && currentItem.getPurchaseDate() != null) {
+            currentItem.getPurchaseDate();
+        }
+
         new DatePickerDialog(getContext(), dateSetListener, currentDate.getYear(),
                 currentDate.getMonthValue() - 1, // Month is 0-indexed in DatePickerDialog
                 currentDate.getDayOfMonth()).show();
@@ -223,6 +354,7 @@ public class AddItemFragment extends Fragment {
         String date = purchaseDateEditText.getText().toString().trim();
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         Date officialDate = null;
+
         try {
             officialDate = dateFormat.parse(date);
         } catch (ParseException e) {
@@ -234,8 +366,11 @@ public class AddItemFragment extends Fragment {
             return;
         }
 
+        // Before creating or updating the InventoryItem
         Double estimatedValue = Double.parseDouble(estimatedValueEditText.getText().toString().trim());
-        InventoryItem itemToSave = createOrUpdateItem(officialDate, estimatedValue);
+        String imageUrl = imageUri != null ? imageUri.toString() : "";
+        InventoryItem itemToSave = createOrUpdateItem(officialDate, estimatedValue, imageUrl);
+
         if (itemToSave != null) {
             if (currentItem != null) {
                 listener.onUpdatePressed(itemToSave);
@@ -264,7 +399,7 @@ public class AddItemFragment extends Fragment {
      * @param estimatedValue  The estimated value of the item.
      * @return The created or updated InventoryItem.
      */
-    private InventoryItem createOrUpdateItem(Date officialDate, double estimatedValue) {
+    private InventoryItem createOrUpdateItem(Date officialDate, double estimatedValue, String imageUrl) {
         String description = descriptionEditText.getText().toString().trim();
         String make = makeEditText.getText().toString().trim();
         String model = modelEditText.getText().toString().trim();
@@ -282,10 +417,14 @@ public class AddItemFragment extends Fragment {
             currentItem.setEstimatedValue(estimatedValue);
             currentItem.setComment(comment);
             currentItem.setDocId(documentID);
+            currentItem.setImageUrl(imageUrl);
+
+            // Add the OnClickListener here
+            itemPicture.setOnClickListener(v -> showFullScreenImage(imageUri));
             return currentItem;
         } else {
             // It's a new item
-            return new InventoryItem(officialDate, description, make, model, serialNumber, estimatedValue, comment, documentID);
+            return new InventoryItem(officialDate, description, make, model, serialNumber, estimatedValue, comment, documentID, imageUrl);
         }
     }
 
@@ -307,10 +446,20 @@ public class AddItemFragment extends Fragment {
         serialNumberEditText.setText(item.getSerialNumber());
         estimatedValueEditText.setText(String.valueOf(item.getEstimatedValue()));
         commentEditText.setText(item.getComment());
+
+        // Load the image if there is a URL
+        if (item.getImageUrl() != null && !item.getImageUrl().isEmpty()) {
+            Glide.with(this)
+                    .load(item.getImageUrl())
+                    .into(itemPicture);
+
+            // Add the OnClickListener here
+            itemPicture.setOnClickListener(v -> showFullScreenImage(imageUri));
+        }
     }
 
     private final DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
-        LocalDate dateSet = LocalDate.of(year, monthOfYear + 1, dayOfMonth);
+        LocalDate dateSet = LocalDate.of(year, monthOfYear, dayOfMonth);
         updateLabel(dateSet);
     };
 
