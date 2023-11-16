@@ -28,6 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.example.softwaresolutionssquad.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -63,6 +64,7 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
     private String userName;
 
     private Context context;
+
     public TagFragment() {
         // Required empty public constructor
     }
@@ -86,8 +88,12 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
         UserViewModel userViewModel = myApp.getUserViewModel();
         userName = userViewModel.getUsername();
 
+
+
+        tagsRef = ((MainActivity) getActivity()).getDb().collection("Tags");
+
         db = FirebaseFirestore.getInstance();
-        tagsRef = db.collection("Tags");
+
 
         tagDataList = new ArrayList<>();
         originalTagDataList = new ArrayList<>();
@@ -129,7 +135,6 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
                     tagName.setTextColor(ContextCompat.getColor(context, R.color.button_blue_color));
                     tagImage.setColorFilter(ContextCompat.getColor(context, R.color.button_blue_color));
                 }
-
 
 
                 // Disable the delete button after removing the tags
@@ -209,7 +214,7 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
                     tagDataList.clear();
                     originalTagDataList.clear();
                     searchText.setText("");
-                    for (QueryDocumentSnapshot doc: value) {
+                    for (QueryDocumentSnapshot doc : value) {
                         String tag = doc.getString("tag");
 
                         String user = doc.getString("user");
@@ -223,7 +228,6 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
                 }
             }
         });
-
 
 
         return view;

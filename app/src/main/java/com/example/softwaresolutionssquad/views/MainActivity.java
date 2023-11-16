@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         HomeFragment = new HomeFragment();
-        ItemFragment = new AddItemFragment();
         ProfileFragment = new ProfileFragment();
         TagFragment = new TagFragment();
 
@@ -58,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 } else if (item.getItemId() == R.id.navigation_add) {
                     // Handle Add Item menu item click by setting the AddItemFragment
+                    ItemFragment = new AddItemFragment();
                     setFragment(ItemFragment);
                     return true;
                 } else if (item.getItemId() == R.id.navigation_profile) {

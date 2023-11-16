@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:background="@drawable/login_page"
     android:layout_height="match_parent">
 
     <TextView
@@ -9,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="40sp"
+        android:layout_marginTop="20sp"
         android:paddingStart="40sp"
         android:paddingTop="40sp"
         android:paddingEnd="40sp"
@@ -19,8 +21,8 @@
         android:id="@+id/signup_page_name_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="35sp"
-        android:layout_marginTop="30sp"
+        android:layout_marginStart="55sp"
+        android:layout_marginTop="100sp"
         android:layout_marginEnd="35sp"
         android:text="@string/name"
         android:textStyle="bold" />
@@ -29,18 +31,19 @@
         android:id="@+id/signup_page_name_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30sp"
-        android:layout_marginEnd="30sp"
+        android:layout_marginStart="50sp"
+        android:layout_marginEnd="50sp"
         android:ems="10"
         android:inputType="text"
         android:textSize="14sp"
+        android:backgroundTint="@color/button_blue_color"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/signup_page_signup_email_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="35sp"
+        android:layout_marginStart="55sp"
         android:layout_marginTop="30sp"
         android:layout_marginEnd="35sp"
         android:text="@string/email_address"
@@ -50,16 +53,17 @@
         android:id="@+id/signup_page_signup_email_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30sp"
-        android:layout_marginEnd="30sp"
+        android:layout_marginStart="50sp"
+        android:layout_marginEnd="50sp"
         android:ems="10"
+        android:backgroundTint="@color/button_blue_color"
         android:inputType="textEmailAddress" />
 
     <TextView
         android:id="@+id/signup_page_signup_password_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="35sp"
+        android:layout_marginStart="55sp"
         android:layout_marginTop="30sp"
         android:layout_marginEnd="35sp"
         android:text="@string/password"
@@ -69,9 +73,10 @@
         android:id="@+id/signup_page_signup_password_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30sp"
-        android:layout_marginEnd="30sp"
+        android:layout_marginStart="50sp"
+        android:layout_marginEnd="50sp"
         android:ems="10"
+        android:backgroundTint="@color/button_blue_color"
         android:inputType="textPassword" />
 
     <TextView
@@ -88,7 +93,8 @@
         android:id="@+id/signup_page_signup_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="30sp"
+        android:layout_marginHorizontal="50sp"
+        android:layout_marginVertical="30sp"
         android:backgroundTint="@color/app_blue"
         android:text="@string/sign_up" />
 
@@ -96,7 +102,7 @@
         android:id="@+id/signup_page_existing_user_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50sp"
+        android:layout_marginTop="35sp"
         android:text="@string/existing_user"
         android:textAlignment="center" />
 
