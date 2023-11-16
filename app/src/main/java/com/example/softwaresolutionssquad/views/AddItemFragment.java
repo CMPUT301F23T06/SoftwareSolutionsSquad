@@ -1,6 +1,7 @@
 package com.example.softwaresolutionssquad.views;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.pm.PackageManager;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -27,6 +28,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -243,6 +245,11 @@ public class AddItemFragment extends Fragment {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     imageUri = result.getData().getData();
                     itemPicture.setImageURI(imageUri);
+
+                    // Add the OnClickListener here
+                    itemPicture.setOnClickListener(v -> showFullScreenImage(imageUri));
+
+
                     uploadImageToFirebase(imageUri);
                 }
             });
@@ -285,6 +292,23 @@ public class AddItemFragment extends Fragment {
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cr.getType(uri));
     }
+
+    private void showFullScreenImage(Uri imageUri) {
+        Dialog fullScreenDialog = new Dialog(getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        fullScreenDialog.setContentView(R.layout.fragment_view_item_photo);
+
+        ImageView imageView = fullScreenDialog.findViewById(R.id.fullscreenImageView);
+        ImageButton closeButton = fullScreenDialog.findViewById(R.id.closeButton);
+
+        Glide.with(this).load(imageUri).into(imageView);
+
+        closeButton.setOnClickListener(v -> fullScreenDialog.dismiss());
+        imageView.setOnClickListener(v -> fullScreenDialog.dismiss()); // Optional: allows closing by clicking the image
+
+        fullScreenDialog.show();
+    }
+
+
 
     /**
      * Initializes the UI elements of the fragment.
@@ -394,6 +418,9 @@ public class AddItemFragment extends Fragment {
             currentItem.setComment(comment);
             currentItem.setDocId(documentID);
             currentItem.setImageUrl(imageUrl);
+
+            // Add the OnClickListener here
+            itemPicture.setOnClickListener(v -> showFullScreenImage(imageUri));
             return currentItem;
         } else {
             // It's a new item
@@ -425,6 +452,9 @@ public class AddItemFragment extends Fragment {
             Glide.with(this)
                     .load(item.getImageUrl())
                     .into(itemPicture);
+
+            // Add the OnClickListener here
+            itemPicture.setOnClickListener(v -> showFullScreenImage(imageUri));
         }
     }
 
