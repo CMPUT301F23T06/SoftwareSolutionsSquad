@@ -30,6 +30,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -75,6 +76,8 @@ public class AddItemFragment extends Fragment {
     private Button cancelButton;
     private InventoryItem currentItem;
     private OnNewItemSubmission listener;
+
+    private TextView title;
     private final LocalDate currentDate = LocalDate.now();
 
     private static final int PICK_IMAGE_REQUEST = 1000;
@@ -128,6 +131,7 @@ public class AddItemFragment extends Fragment {
         commentEditText = view.findViewById(R.id.edtCommentTitle);
         nextButton = view.findViewById(R.id.btnNext);
         cancelButton = view.findViewById(R.id.btnCancel);
+        title = view.findViewById(R.id.title);
 
         // Initialize the ImageView and Firebase Storage
         itemPicture = view.findViewById(R.id.itemPicture);
@@ -220,6 +224,7 @@ public class AddItemFragment extends Fragment {
 
         // Prepopulate fields if currentItem is not null (i.e., we're editing an existing item)
         if (currentItem != null) {
+            title.setText("Update Item");
             prepopulateFields(currentItem);
         }
         return view;
