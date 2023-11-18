@@ -110,7 +110,7 @@ public class AddItemFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             currentItem = (InventoryItem) getArguments().getSerializable(ITEM_KEY);
-            Log.d("item", currentItem.toString());
+            Log.d("item", currentItem.getTags().toString());
         }
     }
 

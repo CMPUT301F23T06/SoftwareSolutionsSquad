@@ -5,7 +5,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,7 +22,9 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class AddItemNextFragment extends Fragment {
     private Button backBtn;
@@ -32,6 +37,13 @@ public class AddItemNextFragment extends Fragment {
     private Boolean newItem;
 
     private Button createBtn;
+
+
+    private GridView tagGrid;
+
+    private List<String> tags = new ArrayList<>();
+
+    private ArrayAdapter<String> adapter;
 
     public AddItemNextFragment(InventoryItem item, boolean newItem) {
         this.item = item;
@@ -46,9 +58,20 @@ public class AddItemNextFragment extends Fragment {
         backBtn = view.findViewById(R.id.btnBack);
         cancelBtn = view.findViewById(R.id.btnCancel);
         createBtn = view.findViewById(R.id.btnCreate);
+        tagGrid = view.findViewById(R.id.tagGridView);
+        tags = item.getTags();
+        Log.d("tags", tags.toString());
+        if (tags.size() > 0) {
+            tagGrid.setVisibility(View.VISIBLE);
+        }
+
+        adapter = new ArrayAdapter<>(requireContext(), R.layout.grid_tag, tags);
+        tagGrid.setAdapter(adapter);
+
         if (!newItem) {
             createBtn.setText("Update");
         }
+
         itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");
         cancelBtn.setOnClickListener(v -> {
             if (getActivity() != null) {
@@ -78,6 +101,9 @@ public class AddItemNextFragment extends Fragment {
         });
         return view;
     }
+
+
+
 
     public void createNewItem(InventoryItem newItem) {
         // Get a new document reference from Firestore, which has an auto-generated ID
