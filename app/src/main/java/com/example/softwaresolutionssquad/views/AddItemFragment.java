@@ -30,6 +30,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -140,6 +141,13 @@ public class AddItemFragment extends Fragment {
 
         selectImage.setOnClickListener(v -> selectImage());
 
+        // Initialize the ImageView and Firebase Storage
+        itemPicture = view.findViewById(R.id.itemPicture);
+        selectImage = view.findViewById(R.id.btnSelectImage);
+        storageRef = FirebaseStorage.getInstance().getReference();
+
+        selectImage.setOnClickListener(v -> selectImage());
+
 
         // Set an onClickListener for the purchase date EditText to show a date picker
         purchaseDateEditText.setOnClickListener(v -> {
@@ -202,7 +210,6 @@ public class AddItemFragment extends Fragment {
                     // It's a new item
                     itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, imageUrl);
                 }
-
 
             if (getActivity() instanceof MainActivity) {
                 AddItemNextFragment nextFragment = new AddItemNextFragment(itemToSave, newItem);
@@ -349,6 +356,8 @@ public class AddItemFragment extends Fragment {
                 currentDate.getDayOfMonth()).show();
     }
 
+
+
     /**
      * Shows an alert dialog with a specified title and message.
      * @param title   The title of the alert dialog.
@@ -360,41 +369,6 @@ public class AddItemFragment extends Fragment {
         builder.setMessage(message);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-    }
-
-    /**
-     * Creates or updates an InventoryItem with the provided details.
-     * @param officialDate    The official purchase date of the item.
-     * @param estimatedValue  The estimated value of the item.
-     * @return The created or updated InventoryItem.
-     */
-    private InventoryItem createOrUpdateItem(Date officialDate, double estimatedValue, String imageUrl) {
-        String description = descriptionEditText.getText().toString().trim();
-        String make = makeEditText.getText().toString().trim();
-        String model = modelEditText.getText().toString().trim();
-        String serialNumber = serialNumberEditText.getText().toString().trim();
-        String comment = commentEditText.getText().toString().trim();
-        String documentID = retrieveDocId(currentItem);
-
-        if (currentItem != null) {
-            // Update the existing item's properties
-            currentItem.setPurchaseDate(officialDate);
-            currentItem.setDescription(description);
-            currentItem.setMake(make);
-            currentItem.setModel(model);
-            currentItem.setSerialNumber(serialNumber);
-            currentItem.setEstimatedValue(estimatedValue);
-            currentItem.setComment(comment);
-            currentItem.setDocId(documentID);
-            currentItem.setImageUrl(imageUrl);
-
-            // Add the OnClickListener here
-            itemPicture.setOnClickListener(v -> showFullScreenImage(imageUri));
-            return currentItem;
-        } else {
-            // It's a new item
-            return new InventoryItem(officialDate, description, make, model, serialNumber, estimatedValue, comment, documentID, imageUrl);
-        }
     }
 
     private String retrieveDocId(InventoryItem item) {
