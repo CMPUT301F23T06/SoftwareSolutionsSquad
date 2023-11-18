@@ -8,7 +8,7 @@
 
         <!-- Main content section -->
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/itemTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
@@ -88,7 +88,7 @@
         <!-- This View will take up all the available space in between the buttons -->
 
         <Button
-            android:id="@+id/btnNext"
+            android:id="@+id/btnCreate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

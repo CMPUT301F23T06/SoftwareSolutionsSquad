@@ -38,6 +38,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.softwaresolutionssquad.models.InventoryItem;
@@ -184,6 +185,7 @@ public class AddItemFragment extends Fragment {
                 String imageUrl = imageUri != null ? imageUri.toString() : "";
 
                 InventoryItem itemToSave;
+                Boolean newItem = false;
                 if(currentItem != null) {
                     // Update the existing item's properties
                     currentItem.setPurchaseDate(officialDate);
@@ -198,16 +200,20 @@ public class AddItemFragment extends Fragment {
                     itemToSave = currentItem;
                     listener.onUpdatePressed(itemToSave);
                 } else {
+                    newItem = true;
                     // It's a new item
                     itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, imageUrl);
-                    createNewItem(itemToSave);
+//                    createNewItem(itemToSave);
                 }
 
-            // Close the fragment
-            // Show the HomeFragment
+
             if (getActivity() instanceof MainActivity) {
-                HomeFragment homeFragment = new HomeFragment();
-                ((MainActivity) getActivity()).setFragment(homeFragment);
+                AddItemNextFragment nextFragment = new AddItemNextFragment(itemToSave, newItem);
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frag_container, nextFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
             }
         });
 

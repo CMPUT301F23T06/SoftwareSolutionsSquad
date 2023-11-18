@@ -350,13 +350,13 @@ public class HomeFragment extends Fragment implements AddItemFragment.OnNewItemS
                 .addOnSuccessListener(aVoid -> {
                     Log.d("UpdateItem", "DocumentSnapshot successfully updated!");
 
-                    // Update the item in the local list and notify the adapter
-                    int itemIndex = inventoryItems.indexOf(updatedItem);
-                    if (itemIndex != -1) {
-                        inventoryItems.set(itemIndex, updatedItem);
-                        inventoryListAdapter.notifyDataSetChanged();
-                        updateTotalValue();
-                    }
+//                    // Update the item in the local list and notify the adapter
+//                    int itemIndex = inventoryItems.indexOf(updatedItem);
+//                    if (itemIndex != -1) {
+//                        inventoryItems.set(itemIndex, updatedItem);
+//                        inventoryListAdapter.notifyDataSetChanged();
+//                        updateTotalValue();
+//                    }
                 })
                 .addOnFailureListener(e -> Log.w("UpdateItem", "Error updating document", e));
     }
