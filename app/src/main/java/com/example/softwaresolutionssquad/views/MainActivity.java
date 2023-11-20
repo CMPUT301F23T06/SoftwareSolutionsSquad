@@ -83,8 +83,14 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout fragmentContainer = findViewById(R.id.frag_container);
         fragmentContainer.setVisibility(View.VISIBLE);
         FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.frag_container, fragment);
         transaction.commit();
+
     }
+
+
+
 }

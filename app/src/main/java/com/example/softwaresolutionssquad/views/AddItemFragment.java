@@ -30,6 +30,8 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,6 +39,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.softwaresolutionssquad.models.InventoryItem;
@@ -74,7 +77,8 @@ public class AddItemFragment extends Fragment {
     private Button nextButton;
     private Button cancelButton;
     private InventoryItem currentItem;
-    private OnNewItemSubmission listener;
+
+    private TextView title;
     private final LocalDate currentDate = LocalDate.now();
 
     private static final int PICK_IMAGE_REQUEST = 1000;
@@ -107,6 +111,7 @@ public class AddItemFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             currentItem = (InventoryItem) getArguments().getSerializable(ITEM_KEY);
+            Log.d("item", currentItem.getTags().toString());
         }
     }
 
@@ -116,7 +121,6 @@ public class AddItemFragment extends Fragment {
         // Inflate the fragment's layout
         View view = inflater.inflate(R.layout.fragment_add_item, container, false);
         initializeUiElements(view);
-        setOnClickListeners();
         itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");
         // Initialize UI elements
         purchaseDateEditText = view.findViewById(R.id.edtPurchaseDate);
@@ -128,6 +132,14 @@ public class AddItemFragment extends Fragment {
         commentEditText = view.findViewById(R.id.edtCommentTitle);
         nextButton = view.findViewById(R.id.btnNext);
         cancelButton = view.findViewById(R.id.btnCancel);
+        title = view.findViewById(R.id.title);
+
+        // Initialize the ImageView and Firebase Storage
+        itemPicture = view.findViewById(R.id.itemPicture);
+        selectImage = view.findViewById(R.id.btnSelectImage);
+        storageRef = FirebaseStorage.getInstance().getReference();
+
+        selectImage.setOnClickListener(v -> selectImage());
 
         // Initialize the ImageView and Firebase Storage
         itemPicture = view.findViewById(R.id.itemPicture);
@@ -180,6 +192,7 @@ public class AddItemFragment extends Fragment {
                 String imageUrl = imageUri != null ? imageUri.toString() : "";
 
                 InventoryItem itemToSave;
+                Boolean newItem = false;
                 if(currentItem != null) {
                     // Update the existing item's properties
                     currentItem.setPurchaseDate(officialDate);
@@ -192,18 +205,19 @@ public class AddItemFragment extends Fragment {
                     currentItem.setDocId(documentID);
                     currentItem.setImageUrl(imageUrl);
                     itemToSave = currentItem;
-                    listener.onUpdatePressed(itemToSave);
                 } else {
+                    newItem = true;
                     // It's a new item
                     itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, imageUrl);
-                    createNewItem(itemToSave);
                 }
 
-            // Close the fragment
-            // Show the HomeFragment
             if (getActivity() instanceof MainActivity) {
-                HomeFragment homeFragment = new HomeFragment();
-                ((MainActivity) getActivity()).setFragment(homeFragment);
+                AddItemNextFragment nextFragment = new AddItemNextFragment(itemToSave, newItem);
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frag_container, nextFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
             }
         });
 
@@ -220,6 +234,7 @@ public class AddItemFragment extends Fragment {
 
         // Prepopulate fields if currentItem is not null (i.e., we're editing an existing item)
         if (currentItem != null) {
+            title.setText("Update Item");
             prepopulateFields(currentItem);
         }
         return view;
@@ -326,13 +341,7 @@ public class AddItemFragment extends Fragment {
         cancelButton = view.findViewById(R.id.btnCancel);
     }
 
-    /**
-     * Sets on click listeners for interactive UI elements.
-     */
-    private void setOnClickListeners() {
-        purchaseDateEditText.setOnClickListener(v -> showDatePicker());
-        nextButton.setOnClickListener(v -> saveItem());
-    }
+
 
     /**
      * Shows a date picker dialog for selecting a purchase date.
@@ -347,38 +356,7 @@ public class AddItemFragment extends Fragment {
                 currentDate.getDayOfMonth()).show();
     }
 
-    /**
-     * Saves the item to the inventory, either by creating a new entry or updating an existing one.
-     */
-    private void saveItem() {
-        String date = purchaseDateEditText.getText().toString().trim();
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
-        Date officialDate = null;
 
-        try {
-            officialDate = dateFormat.parse(date);
-        } catch (ParseException e) {
-            // Handle the error state
-        }
-
-        if (officialDate == null || estimatedValueEditText.getText().toString().trim().isEmpty()) {
-            showAlertDialog("Error", "Please fill in the value and date!");
-            return;
-        }
-
-        // Before creating or updating the InventoryItem
-        Double estimatedValue = Double.parseDouble(estimatedValueEditText.getText().toString().trim());
-        String imageUrl = imageUri != null ? imageUri.toString() : "";
-        InventoryItem itemToSave = createOrUpdateItem(officialDate, estimatedValue, imageUrl);
-
-        if (itemToSave != null) {
-            if (currentItem != null) {
-                listener.onUpdatePressed(itemToSave);
-            } else {
-                createNewItem(itemToSave);
-            }
-        }
-    }
 
     /**
      * Shows an alert dialog with a specified title and message.
@@ -391,41 +369,6 @@ public class AddItemFragment extends Fragment {
         builder.setMessage(message);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-    }
-
-    /**
-     * Creates or updates an InventoryItem with the provided details.
-     * @param officialDate    The official purchase date of the item.
-     * @param estimatedValue  The estimated value of the item.
-     * @return The created or updated InventoryItem.
-     */
-    private InventoryItem createOrUpdateItem(Date officialDate, double estimatedValue, String imageUrl) {
-        String description = descriptionEditText.getText().toString().trim();
-        String make = makeEditText.getText().toString().trim();
-        String model = modelEditText.getText().toString().trim();
-        String serialNumber = serialNumberEditText.getText().toString().trim();
-        String comment = commentEditText.getText().toString().trim();
-        String documentID = retrieveDocId(currentItem);
-
-        if (currentItem != null) {
-            // Update the existing item's properties
-            currentItem.setPurchaseDate(officialDate);
-            currentItem.setDescription(description);
-            currentItem.setMake(make);
-            currentItem.setModel(model);
-            currentItem.setSerialNumber(serialNumber);
-            currentItem.setEstimatedValue(estimatedValue);
-            currentItem.setComment(comment);
-            currentItem.setDocId(documentID);
-            currentItem.setImageUrl(imageUrl);
-
-            // Add the OnClickListener here
-            itemPicture.setOnClickListener(v -> showFullScreenImage(imageUri));
-            return currentItem;
-        } else {
-            // It's a new item
-            return new InventoryItem(officialDate, description, make, model, serialNumber, estimatedValue, comment, documentID, imageUrl);
-        }
     }
 
     private String retrieveDocId(InventoryItem item) {
@@ -469,29 +412,4 @@ public class AddItemFragment extends Fragment {
     }
 
 
-
-    public void createNewItem(InventoryItem newItem) {
-        // Get a new document reference from Firestore, which has an auto-generated ID
-        DocumentReference newDocRef = itemsRef.document();
-
-        // Set the document ID inside the new item object
-        newItem.setDocId(newDocRef.getId()); // Make sure InventoryItem has a method to set its ID
-
-        // Set the new item in the Firestore document
-        newDocRef.set(newItem)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("AddItem", "DocumentSnapshot written with ID: " + newDocRef.getId());
-                });
-    }
-
-
-    /**
-     * Interface for communicating with the activity when an item is saved.
-     */
-    public interface OnNewItemSubmission {
-        void onUpdatePressed(InventoryItem updatedItem);
-    }
-    public void setListener(OnNewItemSubmission listener) {
-        this.listener = listener;
-    }
 }

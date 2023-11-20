@@ -46,7 +46,7 @@ import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class HomeFragment extends Fragment implements AddItemFragment.OnNewItemSubmission, InventoryListAdapter.OnDeleteButtonShowListener  {
+public class HomeFragment extends Fragment implements  InventoryListAdapter.OnDeleteButtonShowListener  {
     private ListView inventoryListView;
     private ArrayList<InventoryItem> inventoryItems;
     private DatabaseController databaseController;
@@ -131,27 +131,13 @@ public class HomeFragment extends Fragment implements AddItemFragment.OnNewItemS
             }
         });
 
-//        databaseController = new DatabaseController(inventoryListAdapter, inventoryItems);
-//
-//        // Populate the initial items with a callback to update UI upon completion
-//        databaseController.loadInitialItems(new DatabaseController.DatabaseActionListener() {
-//            @Override
-//            public void onSuccess() {
-//                updateTotalValue();
-//            }
-//
-//            @Override
-//            public void onFailure(Exception e) {
-//                // Handle error
-//            }
-//        });
 
         inventoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 InventoryItem selectedItem = inventoryItems.get(position);
                 AddItemFragment addItemFragment = AddItemFragment.newInstance(selectedItem);
-                addItemFragment.setListener(HomeFragment.this);
+
 
                 FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frag_container, addItemFragment);
@@ -297,40 +283,8 @@ public class HomeFragment extends Fragment implements AddItemFragment.OnNewItemS
             itemsRef.document(item.getDocId()).delete()
                     .addOnSuccessListener(aVoid -> {
                         Log.d("DeleteItem", "DocumentSnapshot successfully deleted!");
-//                        // Remove from the local list and update the list adapter
-//                        inventoryItems.remove(item);
-//                        inventoryListAdapter.notifyDataSetChanged();
-//                        showDeleteButtonIfNeeded(); // Hide delete button if no items are selected
-//                        updateTotalValue(); // Update total value display
                     })
                     .addOnFailureListener(e -> Log.w("DeleteItem", "Error deleting document", e));
-        }
-    }
-
-    // Helper method to add initial InventoryItem objects to the inventoryItems list
-    private void populateInitialItems() {
-        // Check if adapter is initialized
-        if (inventoryListAdapter != null) {
-            // Fetch all documents from Firestore and add them to the local list
-            itemsRef.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful() && task.getResult() != null) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        InventoryItem item = document.toObject(InventoryItem.class);
-                        item.setDocId(document.getId()); // Ensure the document ID is set on the item
-                        inventoryItems.add(item);
-                    }
-                    // Notify adapter about data set changes inside the success block
-                    requireActivity().runOnUiThread(() -> {
-                        inventoryListAdapter.notifyDataSetChanged();
-                        updateTotalValue(); // Update total value after items are loaded
-                    });
-                } else {
-                    Log.d("populateInitialItems", "Error getting documents: ", task.getException());
-                }
-            });
-        } else {
-            // Handle the case where the adapter is not initialized
-            Log.e("populateInitialItems", "InventoryListAdapter is not initialized.");
         }
     }
 
@@ -341,25 +295,4 @@ public class HomeFragment extends Fragment implements AddItemFragment.OnNewItemS
                 .sum();
         estimatedValue.setText(String.format(Locale.US, "%.2f", totalSum));
     }
-
-
-    // This method updates an existing inventory item
-    public void onUpdatePressed(InventoryItem updatedItem) {
-        // Use the ID from the updatedItem to reference the Firestore document
-        itemsRef.document(updatedItem.getDocId()).set(updatedItem)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("UpdateItem", "DocumentSnapshot successfully updated!");
-
-                    // Update the item in the local list and notify the adapter
-                    int itemIndex = inventoryItems.indexOf(updatedItem);
-                    if (itemIndex != -1) {
-                        inventoryItems.set(itemIndex, updatedItem);
-                        inventoryListAdapter.notifyDataSetChanged();
-                        updateTotalValue();
-                    }
-                })
-                .addOnFailureListener(e -> Log.w("UpdateItem", "Error updating document", e));
-    }
-
-
 }
