@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
@@ -53,6 +54,8 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
     private DatabaseController databaseController;
     private InventoryListAdapter inventoryListAdapter;
     private CollectionReference itemsRef;
+    private Button deleteButton;
+    private ProgressBar loadingSpinner;
     private ArrayList<String> set_of_checked_tags = new ArrayList<>();
 
     private Button deleteButton, tagBtn;
@@ -84,6 +87,9 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
         itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");
         estimatedValue = view.findViewById(R.id.total_estimated_value);
 
+        loadingSpinner = view.findViewById(R.id.loading_spinner);
+        loadingSpinner.setVisibility(View.VISIBLE);
+
         inventoryItems = new ArrayList<>();     // Initialize the ArrayList for inventory items
 
 
@@ -110,15 +116,16 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
                     Log.e("FireStore", error.toString());
+                    loadingSpinner.setVisibility(View.GONE); // Hide spinner on error
                     return;
                 } else {
                     inventoryItems.clear();
                     for (QueryDocumentSnapshot doc: value) {
-                        Log.d("item", doc.getString("docId"));
                         inventoryItems.add(doc.toObject(InventoryItem.class));
                     }
                     updateTotalValue();
                     inventoryListAdapter.notifyDataSetChanged();
+                    loadingSpinner.setVisibility(View.GONE); // Hide spinner after loading data
                 }
             }
         });
