@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -14,6 +13,7 @@ import com.example.softwaresolutionssquad.R;
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.example.softwaresolutionssquad.views.InventoryListAdapter;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -141,8 +141,16 @@ public class DateFilterController {
             }
         };
 
-        LocalDate currentDate = LocalDate.now();
-        DatePickerDialog datePickerDialog = new DatePickerDialog(context, dateSetListener, currentDate.getYear(), currentDate.getMonthValue() - 1, currentDate.getDayOfMonth());
+        LocalDate setDate = LocalDate.parse(selectedDateEditText.getText());
+        DatePickerDialog datePickerDialog = new DatePickerDialog(context, dateSetListener, setDate.getYear(), setDate.getMonthValue() - 1, setDate.getDayOfMonth());
+        Instant otherDateInstant = LocalDate.parse(otherDateEditText.getText()).atStartOfDay(ZoneId.systemDefault()).toInstant();
+
+        if (isStartDate) {
+            datePickerDialog.getDatePicker().setMaxDate(otherDateInstant.toEpochMilli());
+        } else {
+            datePickerDialog.getDatePicker().setMinDate(otherDateInstant.toEpochMilli());
+        }
+
         datePickerDialog.show();
     }
 
