@@ -30,6 +30,10 @@ public class AddItemNextFragment extends Fragment {
     private Button backBtn;
     private Button cancelBtn;
 
+    private Button addTagBtn;
+
+    private TextView titleTextView;
+
     private InventoryItem item;
 
     private CollectionReference itemsRef;
@@ -57,8 +61,10 @@ public class AddItemNextFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_item_next, container, false);
         backBtn = view.findViewById(R.id.btnBack);
 //        cancelBtn = view.findViewById(R.id.btnCancel);
+        addTagBtn = view.findViewById(R.id.btnAddTag);
         createBtn = view.findViewById(R.id.btnCreate);
         tagGrid = view.findViewById(R.id.tagGridView);
+        titleTextView = view.findViewById(R.id.itemTitle);
         tags = item.getTags();
         Log.d("tags", tags.toString());
         if (tags.size() > 0) {
@@ -70,6 +76,7 @@ public class AddItemNextFragment extends Fragment {
 
         if (!newItem) {
             createBtn.setText("Update");
+            titleTextView.setText("Update Item");
         }
 
         itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");

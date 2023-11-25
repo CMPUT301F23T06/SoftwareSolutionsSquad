@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="@color/light_grey"
+    android:padding="8dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:textSize="36sp"
+        android:textColor="@color/black"
+        android:text="Add Tag"
+        android:layout_marginTop="30dp"
+        android:textStyle="bold"
+        />
+
+
+    <ListView
+        android:id="@+id/tag_list"
+        android:layout_weight="3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="15sp"
+        android:layout_marginHorizontal="20dp"
+        tools:listitem="@layout/tag_list"
+        android:scrollbars="none"
+        android:layout_marginTop="50dp">
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:paddingHorizontal="10dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="end">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/createButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/less_round_btn"
+            android:backgroundTint="@color/button_blue_color"
+            android:fontFamily="sans-serif"
+            android:text="Ok"
+            android:textStyle="bold"
+            android:textColor="@color/white" />
+
+        <Space
+            android:layout_width="20dp"
+            android:layout_height="1dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:enabled="false"
+            android:layout_weight="1"
+            android:background="@drawable/less_round_btn"
+            android:backgroundTint="@color/dark_gray"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            />
+    </LinearLayout>
+</LinearLayout>
