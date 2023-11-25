@@ -41,7 +41,7 @@ public class AddItemNextFragment extends Fragment {
 
     private GridView tagGrid;
 
-    private List<String> tags = new ArrayList<>();
+    private ArrayList<String> tags = new ArrayList<>();
 
     private ArrayAdapter<String> adapter;
 
@@ -65,7 +65,7 @@ public class AddItemNextFragment extends Fragment {
             tagGrid.setVisibility(View.VISIBLE);
         }
 
-        adapter = new ArrayAdapter<>(requireContext(), R.layout.grid_tag, tags);
+        adapter = new ItemTagAdapter(getContext(), tags);
         tagGrid.setAdapter(adapter);
 
         if (!newItem) {
