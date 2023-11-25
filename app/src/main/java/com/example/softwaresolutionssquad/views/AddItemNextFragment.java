@@ -56,7 +56,7 @@ public class AddItemNextFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_item_next, container, false);
         backBtn = view.findViewById(R.id.btnBack);
-        cancelBtn = view.findViewById(R.id.btnCancel);
+//        cancelBtn = view.findViewById(R.id.btnCancel);
         createBtn = view.findViewById(R.id.btnCreate);
         tagGrid = view.findViewById(R.id.tagGridView);
         tags = item.getTags();
@@ -73,12 +73,12 @@ public class AddItemNextFragment extends Fragment {
         }
 
         itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");
-        cancelBtn.setOnClickListener(v -> {
-            if (getActivity() != null) {
-                HomeFragment homeFragment = new HomeFragment();
-                ((MainActivity) getActivity()).setFragment(homeFragment);
-            }
-        });
+//        cancelBtn.setOnClickListener(v -> {
+//            if (getActivity() != null) {
+//                HomeFragment homeFragment = new HomeFragment();
+//                ((MainActivity) getActivity()).setFragment(homeFragment);
+//            }
+//        });
 
         backBtn.setOnClickListener(v -> {
             if (getActivity() != null) {

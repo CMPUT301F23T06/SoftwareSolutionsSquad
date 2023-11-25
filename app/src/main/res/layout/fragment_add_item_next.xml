@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#39CECECE"
@@ -33,14 +34,15 @@
         android:id="@+id/tagGridView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.5"
-        android:numColumns="4"
+        android:layout_weight="0.6"
+        android:numColumns="3"
         android:horizontalSpacing="5dp"
         android:verticalSpacing="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:scrollbars="none"
         android:layout_marginHorizontal="15dp"
-        android:visibility="gone" >
+        tools:listitem="@layout/grid_tag"
+        android:visibility="visible" >
     </GridView>
 
     <Button
@@ -86,17 +88,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/button_blue_color"
-            android:layout_marginEnd="40dp"
+            android:layout_marginEnd="200dp"
             android:text="Back" />
 
-        <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/gray_color"
-            android:layout_marginEnd="40dp"
-            android:text="Cancel" />
+<!--        <Button-->
+<!--            android:id="@+id/btnCancel"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:backgroundTint="@color/gray_color"-->
+<!--            android:layout_marginEnd="40dp"-->
+<!--            android:text="Cancel" />-->
 
         <Button
             android:id="@+id/btnCreate"
