@@ -45,7 +45,7 @@ public class AddItemTagFragment extends DialogFragment {
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-                View view = getLayoutInflater().inflate(R.layout.fragment_add_tag_item, container, false);
+                View view = inflater.inflate(R.layout.fragment_add_tag_item, container, false);
 
                 tagListView = view.findViewById(R.id.tagListView);
                 okBtn = view.findViewById(R.id.okButton);
@@ -55,7 +55,9 @@ public class AddItemTagFragment extends DialogFragment {
                 UserViewModel userViewModel = myApp.getUserViewModel();
                 userName = userViewModel.getUsername();
 
-                cancelBtn.setOnClickListener(v -> dismiss());
+                cancelBtn.setOnClickListener(v -> {
+                        dismiss();
+                });
 
                 okBtn.setOnClickListener(v -> {
                         // Get selected tags
