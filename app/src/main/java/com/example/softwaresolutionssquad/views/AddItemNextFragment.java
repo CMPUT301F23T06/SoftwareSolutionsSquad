@@ -1,5 +1,6 @@
 package com.example.softwaresolutionssquad.views;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,9 +27,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class AddItemNextFragment extends Fragment {
+public class AddItemNextFragment extends Fragment implements AddItemTagFragment.OnFragmentInteractionListener {
     private Button backBtn;
     private Button cancelBtn;
+
+    private Button addTagBtn;
+
+    private TextView titleTextView;
 
     private InventoryItem item;
 
@@ -41,13 +46,21 @@ public class AddItemNextFragment extends Fragment {
 
     private GridView tagGrid;
 
-    private List<String> tags = new ArrayList<>();
+    private ArrayList<String> tags = new ArrayList<>();
 
     private ArrayAdapter<String> adapter;
+
+    private Context context;
 
     public AddItemNextFragment(InventoryItem item, boolean newItem) {
         this.item = item;
         this.newItem = newItem;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
 
@@ -56,28 +69,37 @@ public class AddItemNextFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_item_next, container, false);
         backBtn = view.findViewById(R.id.btnBack);
-        cancelBtn = view.findViewById(R.id.btnCancel);
+//        cancelBtn = view.findViewById(R.id.btnCancel);
+        addTagBtn = view.findViewById(R.id.btnAddTag);
         createBtn = view.findViewById(R.id.btnCreate);
         tagGrid = view.findViewById(R.id.tagGridView);
+        titleTextView = view.findViewById(R.id.itemTitle);
         tags = item.getTags();
         Log.d("tags", tags.toString());
         if (tags.size() > 0) {
             tagGrid.setVisibility(View.VISIBLE);
         }
 
-        adapter = new ArrayAdapter<>(requireContext(), R.layout.grid_tag, tags);
+        adapter = new ItemTagAdapter(context, tags);
         tagGrid.setAdapter(adapter);
 
         if (!newItem) {
             createBtn.setText("Update");
+            titleTextView.setText("Update Item");
         }
 
         itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");
-        cancelBtn.setOnClickListener(v -> {
-            if (getActivity() != null) {
-                HomeFragment homeFragment = new HomeFragment();
-                ((MainActivity) getActivity()).setFragment(homeFragment);
-            }
+//        cancelBtn.setOnClickListener(v -> {
+//            if (getActivity() != null) {
+//                HomeFragment homeFragment = new HomeFragment();
+//                ((MainActivity) getActivity()).setFragment(homeFragment);
+//            }
+//        });
+
+        addTagBtn.setOnClickListener(v -> {
+            AddItemTagFragment addItemTagFragment = new AddItemTagFragment();
+            addItemTagFragment.setListener(AddItemNextFragment.this);
+            addItemTagFragment.show(getActivity().getSupportFragmentManager(), "ADD_ITEM_TAG");
         });
 
         backBtn.setOnClickListener(v -> {
@@ -126,5 +148,19 @@ public class AddItemNextFragment extends Fragment {
                     Log.d("UpdateItem", "DocumentSnapshot successfully updated!");
                 })
                 .addOnFailureListener(e -> Log.w("UpdateItem", "Error updating document", e));
+    }
+
+    @Override
+    public void onOkPressed(ArrayList<String> selectedTags) {
+        for (String tag: selectedTags) {
+            if (!tags.contains(tag)) {
+                tags.add(tag);
+            }
+        }
+        if (tags.size() > 0) {
+            tagGrid.setVisibility(View.VISIBLE);
+        }
+        adapter.notifyDataSetChanged();
+
     }
 }
