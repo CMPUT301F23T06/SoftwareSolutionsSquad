@@ -157,8 +157,10 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
                 tags.add(tag);
             }
         }
-        Log.d("Adapter", "1");
+        if (tags.size() > 0) {
+            tagGrid.setVisibility(View.VISIBLE);
+        }
         adapter.notifyDataSetChanged();
-        Log.d("Adapter", "2");
+
     }
 }
