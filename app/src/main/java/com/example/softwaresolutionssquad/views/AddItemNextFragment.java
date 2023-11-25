@@ -1,5 +1,6 @@
 package com.example.softwaresolutionssquad.views;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class AddItemNextFragment extends Fragment {
+public class AddItemNextFragment extends Fragment implements AddItemTagFragment.OnFragmentInteractionListener {
     private Button backBtn;
     private Button cancelBtn;
 
@@ -49,9 +50,17 @@ public class AddItemNextFragment extends Fragment {
 
     private ArrayAdapter<String> adapter;
 
+    private Context context;
+
     public AddItemNextFragment(InventoryItem item, boolean newItem) {
         this.item = item;
         this.newItem = newItem;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
 
@@ -71,7 +80,7 @@ public class AddItemNextFragment extends Fragment {
             tagGrid.setVisibility(View.VISIBLE);
         }
 
-        adapter = new ItemTagAdapter(getContext(), tags);
+        adapter = new ItemTagAdapter(context, tags);
         tagGrid.setAdapter(adapter);
 
         if (!newItem) {
@@ -86,6 +95,12 @@ public class AddItemNextFragment extends Fragment {
 //                ((MainActivity) getActivity()).setFragment(homeFragment);
 //            }
 //        });
+
+        addTagBtn.setOnClickListener(v -> {
+            AddItemTagFragment addItemTagFragment = new AddItemTagFragment();
+            addItemTagFragment.setListener(AddItemNextFragment.this);
+            addItemTagFragment.show(getActivity().getSupportFragmentManager(), "ADD_ITEM_TAG");
+        });
 
         backBtn.setOnClickListener(v -> {
             if (getActivity() != null) {
@@ -133,5 +148,17 @@ public class AddItemNextFragment extends Fragment {
                     Log.d("UpdateItem", "DocumentSnapshot successfully updated!");
                 })
                 .addOnFailureListener(e -> Log.w("UpdateItem", "Error updating document", e));
+    }
+
+    @Override
+    public void onOkPressed(ArrayList<String> selectedTags) {
+        for (String tag: selectedTags) {
+            if (!tags.contains(tag)) {
+                tags.add(tag);
+            }
+        }
+        Log.d("Adapter", "1");
+        adapter.notifyDataSetChanged();
+        Log.d("Adapter", "2");
     }
 }

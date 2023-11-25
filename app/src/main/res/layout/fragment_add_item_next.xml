@@ -42,7 +42,7 @@
         android:scrollbars="none"
         android:layout_marginHorizontal="15dp"
         tools:listitem="@layout/grid_tag"
-        android:visibility="visible" >
+        android:visibility="gone" >
     </GridView>
 
     <Button
