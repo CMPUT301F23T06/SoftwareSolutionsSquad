@@ -2,23 +2,22 @@ package com.example.softwaresolutionssquad.views;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.pm.PackageManager;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.ContextCompat;
-import androidx.core.app.ActivityCompat;
 
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,19 +26,18 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.softwaresolutionssquad.models.InventoryItem;
@@ -49,6 +47,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -62,6 +63,7 @@ import java.util.Locale;
  */
 public class AddItemFragment extends Fragment {
 
+    static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String ITEM_KEY = "item";
 
@@ -84,9 +86,11 @@ public class AddItemFragment extends Fragment {
     private static final int PICK_IMAGE_REQUEST = 1000;
     private static final int PERMISSION_REQUEST_STORAGE = 2000;
 
-    private ImageView itemPicture;
-    private Button selectImage;
+    private RecyclerView attachedImages;
+    private Button selectImage, takePhoto;
     private Uri imageUri;
+    private ArrayList<String> imageUrisList = new ArrayList<>();
+    ImageAdapter imageAdapter;
     private StorageReference storageRef;
 
     public AddItemFragment() {
@@ -134,20 +138,18 @@ public class AddItemFragment extends Fragment {
         cancelButton = view.findViewById(R.id.btnCancel);
         title = view.findViewById(R.id.title);
 
-        // Initialize the ImageView and Firebase Storage
-        itemPicture = view.findViewById(R.id.itemPicture);
+        imageAdapter = new ImageAdapter(getContext(), imageUrisList);
+        attachedImages = view.findViewById(R.id.recyclerViewImages);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        attachedImages.setLayoutManager(layoutManager);
+        attachedImages.setAdapter(imageAdapter);
+
         selectImage = view.findViewById(R.id.btnSelectImage);
+        takePhoto = view.findViewById(R.id.btnTakePhoto);
         storageRef = FirebaseStorage.getInstance().getReference();
 
         selectImage.setOnClickListener(v -> selectImage());
-
-        // Initialize the ImageView and Firebase Storage
-        itemPicture = view.findViewById(R.id.itemPicture);
-        selectImage = view.findViewById(R.id.btnSelectImage);
-        storageRef = FirebaseStorage.getInstance().getReference();
-
-        selectImage.setOnClickListener(v -> selectImage());
-
+        takePhoto.setOnClickListener(v -> checkCameraPermissionAndOpenCamera());
 
         // Set an onClickListener for the purchase date EditText to show a date picker
         purchaseDateEditText.setOnClickListener(v -> {
@@ -189,7 +191,7 @@ public class AddItemFragment extends Fragment {
                 Double official_estimated_value = Double.parseDouble(estimated_val);
                 String comm = commentEditText.getText().toString().trim();
                 String documentID = retrieveDocId(currentItem);
-                String imageUrl = imageUri != null ? imageUri.toString() : "";
+                ArrayList<String> imageUrl = imageUrisList != null ? imageUrisList : new ArrayList<>();
 
                 InventoryItem itemToSave;
                 Boolean newItem = false;
@@ -240,33 +242,85 @@ public class AddItemFragment extends Fragment {
         return view;
     }
 
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    selectImage();
-                } else {
-                    Toast.makeText(getContext(), "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+    private final ActivityResultLauncher<String> requestCameraPermissionLauncher =
+        registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (isGranted) {
+                takePhoto();
+            } else {
+                Toast.makeText(getContext(), "Permission denied to capture photos", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    private Uri createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",   /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        return FileProvider.getUriForFile(getContext(), "com.example.softwaresolutionssquad.fileprovider", image);
+    }
+
+    private void takePhoto() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            imageUri = createImageFile();
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            takePhotoLauncher.launch(intent);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private final ActivityResultLauncher<Intent> takePhotoLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    imageUrisList.add(imageUri.toString());
+                    imageAdapter.notifyDataSetChanged();
+                    uploadImageToFirebase(imageUri);
                 }
-            });
+            }
+    );
+
+    private void checkCameraPermissionAndOpenCamera() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            takePhoto();
+        } else {
+            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+        }
+    }
 
     private void selectImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         pickImageLauncher.launch(intent);
     }
 
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
+                ArrayList<String> newImages = new ArrayList<>();
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                    imageUri = result.getData().getData();
-                    itemPicture.setImageURI(imageUri);
-
-                    // Add the OnClickListener here
-                    itemPicture.setOnClickListener(v -> showFullScreenImage(imageUri));
-
-
-                    uploadImageToFirebase(imageUri);
+                    if (result.getData().getClipData() != null) {
+                        ClipData cd = result.getData().getClipData();
+                        for (int i = 0; i < cd.getItemCount(); i++) {
+                            imageUri = cd.getItemAt(i).getUri();
+                            newImages.add(imageUri.toString());
+                            imageUrisList.add(imageUri.toString());
+                            imageAdapter.notifyDataSetChanged();
+                        }
+                    }
                 }
+//                for (String uriString : newImages) {
+//                    uploadImageToFirebase(Uri.parse(uriString));
+//                    imageAdapter.notifyDataSetChanged();
+//                }
             });
 
     private void uploadImageToFirebase(Uri uri) {
@@ -278,7 +332,6 @@ public class AddItemFragment extends Fragment {
             // Create a unique filename for the image
             String fileName = "images/" + System.currentTimeMillis() + "-" + getFileExtension(uri);
             StorageReference fileRef = storageRef.child(fileName);
-
             // Upload the file to Firebase Storage
             fileRef.putFile(uri)
                     .addOnSuccessListener(taskSnapshot -> {
@@ -286,7 +339,8 @@ public class AddItemFragment extends Fragment {
                         fileRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
                             // Here you get the image download URL
                             String imageUrl = downloadUri.toString();
-
+                            imageUrisList.add(imageUrl);
+                            System.err.println("SUCCESS");
                             // You can now use this URL to save it to Firestore or do other actions
                             // For instance, you might want to set this URL to a class variable
                             // that is later saved along with other item data to Firestore
@@ -307,23 +361,6 @@ public class AddItemFragment extends Fragment {
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cr.getType(uri));
     }
-
-    private void showFullScreenImage(Uri imageUri) {
-        Dialog fullScreenDialog = new Dialog(getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        fullScreenDialog.setContentView(R.layout.fragment_view_item_photo);
-
-        ImageView imageView = fullScreenDialog.findViewById(R.id.fullscreenImageView);
-        ImageButton closeButton = fullScreenDialog.findViewById(R.id.closeButton);
-
-        Glide.with(this).load(imageUri).into(imageView);
-
-        closeButton.setOnClickListener(v -> fullScreenDialog.dismiss());
-        imageView.setOnClickListener(v -> fullScreenDialog.dismiss()); // Optional: allows closing by clicking the image
-
-        fullScreenDialog.show();
-    }
-
-
 
     /**
      * Initializes the UI elements of the fragment.
@@ -390,15 +427,8 @@ public class AddItemFragment extends Fragment {
         estimatedValueEditText.setText(String.valueOf(item.getEstimatedValue()));
         commentEditText.setText(item.getComment());
 
-        // Load the image if there is a URL
-        if (item.getImageUrl() != null && !item.getImageUrl().isEmpty()) {
-            Glide.with(this)
-                    .load(item.getImageUrl())
-                    .into(itemPicture);
-
-            // Add the OnClickListener here
-            itemPicture.setOnClickListener(v -> showFullScreenImage(imageUri));
-        }
+        imageUrisList = new ArrayList<>(item.getImageUrl());
+        System.err.println(imageUrisList);
     }
 
     private final DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
