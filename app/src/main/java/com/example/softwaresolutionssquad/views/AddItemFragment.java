@@ -62,8 +62,6 @@ import java.util.Locale;
  * A fragment for adding a new item to the inventory or editing an existing one.
  */
 public class AddItemFragment extends Fragment {
-
-    static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String ITEM_KEY = "item";
 
@@ -83,14 +81,6 @@ public class AddItemFragment extends Fragment {
     private TextView title;
     private final LocalDate currentDate = LocalDate.now();
 
-    private static final int PICK_IMAGE_REQUEST = 1000;
-    private static final int PERMISSION_REQUEST_STORAGE = 2000;
-
-    private RecyclerView attachedImages;
-    private Button selectImage, takePhoto;
-    private Uri imageUri;
-    private ArrayList<String> imageUrisList = new ArrayList<>();
-    ImageAdapter imageAdapter;
     private StorageReference storageRef;
 
     public AddItemFragment() {
@@ -137,19 +127,9 @@ public class AddItemFragment extends Fragment {
         nextButton = view.findViewById(R.id.btnNext);
         cancelButton = view.findViewById(R.id.btnCancel);
         title = view.findViewById(R.id.title);
-
-        imageAdapter = new ImageAdapter(getContext(), imageUrisList);
-        attachedImages = view.findViewById(R.id.recyclerViewImages);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        attachedImages.setLayoutManager(layoutManager);
-        attachedImages.setAdapter(imageAdapter);
-
-        selectImage = view.findViewById(R.id.btnSelectImage);
-        takePhoto = view.findViewById(R.id.btnTakePhoto);
         storageRef = FirebaseStorage.getInstance().getReference();
 
-        selectImage.setOnClickListener(v -> selectImage());
-        takePhoto.setOnClickListener(v -> checkCameraPermissionAndOpenCamera());
+
 
         // Set an onClickListener for the purchase date EditText to show a date picker
         purchaseDateEditText.setOnClickListener(v -> {
@@ -191,7 +171,7 @@ public class AddItemFragment extends Fragment {
                 Double official_estimated_value = Double.parseDouble(estimated_val);
                 String comm = commentEditText.getText().toString().trim();
                 String documentID = retrieveDocId(currentItem);
-                ArrayList<String> imageUrl = imageUrisList != null ? imageUrisList : new ArrayList<>();
+//                ArrayList<String> imageUrl = imageUrisList != null ? imageUrisList : new ArrayList<>();
 
                 InventoryItem itemToSave;
                 Boolean newItem = false;
@@ -205,12 +185,12 @@ public class AddItemFragment extends Fragment {
                     currentItem.setEstimatedValue(official_estimated_value);
                     currentItem.setComment(comm);
                     currentItem.setDocId(documentID);
-                    currentItem.setImageUrl(imageUrl);
+//                    currentItem.setImageUrl(imageUrl);
                     itemToSave = currentItem;
                 } else {
                     newItem = true;
                     // It's a new item
-                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, imageUrl);
+                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, new ArrayList<>());
                 }
 
             if (getActivity() instanceof MainActivity) {
@@ -242,125 +222,7 @@ public class AddItemFragment extends Fragment {
         return view;
     }
 
-    private final ActivityResultLauncher<String> requestCameraPermissionLauncher =
-        registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-            if (isGranted) {
-                takePhoto();
-            } else {
-                Toast.makeText(getContext(), "Permission denied to capture photos", Toast.LENGTH_SHORT).show();
-            }
-        });
 
-    private Uri createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",   /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        return FileProvider.getUriForFile(getContext(), "com.example.softwaresolutionssquad.fileprovider", image);
-    }
-
-    private void takePhoto() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        try {
-            imageUri = createImageFile();
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-            takePhotoLauncher.launch(intent);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private final ActivityResultLauncher<Intent> takePhotoLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    imageUrisList.add(imageUri.toString());
-                    imageAdapter.notifyDataSetChanged();
-                    uploadImageToFirebase(imageUri);
-                }
-            }
-    );
-
-    private void checkCameraPermissionAndOpenCamera() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            takePhoto();
-        } else {
-            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
-        }
-    }
-
-    private void selectImage() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        pickImageLauncher.launch(intent);
-    }
-
-    private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                ArrayList<String> newImages = new ArrayList<>();
-                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                    if (result.getData().getClipData() != null) {
-                        ClipData cd = result.getData().getClipData();
-                        for (int i = 0; i < cd.getItemCount(); i++) {
-                            imageUri = cd.getItemAt(i).getUri();
-                            newImages.add(imageUri.toString());
-                            imageUrisList.add(imageUri.toString());
-                            imageAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-//                for (String uriString : newImages) {
-//                    uploadImageToFirebase(Uri.parse(uriString));
-//                    imageAdapter.notifyDataSetChanged();
-//                }
-            });
-
-    private void uploadImageToFirebase(Uri uri) {
-        if (uri != null) {
-            // Initialize Firebase Storage with the specific URL
-            FirebaseStorage storage = FirebaseStorage.getInstance("gs://softwaresolutionssquad.appspot.com");
-            StorageReference storageRef = storage.getReference();
-
-            // Create a unique filename for the image
-            String fileName = "images/" + System.currentTimeMillis() + "-" + getFileExtension(uri);
-            StorageReference fileRef = storageRef.child(fileName);
-            // Upload the file to Firebase Storage
-            fileRef.putFile(uri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        // On successful upload, get the download URL
-                        fileRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
-                            // Here you get the image download URL
-                            String imageUrl = downloadUri.toString();
-                            imageUrisList.add(imageUrl);
-                            System.err.println("SUCCESS");
-                            // You can now use this URL to save it to Firestore or do other actions
-                            // For instance, you might want to set this URL to a class variable
-                            // that is later saved along with other item data to Firestore
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        // Handle unsuccessful uploads
-                        // You can display a message or perform other actions
-                    })
-                    .addOnProgressListener(snapshot -> {
-                        // If you want, you can show upload progress here
-                    });
-        }
-    }
-
-    private String getFileExtension(Uri uri) {
-        ContentResolver cr = getContext().getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cr.getType(uri));
-    }
 
     /**
      * Initializes the UI elements of the fragment.
@@ -426,9 +288,6 @@ public class AddItemFragment extends Fragment {
         serialNumberEditText.setText(item.getSerialNumber());
         estimatedValueEditText.setText(String.valueOf(item.getEstimatedValue()));
         commentEditText.setText(item.getComment());
-
-        imageUrisList = new ArrayList<>(item.getImageUrl());
-        System.err.println(imageUrisList);
     }
 
     private final DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {

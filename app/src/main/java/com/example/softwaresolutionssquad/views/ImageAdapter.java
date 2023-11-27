@@ -65,8 +65,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        System.err.println("TESTING");
-        System.err.println(imageUris);
         Uri imageUri = Uri.parse(imageUris.get(position));
 //        holder.imageView.setImageURI(imageUri);
         Glide.with(context).load(imageUris.get(position)).into(holder.imageView);
