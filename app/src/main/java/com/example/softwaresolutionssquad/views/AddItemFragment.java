@@ -132,11 +132,7 @@ public class AddItemFragment extends Fragment {
 
 
         // Set an onClickListener for the purchase date EditText to show a date picker
-        purchaseDateEditText.setOnClickListener(v -> {
-            new DatePickerDialog(getContext(), dateSetListener, currentDate.getYear(),
-                    currentDate.getMonthValue(),
-                    currentDate.getDayOfMonth()).show();
-        });
+        purchaseDateEditText.setOnClickListener(v -> { showDatePicker(); });
 
         // Set an onClickListener for the Next button
         nextButton.setOnClickListener(v -> {
@@ -291,7 +287,7 @@ public class AddItemFragment extends Fragment {
     }
 
     private final DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
-        LocalDate dateSet = LocalDate.of(year, monthOfYear, dayOfMonth);
+        LocalDate dateSet = LocalDate.of(year, monthOfYear + 1, dayOfMonth);
         updateLabel(dateSet);
     };
 

@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AddItemNextFragment extends Fragment implements AddItemTagFragment.OnFragmentInteractionListener {
     private Button backBtn;
@@ -279,6 +280,7 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
             // Initialize Firebase Storage with the specific URL
             FirebaseStorage storage = FirebaseStorage.getInstance("gs://softwaresolutionssquad.appspot.com");
             StorageReference storageRef = storage.getReference();
+            AtomicInteger uploadCount = new AtomicInteger(0);
 
             for (String uriString : uriStrings) {
                 Uri uri = Uri.parse(uriString);
@@ -294,6 +296,11 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
                                 // Here you get the image download URL
                                 imageUrl = downloadUri.toString();
                                 imageUrisList.add(imageUrl);
+                                if (uploadCount.incrementAndGet() == uriStrings.size()) {
+                                    if (listener != null) {
+                                        listener.onUploadComplete(uriStrings);
+                                    }
+                                }
                             });
                         })
                         .addOnFailureListener(e -> {
@@ -303,9 +310,6 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
                         .addOnProgressListener(snapshot -> {
                             // If you want, you can show upload progress here
                         });
-            }
-            if  (listener != null) {
-                listener.onUploadComplete(uriStrings);
             }
         }
     }
