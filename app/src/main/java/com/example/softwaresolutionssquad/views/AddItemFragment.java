@@ -2,23 +2,22 @@ package com.example.softwaresolutionssquad.views;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.pm.PackageManager;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.ContextCompat;
-import androidx.core.app.ActivityCompat;
 
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,19 +26,18 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.softwaresolutionssquad.models.InventoryItem;
@@ -49,6 +47,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -61,7 +62,6 @@ import java.util.Locale;
  * A fragment for adding a new item to the inventory or editing an existing one.
  */
 public class AddItemFragment extends Fragment {
-
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String ITEM_KEY = "item";
 
@@ -81,12 +81,6 @@ public class AddItemFragment extends Fragment {
     private TextView title;
     private final LocalDate currentDate = LocalDate.now();
 
-    private static final int PICK_IMAGE_REQUEST = 1000;
-    private static final int PERMISSION_REQUEST_STORAGE = 2000;
-
-    private ImageView itemPicture;
-    private Button selectImage;
-    private Uri imageUri;
     private StorageReference storageRef;
 
     public AddItemFragment() {
@@ -133,28 +127,12 @@ public class AddItemFragment extends Fragment {
         nextButton = view.findViewById(R.id.btnNext);
         cancelButton = view.findViewById(R.id.btnCancel);
         title = view.findViewById(R.id.title);
-
-        // Initialize the ImageView and Firebase Storage
-        itemPicture = view.findViewById(R.id.itemPicture);
-        selectImage = view.findViewById(R.id.btnSelectImage);
         storageRef = FirebaseStorage.getInstance().getReference();
 
-        selectImage.setOnClickListener(v -> selectImage());
-
-        // Initialize the ImageView and Firebase Storage
-        itemPicture = view.findViewById(R.id.itemPicture);
-        selectImage = view.findViewById(R.id.btnSelectImage);
-        storageRef = FirebaseStorage.getInstance().getReference();
-
-        selectImage.setOnClickListener(v -> selectImage());
 
 
         // Set an onClickListener for the purchase date EditText to show a date picker
-        purchaseDateEditText.setOnClickListener(v -> {
-            new DatePickerDialog(getContext(), dateSetListener, currentDate.getYear(),
-                    currentDate.getMonthValue(),
-                    currentDate.getDayOfMonth()).show();
-        });
+        purchaseDateEditText.setOnClickListener(v -> { showDatePicker(); });
 
         // Set an onClickListener for the Next button
         nextButton.setOnClickListener(v -> {
@@ -189,7 +167,7 @@ public class AddItemFragment extends Fragment {
                 Double official_estimated_value = Double.parseDouble(estimated_val);
                 String comm = commentEditText.getText().toString().trim();
                 String documentID = retrieveDocId(currentItem);
-                String imageUrl = imageUri != null ? imageUri.toString() : "";
+//                ArrayList<String> imageUrl = imageUrisList != null ? imageUrisList : new ArrayList<>();
 
                 InventoryItem itemToSave;
                 Boolean newItem = false;
@@ -203,12 +181,12 @@ public class AddItemFragment extends Fragment {
                     currentItem.setEstimatedValue(official_estimated_value);
                     currentItem.setComment(comm);
                     currentItem.setDocId(documentID);
-                    currentItem.setImageUrl(imageUrl);
+//                    currentItem.setImageUrl(imageUrl);
                     itemToSave = currentItem;
                 } else {
                     newItem = true;
                     // It's a new item
-                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, imageUrl);
+                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, new ArrayList<>());
                 }
 
             if (getActivity() instanceof MainActivity) {
@@ -238,89 +216,6 @@ public class AddItemFragment extends Fragment {
             prepopulateFields(currentItem);
         }
         return view;
-    }
-
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    selectImage();
-                } else {
-                    Toast.makeText(getContext(), "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-    private void selectImage() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickImageLauncher.launch(intent);
-    }
-
-    private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                    imageUri = result.getData().getData();
-                    itemPicture.setImageURI(imageUri);
-
-                    // Add the OnClickListener here
-                    itemPicture.setOnClickListener(v -> showFullScreenImage(imageUri));
-
-
-                    uploadImageToFirebase(imageUri);
-                }
-            });
-
-    private void uploadImageToFirebase(Uri uri) {
-        if (uri != null) {
-            // Initialize Firebase Storage with the specific URL
-            FirebaseStorage storage = FirebaseStorage.getInstance("gs://softwaresolutionssquad.appspot.com");
-            StorageReference storageRef = storage.getReference();
-
-            // Create a unique filename for the image
-            String fileName = "images/" + System.currentTimeMillis() + "-" + getFileExtension(uri);
-            StorageReference fileRef = storageRef.child(fileName);
-
-            // Upload the file to Firebase Storage
-            fileRef.putFile(uri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        // On successful upload, get the download URL
-                        fileRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
-                            // Here you get the image download URL
-                            String imageUrl = downloadUri.toString();
-
-                            // You can now use this URL to save it to Firestore or do other actions
-                            // For instance, you might want to set this URL to a class variable
-                            // that is later saved along with other item data to Firestore
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        // Handle unsuccessful uploads
-                        // You can display a message or perform other actions
-                    })
-                    .addOnProgressListener(snapshot -> {
-                        // If you want, you can show upload progress here
-                    });
-        }
-    }
-
-    private String getFileExtension(Uri uri) {
-        ContentResolver cr = getContext().getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cr.getType(uri));
-    }
-
-    private void showFullScreenImage(Uri imageUri) {
-        Dialog fullScreenDialog = new Dialog(getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        fullScreenDialog.setContentView(R.layout.fragment_view_item_photo);
-
-        ImageView imageView = fullScreenDialog.findViewById(R.id.fullscreenImageView);
-        ImageButton closeButton = fullScreenDialog.findViewById(R.id.closeButton);
-
-        Glide.with(this).load(imageUri).into(imageView);
-
-        closeButton.setOnClickListener(v -> fullScreenDialog.dismiss());
-        imageView.setOnClickListener(v -> fullScreenDialog.dismiss()); // Optional: allows closing by clicking the image
-
-        fullScreenDialog.show();
     }
 
 
@@ -389,20 +284,10 @@ public class AddItemFragment extends Fragment {
         serialNumberEditText.setText(item.getSerialNumber());
         estimatedValueEditText.setText(String.valueOf(item.getEstimatedValue()));
         commentEditText.setText(item.getComment());
-
-        // Load the image if there is a URL
-        if (item.getImageUrl() != null && !item.getImageUrl().isEmpty()) {
-            Glide.with(this)
-                    .load(item.getImageUrl())
-                    .into(itemPicture);
-
-            // Add the OnClickListener here
-            itemPicture.setOnClickListener(v -> showFullScreenImage(imageUri));
-        }
     }
 
     private final DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
-        LocalDate dateSet = LocalDate.of(year, monthOfYear, dayOfMonth);
+        LocalDate dateSet = LocalDate.of(year, monthOfYear + 1, dayOfMonth);
         updateLabel(dateSet);
     };
 
