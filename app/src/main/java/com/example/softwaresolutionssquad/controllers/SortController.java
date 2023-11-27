@@ -67,6 +67,14 @@ public class SortController {
                 comparator = ComparatorFactory.getEstimatedValueComparator();
                 sortInventoryItems(comparator, false);
                 break;
+            case 8:
+                comparator = ComparatorFactory.getTagComparator();
+                sortInventoryItems(comparator, true);
+                break;
+            case 9: // Assuming position 8 corresponds to the tag sorting option
+                comparator = ComparatorFactory.getTagComparator();
+                sortInventoryItems(comparator, false);
+                break;
             default:
                 throw new IllegalArgumentException("Invalid position: " + position);
         }

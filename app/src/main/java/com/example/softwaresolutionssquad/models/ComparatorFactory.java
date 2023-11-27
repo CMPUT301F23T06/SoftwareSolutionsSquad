@@ -1,5 +1,6 @@
 package com.example.softwaresolutionssquad.models;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
@@ -42,4 +43,34 @@ public class ComparatorFactory {
     public static Comparator<InventoryItem> getEstimatedValueComparator() {
         return Comparator.comparingDouble(InventoryItem::getEstimatedValue);
     }
+
+    /**
+     * Creates a comparator for InventoryItem that compares by tags.
+     *
+     * @return Comparator for InventoryItem
+     */
+    public static Comparator<InventoryItem> getTagComparator() {
+        return (item1, item2) -> {
+            ArrayList<String> tags1 = item1.getSortedTags();
+            ArrayList<String> tags2 = item2.getSortedTags();
+
+            // Check if one of the lists is empty
+            if (tags1.isEmpty()) {
+                return tags2.isEmpty() ? 0 : 1;
+            } else if (tags2.isEmpty()) {
+                return -1;
+            }
+
+            // Compare the strings element-wise
+            for (int i = 0; i < Math.min(tags1.size(), tags2.size()); i++) {
+                int comparison = tags1.get(i).compareTo(tags2.get(i));
+                if (comparison != 0) {
+                    return comparison;
+                }
+            }
+
+            return Integer.compare(tags1.size(), tags2.size());
+        };
+    }
+
 }
