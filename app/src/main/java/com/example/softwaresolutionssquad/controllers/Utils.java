@@ -7,7 +7,6 @@ import java.security.NoSuchAlgorithmException;
  * Utility class for common operations needed across the application.
  */
 public class Utils {
-    private static String USERNAME;
 
     /**
      * Generates a SHA-256 hash of the provided password.
@@ -38,7 +37,4 @@ public class Utils {
             return null;
         }
     }
-
-    public static void setCurrentUser(String username) { USERNAME = username; }
-    public static String getCurrentUser() { return USERNAME; }
 }
