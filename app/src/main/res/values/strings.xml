@@ -32,6 +32,8 @@
         <item>Make DESC</item>
         <item>EST_VAL ASC</item>
         <item>EST_VAL DESC</item>
+        <item>TAG ASC</item>
+        <item>TAG DESC</item>
     </string-array>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
