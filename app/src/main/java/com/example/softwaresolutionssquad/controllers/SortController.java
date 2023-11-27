@@ -71,7 +71,7 @@ public class SortController {
                 comparator = ComparatorFactory.getTagComparator();
                 sortInventoryItems(comparator, true);
                 break;
-            case 9: // Assuming position 8 corresponds to the tag sorting option
+            case 9: 
                 comparator = ComparatorFactory.getTagComparator();
                 sortInventoryItems(comparator, false);
                 break;

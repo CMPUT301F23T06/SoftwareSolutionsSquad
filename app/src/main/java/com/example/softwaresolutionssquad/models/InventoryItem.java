@@ -20,7 +20,7 @@ public class InventoryItem implements Serializable {
     private String comment;
     private ArrayList<String> tags;
     private String docId;
-    private String imageUrl;
+    private ArrayList<String> imageUrl;
     private boolean isSelected;
 
     /**
@@ -36,7 +36,7 @@ public class InventoryItem implements Serializable {
      * @param docId          document identifier for the item
      */
     public InventoryItem(Date purchaseDate, String description, String make, String model,
-                         String serialNumber, double estimatedValue, String comment, String docId, String imageUrl) {
+                         String serialNumber, double estimatedValue, String comment, String docId, ArrayList<String> imageUrl) {
         this.purchaseDate = purchaseDate;
         this.description = description;
         this.make = make;
@@ -63,7 +63,7 @@ public class InventoryItem implements Serializable {
      * @param docId          document identifier for the item
      */
     public InventoryItem(Date purchaseDate, String description, String make, String model, String serialNumber,
-             double estimatedValue, String comment, ArrayList<String> tags, String docId, String imageUrl) {
+             double estimatedValue, String comment, ArrayList<String> tags, String docId, ArrayList<String> imageUrl) {
         this.purchaseDate = purchaseDate;
         this.description = description;
         this.make = make;
@@ -174,11 +174,11 @@ public class InventoryItem implements Serializable {
         this.docId = docId;
     }
 
-    public String getImageUrl() {
+    public ArrayList<String> getImageUrl() {
         return imageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
+    public void setImageUrl(ArrayList<String> imageUrl) {
         this.imageUrl = imageUrl;
     }
 

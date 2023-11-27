@@ -203,12 +203,12 @@ public class AddItemFragment extends Fragment {
                     currentItem.setEstimatedValue(official_estimated_value);
                     currentItem.setComment(comm);
                     currentItem.setDocId(documentID);
-                    currentItem.setImageUrl(imageUrl);
+//                    currentItem.setImageUrl(imageUrl);
                     itemToSave = currentItem;
                 } else {
                     newItem = true;
                     // It's a new item
-                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, imageUrl);
+                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, null);
                 }
 
             if (getActivity() instanceof MainActivity) {
