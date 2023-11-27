@@ -2,6 +2,7 @@ package com.example.softwaresolutionssquad;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -9,6 +10,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
+import static java.lang.Thread.sleep;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -42,7 +45,7 @@ public class SignupTest {
             ActivityScenarioRule<>(SignupActivity.class);
 
     @Test
-    public void TestReturnToLogin() {
+    public void TestReturnToLogin() throws InterruptedException {
         // Arrange
         Intents.init();
         // Act
@@ -131,7 +134,7 @@ public class SignupTest {
             onView(withId(R.id.signup_page_signup_button)).perform(click());
             // Assert
             // why sleep? LoginActivity is not instantaneous as it adds user to database
-            Thread.sleep(1000);
+            sleep(1000);
             intended(hasComponent(LoginActivity.class.getName()));
             DocumentReference userRef = db.collection("User").document(TESTUSER);
 
@@ -144,7 +147,7 @@ public class SignupTest {
                 Assert.assertEquals(TESTUSER, user.getString("displayName"));
             });
             // why sleep? Testing values in the database is not instantaneous
-            Thread.sleep(1000);
+            sleep(1000);
         } catch (Exception ex) {
 
         } finally {
