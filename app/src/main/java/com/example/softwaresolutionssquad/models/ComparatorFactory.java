@@ -55,10 +55,12 @@ public class ComparatorFactory {
             ArrayList<String> tags2 = item2.getSortedTags();
 
             // Check if one of the lists is empty
-            if (tags1.isEmpty()) {
-                return tags2.isEmpty() ? 0 : 1;
+            if (tags1.isEmpty() && tags2.isEmpty()) {
+                return 0; // Both are empty, consider them equal
+            } else if (tags1.isEmpty()) {
+                return -1; // Only tags1 is empty, consider it smaller
             } else if (tags2.isEmpty()) {
-                return -1;
+                return 1; // Only tags2 is empty, consider it smaller
             }
 
             // Compare the strings element-wise
