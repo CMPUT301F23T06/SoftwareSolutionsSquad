@@ -82,6 +82,8 @@ public class AddItemFragment extends Fragment {
     private final LocalDate currentDate = LocalDate.now();
 
     private StorageReference storageRef;
+    private Button scanDescription;
+    private Button scanSerial;
 
     public AddItemFragment() {
         // Required empty public constructor
@@ -128,8 +130,12 @@ public class AddItemFragment extends Fragment {
         cancelButton = view.findViewById(R.id.btnCancel);
         title = view.findViewById(R.id.title);
         storageRef = FirebaseStorage.getInstance().getReference();
+        scanDescription = view.findViewById(R.id.btnScanDescription);
+        scanSerial = view.findViewById(R.id.btnScanSerial);
 
-
+        // Initialize the ScanDescription and ScanSerial buttons
+        scanDescription.setOnClickListener(v -> openScanIntent("description"));
+        scanSerial.setOnClickListener(v -> openScanIntent("serial"));
 
         // Set an onClickListener for the purchase date EditText to show a date picker
         purchaseDateEditText.setOnClickListener(v -> { showDatePicker(); });
@@ -296,5 +302,8 @@ public class AddItemFragment extends Fragment {
         purchaseDateEditText.setText(dateSet.format(dtf));
     }
 
+    private void openScanIntent(String field) {
+        startActivity(new Intent(AddItemFragment.this, ScanBarcodeActivity.class));
+    }
 
 }
