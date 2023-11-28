@@ -19,6 +19,6 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d("Profile", "hello");
         // You can create a simple layout for the dummy fragment or leave it empty.
-        return inflater.inflate(R.layout.fragment_dummy, container, false);
+        return inflater.inflate(R.layout.fragment_profile_layout, container, false);
     }
 }
