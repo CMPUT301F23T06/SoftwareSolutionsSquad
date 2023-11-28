@@ -83,7 +83,7 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnDe
         inventoryItems = new ArrayList<>();     // Initialize the ArrayList for inventory items
 
 
-        // Initialize tzhe custom adapter and assign it to the ListView
+        // Initialize the custom adapter and assign it to the ListView
         inventoryListAdapter = new InventoryListAdapter(context, inventoryItems);
         inventoryListView = view.findViewById(R.id.inventory_list_view);
         inventoryListView.setAdapter(inventoryListAdapter);

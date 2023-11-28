@@ -192,7 +192,7 @@ public class InventoryItem implements Serializable {
         return "InventoryItem{" +
                 "purchaseDate=" + purchaseDate +
                 ", docId='" + docId + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
+                ", imageUrl='" + String.join(",", imageUrl) + '\'' +
                 ", description='" + description + '\'' +
                 ", make='" + make + '\'' +
                 ", model='" + model + '\'' +
