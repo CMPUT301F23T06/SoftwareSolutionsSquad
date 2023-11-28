@@ -144,21 +144,29 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
         });
 
         createBtn.setOnClickListener(v -> {
-            uploadImageToFirebase(newImages, uploaded -> {
-                imageUrisList.removeAll(newImages);
-                item.setImageUrl(imageUrisList);
-                if (newItem) {
-                    createNewItem(item);
-                } else {
-                    onUpdatePressed(item);
-                }
-                if (getActivity() != null) {
-                    HomeFragment homeFragment = new HomeFragment();
-                    ((MainActivity) getActivity()).setFragment(homeFragment);
-                }
-            });
+            if (newImages.size() > 0) {
+                uploadImageToFirebase(newImages, uploaded -> {
+                    imageUrisList.removeAll(newImages);
+                    item.setImageUrl(imageUrisList);
+                    processItem();
+                });
+            } else {
+                processItem();
+            }
         });
         return view;
+    }
+
+    private void processItem() {
+        if (newItem) {
+            createNewItem(item);
+        } else {
+            onUpdatePressed(item);
+        }
+        if (getActivity() != null) {
+            HomeFragment homeFragment = new HomeFragment();
+            ((MainActivity) getActivity()).setFragment(homeFragment);
+        }
     }
 
     public void createNewItem(InventoryItem newItem) {

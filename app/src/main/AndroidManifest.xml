@@ -46,7 +46,6 @@
             android:name=".views.MainActivity"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
-            <capability android:name="actions.intent.GET_BARCODE" />
         </activity>
         <provider
             android:authorities="com.example.softwaresolutionssquad.fileprovider"

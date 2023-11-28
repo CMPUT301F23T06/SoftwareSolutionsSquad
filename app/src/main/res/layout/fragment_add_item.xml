@@ -69,7 +69,7 @@
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter"
-                android:background="@color/white"
+                android:background="@null"
                 android:src="@drawable/scanicon" />
         </LinearLayout>
 
@@ -119,7 +119,7 @@
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter"
-                android:background="@color/white"
+                android:background="@null"
                 android:src="@drawable/scanicon" />
 
         </LinearLayout>
