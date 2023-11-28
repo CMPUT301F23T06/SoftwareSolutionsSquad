@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.example.softwaresolutionssquad.views.MainActivity;
+import com.example.softwaresolutionssquad.R;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;

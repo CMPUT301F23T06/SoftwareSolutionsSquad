@@ -303,6 +303,8 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
                     })
                     .addOnFailureListener(e -> Log.w("DeleteItem", "Error deleting document", e));
         }
+        buttonsLayout.setVisibility(View.GONE);
+
     }
 
     // Method to update total estimated value of InventoryItems
@@ -313,6 +315,10 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
         estimatedValue.setText(String.format(Locale.US, "%.2f", totalSum));
     }
 
+    /***
+     * Takes the selected tags, finds the selected items and adds each tag to each selected item
+     * @param selectedTags
+     */
     @Override
     public void onOkPressed(ArrayList<String> selectedTags) {
         List<InventoryItem> itemsToAddTagsTo = inventoryItems.stream()
@@ -321,6 +327,7 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
 
         itemsToAddTagsTo.forEach(item -> {
             boolean isUpdated = false;
+            item.setSelected(false);
             for (String tag : selectedTags) {
                 if (!item.getTags().contains(tag)) {
                     item.addTag(tag);
@@ -334,6 +341,10 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
         });
     }
 
+    /***
+     * Makes sure to update one item at a time
+     * @param item
+     */
     private void updateItemInFirestore(InventoryItem item) {
         itemsRef.document(item.getDocId()).set(item)
                 .addOnSuccessListener(aVoid -> Log.d("UpdateItem", "DocumentSnapshot successfully updated!"))
