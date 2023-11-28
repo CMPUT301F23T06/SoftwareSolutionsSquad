@@ -2,6 +2,7 @@ package com.example.softwaresolutionssquad.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -141,6 +142,12 @@ public class InventoryItem implements Serializable {
     }
 
     public ArrayList<String> getTags() { return tags; }
+
+    public ArrayList<String> getSortedTags() {
+        ArrayList<String> sortedTags = tags;
+        Collections.sort(sortedTags);
+        return sortedTags;
+    }
 
 
     public void addTag(String tag) {

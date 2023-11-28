@@ -144,29 +144,33 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
         });
 
         createBtn.setOnClickListener(v -> {
-            if (newImages.size() > 0) {
+//            if (newImages.size() > 0) {
                 uploadImageToFirebase(newImages, uploaded -> {
                     imageUrisList.removeAll(newImages);
                     item.setImageUrl(imageUrisList);
-                    processItem();
+                    if (newItem) {
+                        createNewItem(item);
+                    } else {
+                        onUpdatePressed(item);
+                    }
+                    if (getActivity() != null) {
+                        HomeFragment homeFragment = new HomeFragment();
+                        ((MainActivity) getActivity()).setFragment(homeFragment);
+                    }
                 });
-            } else {
-                processItem();
-            }
+//            } else {
+//                if (newItem) {
+//                    createNewItem(item);
+//                } else {
+//                    onUpdatePressed(item);
+//                }
+//                if (getActivity() != null) {
+//                    HomeFragment homeFragment = new HomeFragment();
+//                    ((MainActivity) getActivity()).setFragment(homeFragment);
+//                }
+//            }
         });
         return view;
-    }
-
-    private void processItem() {
-        if (newItem) {
-            createNewItem(item);
-        } else {
-            onUpdatePressed(item);
-        }
-        if (getActivity() != null) {
-            HomeFragment homeFragment = new HomeFragment();
-            ((MainActivity) getActivity()).setFragment(homeFragment);
-        }
     }
 
     public void createNewItem(InventoryItem newItem) {
@@ -284,7 +288,7 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
             });
 
     private void uploadImageToFirebase(ArrayList<String> uriStrings, UploadCompleteListener listener) {
-        if (uriStrings != null) {
+        if (uriStrings != null && uriStrings.size() > 0) {
             // Initialize Firebase Storage with the specific URL
             FirebaseStorage storage = FirebaseStorage.getInstance("gs://softwaresolutionssquad.appspot.com");
             StorageReference storageRef = storage.getReference();
@@ -319,6 +323,8 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
                             // If you want, you can show upload progress here
                         });
             }
+        } else {
+            listener.onUploadComplete(uriStrings);
         }
     }
 

@@ -193,6 +193,7 @@ public class AddItemFragment extends Fragment {
                     newItem = true;
                     // It's a new item
                     itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, new ArrayList<>());
+
                 }
 
             if (getActivity() instanceof MainActivity) {
