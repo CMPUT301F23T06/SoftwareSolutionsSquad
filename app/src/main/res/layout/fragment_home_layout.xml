@@ -170,6 +170,30 @@
         android:layout_height="325dp"
         android:layout_weight="1" />
 
+    <LinearLayout
+        android:id="@+id/buttons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:visibility="gone"> <!-- Set to gone initially -->
+
+        <Button
+            android:id="@+id/delete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/red"
+            android:text="Delete" />
+
+        <Button
+            android:id="@+id/add_tags_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Add Tags" /> <!-- Add margin for spacing -->
+
+    </LinearLayout>
     <!-- New LinearLayout for showing total estimated value -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -177,15 +201,6 @@
         android:orientation="horizontal"
         android:padding="16dp"
         android:gravity="center_vertical">
-
-        <!-- Button for deleting selected items -->
-        <Button
-            android:id="@+id/delete_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Delete"
-            android:layout_marginEnd="16dp"
-            android:visibility="gone" /> <!-- Initially hidden -->
 
         <TextView
             android:id="@+id/total_estimated_value_label"

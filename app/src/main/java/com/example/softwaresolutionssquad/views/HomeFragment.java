@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
@@ -45,15 +44,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import com.example.softwaresolutionssquad.views.AddItemNextFragment;
 
-public class HomeFragment extends Fragment implements  InventoryListAdapter.OnDeleteButtonShowListener  {
+
+public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCheckedItemShowButtonsListener, AddItemTagFragment.OnFragmentInteractionListener {
     private ListView inventoryListView;
     private ArrayList<InventoryItem> inventoryItems;
     private DatabaseController databaseController;
     private InventoryListAdapter inventoryListAdapter;
     private CollectionReference itemsRef;
-    private Button deleteButton;
+    private ArrayList<String> set_of_checked_tags = new ArrayList<>();
 
+    private Button deleteButton, tagBtn;
+    private LinearLayout buttonsLayout;
     private Context context;
     // Buttons used to enable filtering based on date, keyword, make, and tags
     private TextView dateButton, keywordButton, makeButton, tagButton;
@@ -88,6 +91,9 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnDe
         inventoryListView = view.findViewById(R.id.inventory_list_view);
         inventoryListView.setAdapter(inventoryListAdapter);
         updateTotalValue();
+
+        buttonsLayout = view.findViewById(R.id.buttons_layout); // Assign ID to your LinearLayout
+
 
         Spinner spinnerOrder = view.findViewById(R.id.spinner_order); // init Spinner to sort items
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -150,6 +156,17 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnDe
                 }
             }
         });
+        tagBtn = view.findViewById(R.id.add_tags_button);
+
+        tagBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ;      // Implement the deletion logic here
+                AddItemTagFragment addItemTagFragment = new AddItemTagFragment();
+                addItemTagFragment.setListener((AddItemTagFragment.OnFragmentInteractionListener) HomeFragment.this);
+                addItemTagFragment.show(getActivity().getSupportFragmentManager(), "ADD_ITEM_TAG");
+            }
+        });
 
         deleteButton = view.findViewById(R.id.delete_button);
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -159,7 +176,7 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnDe
             }
         });
 
-        inventoryListAdapter.setOnDeleteButtonShowListener(this);       // Set listener on adapter
+        inventoryListAdapter.setOnButtonsShowListener(this);       // Set listener on adapter
 
         // Buttons that trigger the date, keyword, make, and tag filters
         dateButton = view.findViewById(R.id.date_btn);
@@ -260,8 +277,8 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnDe
     }
 
     // Method to show the delete button if any items are selected
-    public void showDeleteButtonIfNeeded() {
-        deleteButton.setVisibility(inventoryItems.stream().anyMatch(InventoryItem::getSelected) ? View.VISIBLE : View.GONE);
+    public void showButtonsIfNeeded() {
+        buttonsLayout.setVisibility(inventoryItems.stream().anyMatch(InventoryItem::getSelected) ? View.VISIBLE : View.GONE);
     }
 
     // Method to delete selected items
@@ -295,4 +312,32 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnDe
                 .sum();
         estimatedValue.setText(String.format(Locale.US, "%.2f", totalSum));
     }
+
+    @Override
+    public void onOkPressed(ArrayList<String> selectedTags) {
+        List<InventoryItem> itemsToAddTagsTo = inventoryItems.stream()
+                .filter(InventoryItem::getSelected)
+                .collect(Collectors.toList());
+
+        itemsToAddTagsTo.forEach(item -> {
+            boolean isUpdated = false;
+            for (String tag : selectedTags) {
+                if (!item.getTags().contains(tag)) {
+                    item.addTag(tag);
+                    isUpdated = true;
+                }
+            }
+
+            if (isUpdated) {
+                updateItemInFirestore(item);
+            }
+        });
+    }
+
+    private void updateItemInFirestore(InventoryItem item) {
+        itemsRef.document(item.getDocId()).set(item)
+                .addOnSuccessListener(aVoid -> Log.d("UpdateItem", "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w("UpdateItem", "Error updating document", e));
+    }
+
 }
