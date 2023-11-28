@@ -106,11 +106,13 @@ public class ItemTest {
         onView(withId(R.id.editTextNumberDecimal)).perform(typeText("999.99"), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.edtCommentTitle)).perform(typeText("Great condition!"), ViewActions.closeSoftKeyboard());
 
-        // Click the Next/Save button to save the item
+        // Click the Next/Save button to move to next the item
         onView(withId(R.id.btnNext)).perform(scrollTo(), click());
-        sleep(1000);
-        onView(withId(R.id.btnCreate)).perform(click());
-        sleep(1000);
+        sleep(2000);
+
+        // Click the Save button to add the item
+        onView(withId(R.id.btnCreate)).perform(scrollTo(), click());
+        sleep(5000);
 
         // Now verify the item was added
         onData(withItemContent(uniqueDescription))
