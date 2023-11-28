@@ -44,19 +44,19 @@ public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
     /**
      * Interface for delete button visibility callback.
      */
-    public interface OnDeleteButtonShowListener {
-        void showDeleteButtonIfNeeded();
+    public interface OnCheckedItemShowButtonsListener {
+        void showButtonsIfNeeded();
     }
 
-    private OnDeleteButtonShowListener onDeleteButtonShowListener;
+    private OnCheckedItemShowButtonsListener OnCheckedItemShowButtonsListener;
 
     /**
      * Sets the delete button show listener.
      *
      * @param listener the listener to set
      */
-    public void setOnDeleteButtonShowListener(OnDeleteButtonShowListener listener) {
-        this.onDeleteButtonShowListener = listener;
+    public void setOnButtonsShowListener(OnCheckedItemShowButtonsListener listener) {
+        this.OnCheckedItemShowButtonsListener = listener;
     }
 
     /**
@@ -97,8 +97,8 @@ public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
             InventoryItem item = getItem(position1);
             if (item != null) {
                 item.setSelected(!item.getSelected());
-                if (onDeleteButtonShowListener != null) {
-                    onDeleteButtonShowListener.showDeleteButtonIfNeeded();
+                if (OnCheckedItemShowButtonsListener != null) {
+                    OnCheckedItemShowButtonsListener.showButtonsIfNeeded();
                 }
             }
         });
