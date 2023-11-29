@@ -50,10 +50,12 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageView;
+        public ImageButton deleteButton; // Add a delete button
 
         public ViewHolder(View view) {
             super(view);
             imageView = view.findViewById(R.id.imageViewItem);
+            deleteButton = view.findViewById(R.id.deleteButton); // Initialize the delete button
         }
     }
 
@@ -74,6 +76,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
             public void onClick(View v) {
                 showFullScreenImage(imageUri);
             }
+        });
+
+        holder.deleteButton.setOnClickListener(v -> {
+            imageUris.remove(position); // Remove the image URI from the list
+            notifyItemRemoved(position); // Notify the adapter of the item removed
+            notifyItemRangeChanged(position, imageUris.size()); // Update the positions of remaining items
+            // Optionally, if you want to delete the image from Firebase Storage as well,
+            // you should call a method here that handles the deletion using Firebase API.
         });
     }
 

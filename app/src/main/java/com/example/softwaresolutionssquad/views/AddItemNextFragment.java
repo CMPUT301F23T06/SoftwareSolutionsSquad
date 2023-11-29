@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -99,9 +100,14 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
 
         imageAdapter = new ImageAdapter(getContext(), imageUrisList);
         attachedImages = view.findViewById(R.id.recyclerViewImages);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        int spanCount = 3; // The number of columns in the grid
+        int spacing = getResources().getDimensionPixelSize(R.dimen.grid_spacing); // The amount of spacing, in pixels, you want
+        boolean includeEdge = true; // Whether to include the edge spacing
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
         attachedImages.setLayoutManager(layoutManager);
+
         attachedImages.setAdapter(imageAdapter);
+        attachedImages.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
         selectImage = view.findViewById(R.id.btnSelectImage);
         takePhoto = view.findViewById(R.id.btnTakePhoto);
