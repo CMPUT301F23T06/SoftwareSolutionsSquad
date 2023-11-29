@@ -19,6 +19,7 @@
         android:text="Add A New Item"
         android:textAlignment="center"
         android:textSize="34sp"
+        android:paddingBottom="25dp"
         android:textStyle="bold" />
 
     <TextView
@@ -64,22 +65,6 @@
         android:textSize="22sp"
         android:textStyle="bold" />
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewImages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/list_item_image"/>
-    </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -101,6 +86,21 @@
             android:backgroundTint="@color/gray_color"
             android:text="Take Photo" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewImages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/list_item_image"/>
+    </LinearLayout>
+
     <!-- Button section at the bottom -->
     <LinearLayout
         android:layout_width="match_parent"
