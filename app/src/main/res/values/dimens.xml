@@ -3,5 +3,6 @@
     <dimen name="fragment_horizontal_margin">16dp</dimen>
     <dimen name="fragment_vertical_margin">16dp</dimen>
     <dimen name="circle_size">50dp</dimen>
+    <dimen name="grid_spacing">8dp</dimen>
 
 </resources>

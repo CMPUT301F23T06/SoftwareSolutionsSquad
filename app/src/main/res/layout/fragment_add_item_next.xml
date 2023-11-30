@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#39CECECE"
     android:orientation="vertical"
     android:padding="16dp">
@@ -14,66 +15,66 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:lineSpacingExtra="8sp"
+        android:paddingBottom="25dp"
         android:text="Add A New Item"
         android:textAlignment="center"
         android:textSize="34sp"
-        android:paddingBottom="25dp"
         android:textStyle="bold" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tags"
-        android:textStyle="bold"
-        android:textSize="22sp"
         android:layout_marginHorizontal="15dp"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="30dp"
+        android:text="Tags"
+        android:textSize="22sp"
+        android:textStyle="bold" />
 
     <!-- Set layout_weight for the GridView to 1 and layout_height to 0dp -->
     <GridView
         android:id="@+id/tagGridView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.6"
-        android:numColumns="3"
-        android:horizontalSpacing="5dp"
-        android:verticalSpacing="5dp"
-        android:layout_marginTop="15dp"
-        android:scrollbars="none"
         android:layout_marginHorizontal="15dp"
-        tools:listitem="@layout/grid_tag"
+        android:layout_marginTop="15dp"
+        android:layout_weight="0.6"
+        android:horizontalSpacing="5dp"
+        android:numColumns="3"
+        android:scrollbars="none"
+        android:verticalSpacing="5dp"
         android:visibility="gone"
-        >
-    </GridView>
+        tools:listitem="@layout/grid_tag"></GridView>
 
     <Button
         android:id="@+id/btnAddTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/gray_color"
         android:layout_marginHorizontal="15dp"
-        android:textSize="12sp"
         android:layout_marginTop="15dp"
-        android:text="Add Tag" />
+        android:backgroundTint="@color/gray_color"
+        android:text="Add Tag"
+        android:textSize="12sp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Images"
-        android:textStyle="bold"
-        android:textSize="22sp"
         android:layout_marginHorizontal="15dp"
-        android:layout_marginTop="50dp" />
+        android:layout_marginTop="50dp"
+        android:text="Images"
+        android:textSize="22sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/btnSelectImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Select Image" />
+
         <Button
             android:id="@+id/btnTakePhoto"
             android:layout_width="wrap_content"
@@ -85,11 +86,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewImages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/list_item_image"/>
     </LinearLayout>
 
     <!-- Button section at the bottom -->
@@ -97,8 +101,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="horizontal"
-        android:gravity="bottom">
+        android:gravity="bottom"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btnBack"
