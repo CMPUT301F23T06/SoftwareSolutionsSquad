@@ -163,6 +163,8 @@ public class ItemTest {
      */
     @After
     public void cleanUp() throws InterruptedException {
+
+        sleep(10000);
         onData(withItemContent(uniqueDescription))
                 .inAdapterView(withId(R.id.inventory_list_view))
                 .onChildView(withId(R.id.checkItem))
