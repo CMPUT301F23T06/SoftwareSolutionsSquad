@@ -6,6 +6,7 @@ import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -19,6 +20,8 @@ import org.junit.runner.RunWith;
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.example.softwaresolutionssquad.views.MainActivity;
 import com.example.softwaresolutionssquad.R;
+import com.example.softwaresolutionssquad.views.MyApp;
+import com.example.softwaresolutionssquad.views.UserViewModel;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
@@ -53,13 +56,18 @@ public class ItemTest {
     public ActivityScenarioRule<MainActivity> activityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
     private String uniqueDescription, makeValue, modelValue;
     private Boolean editing = false;
-
+    private static final String TEST_USER = "UiTestUser";
     /**
      * Sets up the test environment before each test.
      */
     @Before
     public void setUp() throws InterruptedException {
         sleep(2500);
+        activityScenarioRule.getScenario().onActivity(a -> {
+            MyApp myApp = (MyApp) a.getApplication();
+            UserViewModel userViewModel = myApp.getUserViewModel();
+            userViewModel.setUsername(TEST_USER);
+        });
         // Assuming the add button is visible on the MainActivity and has a specific ID
         onView(withId(R.id.navigation_add)).perform(click());
         // We wait until the AddItemFragment is displayed
@@ -101,6 +109,8 @@ public class ItemTest {
         // Click the Next/Save button to save the item
         onView(withId(R.id.btnNext)).perform(scrollTo(), click());
         sleep(1000);
+        onView(withId(R.id.btnCreate)).perform(click());
+        sleep(1000);
 
         // Now verify the item was added
         onData(withItemContent(uniqueDescription))
@@ -136,7 +146,9 @@ public class ItemTest {
 
         // Click the "next" or "save" button to update the item
         onView(withId(R.id.btnNext)).perform(scrollTo(), click());
-        sleep(4000); // It's better to use Espresso's IdlingResource instead of sleep
+        sleep(100); // It's better to use Espresso's IdlingResource instead of sleep
+        onView(withId(R.id.btnCreate)).perform(click());
+        sleep(1000);
 
         // Now verify the item was updated
         onData(withItemContent(uniqueDescription))

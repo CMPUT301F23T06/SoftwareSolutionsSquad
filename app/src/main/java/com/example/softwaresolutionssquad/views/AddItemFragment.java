@@ -85,6 +85,8 @@ public class AddItemFragment extends Fragment {
     private ImageButton scanDescription;
     private ImageButton scanSerial;
 
+    public String currentUser;
+
     public AddItemFragment() {
         // Required empty public constructor
     }
@@ -118,6 +120,9 @@ public class AddItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_item, container, false);
         initializeUiElements(view);
         itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");
+        // Initialize required data
+        MyApp app = (MyApp) requireActivity().getApplication();
+        this.currentUser = app.getUserViewModel().getUsername();
         // Initialize UI elements
         purchaseDateEditText = view.findViewById(R.id.edtPurchaseDate);
         descriptionEditText = view.findViewById(R.id.edtDescription);
@@ -177,6 +182,7 @@ public class AddItemFragment extends Fragment {
 
                 InventoryItem itemToSave;
                 Boolean newItem = false;
+
                 if(currentItem != null) {
                     // Update the existing item's properties
                     currentItem.setPurchaseDate(officialDate);
@@ -192,7 +198,7 @@ public class AddItemFragment extends Fragment {
                 } else {
                     newItem = true;
                     // It's a new item
-                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, new ArrayList<>());
+                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, new ArrayList<>(), currentUser);
 
                 }
 

@@ -28,7 +28,7 @@ public class InventoryItemTest {
     public void setUp() {
         purchaseDate = new Date();
         imageUrl.add("content://com.google.android.apps.photos.contentprovider/-1/1/content%3A%2F%2Fmedia%2Fexternal%2Fimages%2Fmedia%2F1000000093/ORIGINAL/NONE/image%2Fjpeg/564331100");
-        item = new InventoryItem(purchaseDate, description, make, model, serialNumber, estimatedValue, comment, docId, imageUrl);
+        item = new InventoryItem(purchaseDate, description, make, model, serialNumber, estimatedValue, comment, docId, imageUrl, "");
         item.setSelected(isSelected);
     }
 

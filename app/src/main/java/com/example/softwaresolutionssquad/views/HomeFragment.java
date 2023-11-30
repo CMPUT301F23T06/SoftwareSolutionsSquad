@@ -80,6 +80,7 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_layout, container, false);
+        String username = ((MyApp) requireActivity().getApplication()).getUserViewModel().getUsername();
         itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");
         estimatedValue = view.findViewById(R.id.total_estimated_value);
 
@@ -104,7 +105,7 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
         spinnerOrder.setAdapter(adapter);   // adapter for the spinner
 
 
-        itemsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        itemsRef.whereEqualTo("username", username).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {

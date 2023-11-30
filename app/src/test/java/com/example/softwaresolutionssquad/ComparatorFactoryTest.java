@@ -38,9 +38,9 @@ public class ComparatorFactoryTest {
         tagItem2.add("apple");
         tagItem2.add("cat");
         // Creating inventory items with different attributes for testing
-        item1 = new InventoryItem(new Date(1000000000000L), "Laptop", "Dell", "XPS", "12345XYZ", 1200.00, "Office use", tagItem1, "DOC123456", imagesItem1);
-        item2 = new InventoryItem(new Date(1000000002000L), "Monitor", "LG", "Ultra", "98765ZYX", 300.00, "Office use", tagItem2, "DOC654321", imagesItem2);
-        item3 = new InventoryItem(new Date(1000000001000L), "Keyboard", "Logitech", "K120", "11122AAA", 50.00, "Office use", tagItem3, "DOC112233", imagesItem3);
+        item1 = new InventoryItem(new Date(1000000000000L), "Laptop", "Dell", "XPS", "12345XYZ", 1200.00, "Office use", tagItem1, "DOC123456", imagesItem1, "");
+        item2 = new InventoryItem(new Date(1000000002000L), "Monitor", "LG", "Ultra", "98765ZYX", 300.00, "Office use", tagItem2, "DOC654321", imagesItem2, "");
+        item3 = new InventoryItem(new Date(1000000001000L), "Keyboard", "Logitech", "K120", "11122AAA", 50.00, "Office use", tagItem3, "DOC112233", imagesItem3, "");
 
         items = new ArrayList<>();
         Collections.addAll(items, item1, item2, item3);

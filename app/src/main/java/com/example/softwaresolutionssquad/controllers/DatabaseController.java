@@ -41,7 +41,6 @@ public class DatabaseController {
     public void addNewItem(InventoryItem newItem, DatabaseActionListener listener) {
         DocumentReference newDocRef = itemsRef.document();
         newItem.setDocId(newDocRef.getId());
-
         newDocRef.set(newItem)
                 .addOnSuccessListener(aVoid -> {
                     inventoryItems.add(newItem);
