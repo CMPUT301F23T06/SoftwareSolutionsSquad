@@ -65,7 +65,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void getItemCount() {
-        itemsRef.get().addOnCompleteListener(task -> {
+        itemsRef.whereEqualTo("username", userName).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 itemCount = 0;
                 for (QueryDocumentSnapshot _ : task.getResult()) {
