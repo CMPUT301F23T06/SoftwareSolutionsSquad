@@ -98,7 +98,7 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
         tagGrid = view.findViewById(R.id.tagGridView);
         titleTextView = view.findViewById(R.id.itemTitle);
 
-        imageAdapter = new ImageAdapter(getContext(), imageUrisList);
+        imageAdapter = new ImageAdapter(getContext(), imageUrisList, newImages);
         attachedImages = view.findViewById(R.id.recyclerViewImages);
         int spanCount = 3; // The number of columns in the grid
         int spacing = getResources().getDimensionPixelSize(R.dimen.grid_spacing); // The amount of spacing, in pixels, you want
