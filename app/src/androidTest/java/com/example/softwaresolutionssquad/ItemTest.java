@@ -250,9 +250,6 @@ public class ItemTest {
         onView(withId(R.id.btnScanSerial)).perform(click());
         onView(withId(R.id.surfaceView)).check(matches(isDisplayed()));
         onView(withText("Cancel")).perform(click());
-
-        onView(withId(R.id.btnCancel)).perform(click());
-        sleep(1000);
     }
 
     /**
