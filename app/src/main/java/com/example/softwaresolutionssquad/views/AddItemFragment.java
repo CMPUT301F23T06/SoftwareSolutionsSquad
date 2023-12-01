@@ -82,6 +82,10 @@ public class AddItemFragment extends Fragment {
     private final LocalDate currentDate = LocalDate.now();
 
     private StorageReference storageRef;
+    private ImageButton scanDescription;
+    private ImageButton scanSerial;
+
+    public String currentUser;
 
     public AddItemFragment() {
         // Required empty public constructor
@@ -116,6 +120,9 @@ public class AddItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_item, container, false);
         initializeUiElements(view);
         itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");
+        // Initialize required data
+        MyApp app = (MyApp) requireActivity().getApplication();
+        this.currentUser = app.getUserViewModel().getUsername();
         // Initialize UI elements
         purchaseDateEditText = view.findViewById(R.id.edtPurchaseDate);
         descriptionEditText = view.findViewById(R.id.edtDescription);
@@ -128,8 +135,12 @@ public class AddItemFragment extends Fragment {
         cancelButton = view.findViewById(R.id.btnCancel);
         title = view.findViewById(R.id.title);
         storageRef = FirebaseStorage.getInstance().getReference();
+        scanDescription = view.findViewById(R.id.btnScanDescription);
+        scanSerial = view.findViewById(R.id.btnScanSerial);
 
-
+        // Initialize the ScanDescription and ScanSerial buttons
+        scanDescription.setOnClickListener(v -> openScanIntent(descriptionEditText));
+        scanSerial.setOnClickListener(v -> openScanIntent(serialNumberEditText));
 
         // Set an onClickListener for the purchase date EditText to show a date picker
         purchaseDateEditText.setOnClickListener(v -> { showDatePicker(); });
@@ -171,6 +182,7 @@ public class AddItemFragment extends Fragment {
 
                 InventoryItem itemToSave;
                 Boolean newItem = false;
+
                 if(currentItem != null) {
                     // Update the existing item's properties
                     currentItem.setPurchaseDate(officialDate);
@@ -186,7 +198,7 @@ public class AddItemFragment extends Fragment {
                 } else {
                     newItem = true;
                     // It's a new item
-                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, new ArrayList<>());
+                    itemToSave = new InventoryItem(officialDate, description, make, model, serialNumber, official_estimated_value, comm, documentID, new ArrayList<>(), currentUser);
 
                 }
 
@@ -297,5 +309,9 @@ public class AddItemFragment extends Fragment {
         purchaseDateEditText.setText(dateSet.format(dtf));
     }
 
+    private void openScanIntent(EditText textToAutofill) {
+        ScanFragment scanFragment = new ScanFragment(textToAutofill);
+        scanFragment.show(getActivity().getSupportFragmentManager(), "ADD_TAG");
+    }
 
 }

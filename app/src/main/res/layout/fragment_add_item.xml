@@ -52,17 +52,31 @@
             android:text="Brief Description"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/edtDescription"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp" />
+            android:layout_marginBottom="25dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edtDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/btnScanDescription"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="@null"
+                android:src="@drawable/scanicon" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
 
             <EditText
                 android:id="@+id/edtMake"
@@ -88,11 +102,27 @@
             android:text="Serial Number (If Applicable)"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/edtSerialNumber"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp" />
+            android:layout_marginBottom="25dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edtSerialNumber"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ImageButton
+                android:id="@+id/btnScanSerial"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="@null"
+                android:src="@drawable/scanicon" />
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"

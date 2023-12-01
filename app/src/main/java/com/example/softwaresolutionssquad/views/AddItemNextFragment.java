@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,9 +58,9 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
     private Button cancelBtn;
     private Button addTagBtn;
     private TextView titleTextView;
-    private InventoryItem item;
+    private final InventoryItem item;
     private CollectionReference itemsRef;
-    private Boolean newItem;
+    private final Boolean newItem;
     private Button createBtn;
     private GridView tagGrid;
     private ArrayList<String> tags = new ArrayList<>();
@@ -70,7 +71,7 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
     private Uri imageUri;
     String imageUrl;
     private ArrayList<String> imageUrisList;
-    private ArrayList<String> newImages = new ArrayList<>();
+    private final ArrayList<String> newImages = new ArrayList<>();
     ImageAdapter imageAdapter;
 
     public AddItemNextFragment(InventoryItem item, boolean newItem) {
@@ -97,11 +98,16 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
         tagGrid = view.findViewById(R.id.tagGridView);
         titleTextView = view.findViewById(R.id.itemTitle);
 
-        imageAdapter = new ImageAdapter(getContext(), imageUrisList);
+        imageAdapter = new ImageAdapter(getContext(), imageUrisList, newImages);
         attachedImages = view.findViewById(R.id.recyclerViewImages);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        int spanCount = 3; // The number of columns in the grid
+        int spacing = getResources().getDimensionPixelSize(R.dimen.grid_spacing); // The amount of spacing, in pixels, you want
+        boolean includeEdge = true; // Whether to include the edge spacing
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
         attachedImages.setLayoutManager(layoutManager);
+
         attachedImages.setAdapter(imageAdapter);
+        attachedImages.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
         selectImage = view.findViewById(R.id.btnSelectImage);
         takePhoto = view.findViewById(R.id.btnTakePhoto);

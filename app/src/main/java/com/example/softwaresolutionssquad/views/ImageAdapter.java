@@ -34,8 +34,9 @@ import java.util.Locale;
  * Extends ArrayAdapter to leverage its functionality for item management and view recycling.
  */
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
-    private Context context;
-    private ArrayList<String> imageUris;
+    private final Context context;
+    private final ArrayList<String> imageUris;
+    private final ArrayList<String> newImages;
 
     /**
      * Constructor for InventoryListAdapter.
@@ -43,17 +44,20 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
      * @param context the current context (Activity, Application, etc)
      * @param imageUris the data objects to represent in the ListView
      */
-    public ImageAdapter(Context context, ArrayList<String> imageUris) {
+    public ImageAdapter(Context context, ArrayList<String> imageUris, ArrayList<String> newImages) {
         this.context = context;
         this.imageUris = imageUris;
+        this.newImages = newImages;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageView;
+        public ImageButton deleteButton; // Add a delete button
 
         public ViewHolder(View view) {
             super(view);
             imageView = view.findViewById(R.id.imageViewItem);
+            deleteButton = view.findViewById(R.id.deleteButton); // Initialize the delete button
         }
     }
 
@@ -74,6 +78,16 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
             public void onClick(View v) {
                 showFullScreenImage(imageUri);
             }
+        });
+
+        holder.deleteButton.setOnClickListener(v -> {
+            System.err.println(imageUris);
+            System.err.println(newImages);
+            newImages.remove(imageUris.get(position));
+            imageUris.remove(position); // Remove the image URI from the list
+//            notifyItemRemoved(position); // Notify the adapter of the item removed
+//            notifyItemRangeChanged(position, imageUris.size());
+            notifyDataSetChanged();
         });
     }
 

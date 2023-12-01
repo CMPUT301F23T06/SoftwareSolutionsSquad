@@ -18,9 +18,11 @@ public class InventoryItem implements Serializable {
     private String serialNumber;
     private double estimatedValue;
     private String comment;
-    private ArrayList<String> tags;
+    private final ArrayList<String> tags;
     private String docId;
     private ArrayList<String> imageUrl;
+    // only used to include username when adding item to database
+    private String username;
     private boolean isSelected;
 
     /**
@@ -35,8 +37,8 @@ public class InventoryItem implements Serializable {
      * @param comment        additional comments about the item
      * @param docId          document identifier for the item
      */
-    public InventoryItem(Date purchaseDate, String description, String make, String model,
-                         String serialNumber, double estimatedValue, String comment, String docId, ArrayList<String> imageUrl) {
+    public InventoryItem(Date purchaseDate, String description, String make, String model, String serialNumber,
+                         double estimatedValue, String comment, String docId, ArrayList<String> imageUrl, String username) {
         this.purchaseDate = purchaseDate;
         this.description = description;
         this.make = make;
@@ -47,6 +49,7 @@ public class InventoryItem implements Serializable {
         this.tags = new ArrayList<String>();
         this.docId = docId;
         this.imageUrl = imageUrl;
+        this.username = username;
     }
 
     /**
@@ -62,8 +65,8 @@ public class InventoryItem implements Serializable {
      * @param tags           array list of tags on the item
      * @param docId          document identifier for the item
      */
-    public InventoryItem(Date purchaseDate, String description, String make, String model, String serialNumber,
-             double estimatedValue, String comment, ArrayList<String> tags, String docId, ArrayList<String> imageUrl) {
+    public InventoryItem(Date purchaseDate, String description, String make, String model, String serialNumber, double estimatedValue,
+                         String comment, ArrayList<String> tags, String docId, ArrayList<String> imageUrl, String username) {
         this.purchaseDate = purchaseDate;
         this.description = description;
         this.make = make;
@@ -74,6 +77,7 @@ public class InventoryItem implements Serializable {
         this.tags = tags;
         this.docId = docId;
         this.imageUrl = imageUrl;
+        this.username = username;
     }
 
     /**
@@ -165,6 +169,10 @@ public class InventoryItem implements Serializable {
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
     }
+
+    public void setUsername(String username) { this.username = username; }
+
+    public String getUsername() { return username; }
 
     public String getDocId() {
         return docId;

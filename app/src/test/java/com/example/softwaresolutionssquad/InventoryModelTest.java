@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -28,9 +29,9 @@ public class InventoryModelTest {
         imagesItem3.add("content://com.google.android.apps.photos.contentprovider/-1/1/content%3A%2F%2Fmedia%2Fexternal%2Fimages%2Fmedia%2F1000000093/ORIGINAL/NONE/image%2Fjpeg/564331502");
 
         // Creating sample inventory items
-        item1 = new InventoryItem(new Date(1000000000000L), "Laptop", "Dell", "XPS", "12345XYZ", 1200.00, "Office use", "DOC123456", imagesItem1);
-        item2 = new InventoryItem(new Date(1000000002000L), "Monitor", "LG", "Ultra", "98765ZYX", 300.00, "Office use", "DOC654321", imagesItem2);
-        item3 = new InventoryItem(new Date(1000000001000L), "Keyboard", "Logitech", "K120", "11122AAA", 50.00, "Office use", "DOC112233", imagesItem3);
+        item1 = new InventoryItem(new Date(1000000000000L), "Laptop", "Dell", "XPS", "12345XYZ", 1200.00, "Office use", "DOC123456", imagesItem1, "");
+        item2 = new InventoryItem(new Date(1000000002000L), "Monitor", "LG", "Ultra", "98765ZYX", 300.00, "Office use", "DOC654321", imagesItem2, "");
+        item3 = new InventoryItem(new Date(1000000001000L), "Keyboard", "Logitech", "K120", "11122AAA", 50.00, "Office use", "DOC112233", imagesItem3, "");
 
         ArrayList<InventoryItem> items = new ArrayList<>(Arrays.asList(item1, item2, item3));
         inventoryModel = new InventoryModel(items);
@@ -68,7 +69,7 @@ public class InventoryModelTest {
 
     @Test
     public void testRemoveItems() {
-        inventoryModel.removeItems(Arrays.asList(item2));
+        inventoryModel.removeItems(Collections.singletonList(item2));
         assertFalse(inventoryModel.getInventoryItems().contains(item2));
     }
 

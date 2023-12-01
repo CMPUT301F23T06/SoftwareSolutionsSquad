@@ -21,14 +21,14 @@ public class InventoryItemTest {
     private final double estimatedValue = 1200.00;
     private final String comment = "Office use";
     private final String docId = "DOC123456";
-    private ArrayList<String> imageUrl = new ArrayList<>();
+    private final ArrayList<String> imageUrl = new ArrayList<>();
     private final boolean isSelected = true;
 
     @Before
     public void setUp() {
         purchaseDate = new Date();
         imageUrl.add("content://com.google.android.apps.photos.contentprovider/-1/1/content%3A%2F%2Fmedia%2Fexternal%2Fimages%2Fmedia%2F1000000093/ORIGINAL/NONE/image%2Fjpeg/564331100");
-        item = new InventoryItem(purchaseDate, description, make, model, serialNumber, estimatedValue, comment, docId, imageUrl);
+        item = new InventoryItem(purchaseDate, description, make, model, serialNumber, estimatedValue, comment, docId, imageUrl, "");
         item.setSelected(isSelected);
     }
 
