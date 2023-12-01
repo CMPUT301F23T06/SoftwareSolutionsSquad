@@ -17,6 +17,7 @@ import static org.hamcrest.Matchers.allOf;
 import static java.lang.Thread.sleep;
 import static kotlin.jvm.internal.Intrinsics.checkNotNull;
 
+import android.Manifest;
 import android.view.View;
 import android.widget.DatePicker;
 
@@ -53,6 +54,8 @@ import java.time.LocalDate;
 @RunWith(AndroidJUnit4.class)
 public class ItemTest {
 
+    @Rule
+    public GrantPermissionRule permissionCamera = GrantPermissionRule.grant(Manifest.permission.CAMERA);
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
     private String uniqueDescription, makeValue, modelValue;
@@ -236,6 +239,20 @@ public class ItemTest {
 
         // Reset the flag
         isEditTest = false;
+    }
+
+    @Test
+    public void testScanners() throws InterruptedException {
+        onView(withId(R.id.btnScanDescription)).perform(click());
+        onView(withId(R.id.surfaceView)).check(matches(isDisplayed()));
+        onView(withText("Cancel")).perform(click());
+
+        onView(withId(R.id.btnScanSerial)).perform(click());
+        onView(withId(R.id.surfaceView)).check(matches(isDisplayed()));
+        onView(withText("Cancel")).perform(click());
+
+        onView(withId(R.id.btnCancel)).perform(click());
+        sleep(1000);
     }
 
     /**
