@@ -27,6 +27,9 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.Intents.intending;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
@@ -37,6 +40,12 @@ import static org.hamcrest.Matchers.allOf;
 import static java.lang.Thread.sleep;
 import static kotlin.jvm.internal.Intrinsics.checkNotNull;
 
+import android.app.Activity;
+import android.app.Instrumentation;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.DatePicker;
 
@@ -100,6 +109,14 @@ public class ItemTest {
 
         // Click the Next/Save button to save the item
         onView(withId(R.id.btnNext)).perform(scrollTo(), click());
+
+        intending(hasAction(Intent.ACTION_PICK)).respondWith(getGalleryPickResult());
+        onView(withId(R.id.btnSelectImage)).perform(click());
+
+        intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(getCameraCaptureResult());
+        onView(withId(R.id.btnTakePhoto)).perform(click());
+
+        onView(withId(R.id.btnCreate)).perform(scrollTo(), click());
         sleep(1000);
 
         // Now verify the item was added
@@ -136,6 +153,14 @@ public class ItemTest {
 
         // Click the "next" or "save" button to update the item
         onView(withId(R.id.btnNext)).perform(scrollTo(), click());
+
+        intending(hasAction(Intent.ACTION_PICK)).respondWith(getGalleryPickResult());
+        onView(withId(R.id.btnSelectImage)).perform(click());
+
+        intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(getCameraCaptureResult());
+        onView(withId(R.id.btnTakePhoto)).perform(click());
+
+        onView(withId(R.id.btnCreate)).perform(scrollTo(), click());
         sleep(4000); // It's better to use Espresso's IdlingResource instead of sleep
 
         // Now verify the item was updated
@@ -202,5 +227,21 @@ public class ItemTest {
                 datePicker.updateDate(year, monthOfYear - 1, dayOfMonth);
             }
         };
+    }
+
+    private Instrumentation.ActivityResult getGalleryPickResult() {
+        // Create a mock Uri that represents the image that would be selected
+        Uri selectedImageUri = Uri.parse("content://com.google.android.apps.photos.contentprovider/-1/1/content%3A%2F%2Fmedia%2Fexternal%2Fimages%2Fmedia%2F1000000093/ORIGINAL/NONE/image%2Fjpeg/564331100");
+        Intent resultData = new Intent();
+        resultData.setData(selectedImageUri);
+        return new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData);
+    }
+
+    private Instrumentation.ActivityResult getCameraCaptureResult() {
+        // Create a mock Bitmap or Uri as the camera output
+        Uri uri = Uri.parse("content://com.google.android.apps.photos.contentprovider/-1/1/content%3A%2F%2Fmedia%2Fexternal%2Fimages%2Fmedia%2F1000000093/ORIGINAL/NONE/image%2Fjpeg/564331501");
+        Intent resultData = new Intent();
+        resultData.putExtra("data", uri);
+        return new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData);
     }
 }
