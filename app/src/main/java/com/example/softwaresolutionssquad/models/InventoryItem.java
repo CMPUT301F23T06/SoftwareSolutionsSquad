@@ -18,7 +18,7 @@ public class InventoryItem implements Serializable {
     private String serialNumber;
     private double estimatedValue;
     private String comment;
-    private ArrayList<String> tags;
+    private final ArrayList<String> tags;
     private String docId;
     private ArrayList<String> imageUrl;
     // only used to include username when adding item to database

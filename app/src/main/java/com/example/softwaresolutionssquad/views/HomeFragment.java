@@ -1,7 +1,6 @@
 package com.example.softwaresolutionssquad.views;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,11 +13,11 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -27,24 +26,20 @@ import com.example.softwaresolutionssquad.controllers.DatabaseController;
 import com.example.softwaresolutionssquad.controllers.DateFilterController;
 import com.example.softwaresolutionssquad.controllers.KeywordFilterController;
 import com.example.softwaresolutionssquad.controllers.MakeFilterController;
-import com.example.softwaresolutionssquad.controllers.TagFilterController;
 import com.example.softwaresolutionssquad.controllers.SortController;
+import com.example.softwaresolutionssquad.controllers.TagFilterController;
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import com.example.softwaresolutionssquad.views.AddItemNextFragment;
 
 
 public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCheckedItemShowButtonsListener, AddItemTagFragment.OnFragmentInteractionListener {
@@ -53,9 +48,11 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
     private DatabaseController databaseController;
     private InventoryListAdapter inventoryListAdapter;
     private CollectionReference itemsRef;
-    private ArrayList<String> set_of_checked_tags = new ArrayList<>();
+    private Button deleteButton;
+    private ProgressBar loadingSpinner;
+    private final ArrayList<String> set_of_checked_tags = new ArrayList<>();
 
-    private Button deleteButton, tagBtn;
+    private Button tagBtn;
     private LinearLayout buttonsLayout;
     private Context context;
     // Buttons used to enable filtering based on date, keyword, make, and tags
@@ -84,6 +81,9 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
         itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");
         estimatedValue = view.findViewById(R.id.total_estimated_value);
 
+        loadingSpinner = view.findViewById(R.id.loading_spinner);
+        loadingSpinner.setVisibility(View.VISIBLE);
+
         inventoryItems = new ArrayList<>();     // Initialize the ArrayList for inventory items
 
 
@@ -110,22 +110,22 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
                     Log.e("FireStore", error.toString());
-                    return;
+                    loadingSpinner.setVisibility(View.GONE); // Hide spinner on error
                 } else {
                     inventoryItems.clear();
                     for (QueryDocumentSnapshot doc: value) {
-                        Log.d("item", doc.getString("docId"));
                         inventoryItems.add(doc.toObject(InventoryItem.class));
                     }
                     updateTotalValue();
                     inventoryListAdapter.notifyDataSetChanged();
+                    loadingSpinner.setVisibility(View.GONE); // Hide spinner after loading data
                 }
             }
         });
 
         // Set the listener for when an item is selected in the Spinner
         spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            SortController sortController = new SortController(inventoryListAdapter, inventoryItems);
+            final SortController sortController = new SortController(inventoryListAdapter, inventoryItems);
 
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -162,9 +162,9 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
         tagBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ;      // Implement the deletion logic here
+                // Implement the deletion logic here
                 AddItemTagFragment addItemTagFragment = new AddItemTagFragment();
-                addItemTagFragment.setListener((AddItemTagFragment.OnFragmentInteractionListener) HomeFragment.this);
+                addItemTagFragment.setListener(HomeFragment.this);
                 addItemTagFragment.show(getActivity().getSupportFragmentManager(), "ADD_ITEM_TAG");
             }
         });

@@ -34,9 +34,9 @@ import java.util.Locale;
  * Extends ArrayAdapter to leverage its functionality for item management and view recycling.
  */
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
-    private Context context;
-    private ArrayList<String> imageUris;
-    private ArrayList<String> newImages;
+    private final Context context;
+    private final ArrayList<String> imageUris;
+    private final ArrayList<String> newImages;
 
     /**
      * Constructor for InventoryListAdapter.

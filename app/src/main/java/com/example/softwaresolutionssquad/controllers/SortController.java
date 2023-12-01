@@ -12,8 +12,8 @@ import java.util.List;
  * Controller for handling sorting operations on the inventory list.
  */
 public class SortController {
-    private InventoryListAdapter inventoryListAdapter;
-    private List<InventoryItem> inventoryItems;
+    private final InventoryListAdapter inventoryListAdapter;
+    private final List<InventoryItem> inventoryItems;
 
     /**
      * Constructs a SortController with the specified adapter and inventory items.

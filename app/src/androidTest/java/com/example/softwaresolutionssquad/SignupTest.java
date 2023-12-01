@@ -2,6 +2,7 @@ package com.example.softwaresolutionssquad;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -35,7 +36,7 @@ import java.util.Map;
 @RunWith(AndroidJUnit4.class)
 public class SignupTest {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final String TESTUSER = "UiTestUser";
+    private final String TESTUSER = "UiTestUser@test.com";
     private final String PASSWORD = "UiTestPass";
     private final Map<String, Object> userData = new HashMap() {
         { put("username", TESTUSER); put("password", Utils.hashPassword(PASSWORD)); put("displayName", "UI Test"); }
@@ -62,7 +63,7 @@ public class SignupTest {
         Intents.init();
         // Act
         onView(withId(R.id.signup_page_name_edittext)).perform(typeText("TestName"));
-        onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD));
+        onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD), closeSoftKeyboard());
         onView(withId(R.id.signup_page_signup_button)).perform(click());
         // Assert
         onView(withId(R.id.signup_page_error_message))
@@ -77,8 +78,7 @@ public class SignupTest {
         Intents.init();
         // Act
         onView(withId(R.id.signup_page_name_edittext)).perform(typeText("TestName"));
-        onView(withId(R.id.signup_page_signup_email_edittext)).perform(typeText("test@example.com"));
-        // No password input
+        onView(withId(R.id.signup_page_signup_email_edittext)).perform(typeText("test@example.com"), closeSoftKeyboard());
         onView(withId(R.id.signup_page_signup_button)).perform(click());
         // Assert
         onView(withId(R.id.signup_page_error_message))
@@ -93,7 +93,7 @@ public class SignupTest {
         Intents.init();
         // Act
         onView(withId(R.id.signup_page_name_edittext)).perform(typeText("TestName"));
-        onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD));
+        onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD), closeSoftKeyboard());
         // No email (username) input
         onView(withId(R.id.signup_page_signup_button)).perform(click());
         // Assert
@@ -104,16 +104,17 @@ public class SignupTest {
     }
 
     @Test
-    public void TestExistingUsername() {
+    public void TestExistingUsername() throws InterruptedException {
         // Arrange
         DocumentReference userRef = db.collection("User").document(TESTUSER);
         userRef.set(userData); // Pre-populate the database with the test user
         Intents.init();
         // Act
-        onView(withId(R.id.signup_page_name_edittext)).perform(typeText("TestName"));
-        onView(withId(R.id.signup_page_signup_email_edittext)).perform(typeText(TESTUSER));
-        onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD));
+        onView(withId(R.id.signup_page_name_edittext)).perform(typeText("TestName"), closeSoftKeyboard());
+        onView(withId(R.id.signup_page_signup_email_edittext)).perform(typeText(TESTUSER), closeSoftKeyboard());
+        onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD), closeSoftKeyboard());
         onView(withId(R.id.signup_page_signup_button)).perform(click());
+        Thread.sleep(2000);
         // Assert
         onView(withId(R.id.signup_page_error_message))
                 .check(matches(withText("Username already exists. Please try a different one.")));
@@ -130,7 +131,7 @@ public class SignupTest {
             // Act
             onView(withId(R.id.signup_page_name_edittext)).perform(typeText(TESTUSER));
             onView(withId(R.id.signup_page_signup_email_edittext)).perform(typeText(TESTUSER));
-            onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD));
+            onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD), closeSoftKeyboard());
             onView(withId(R.id.signup_page_signup_button)).perform(click());
             // Assert
             // why sleep? LoginActivity is not instantaneous as it adds user to database

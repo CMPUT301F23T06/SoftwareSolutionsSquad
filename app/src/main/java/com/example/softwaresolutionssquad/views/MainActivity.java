@@ -1,12 +1,9 @@
 package com.example.softwaresolutionssquad.views;
 
-import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-
-import android.view.MenuItem;
-
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -78,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     public void setFragment(Fragment fragment) {
         FrameLayout fragmentContainer = findViewById(R.id.frag_container);
         fragmentContainer.setVisibility(View.VISIBLE);
@@ -90,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
 
     }
-
 
 
 }

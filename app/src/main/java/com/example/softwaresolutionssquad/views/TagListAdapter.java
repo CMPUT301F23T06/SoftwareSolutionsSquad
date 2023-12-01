@@ -18,8 +18,8 @@ import java.util.ArrayList;
 
 public class TagListAdapter extends ArrayAdapter<String> {
 
-    private ArrayList<String> tags;
-    private Context context;
+    private final ArrayList<String> tags;
+    private final Context context;
 
     public TagListAdapter(Context context, ArrayList<String> tags) {
         super(context, 0, tags);

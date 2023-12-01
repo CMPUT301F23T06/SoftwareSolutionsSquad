@@ -209,7 +209,6 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
                     Log.e("FireStore", error.toString());
-                    return;
                 } else {
                     tagDataList.clear();
                     originalTagDataList.clear();

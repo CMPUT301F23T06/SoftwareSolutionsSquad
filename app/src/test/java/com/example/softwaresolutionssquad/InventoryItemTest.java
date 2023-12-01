@@ -21,7 +21,7 @@ public class InventoryItemTest {
     private final double estimatedValue = 1200.00;
     private final String comment = "Office use";
     private final String docId = "DOC123456";
-    private ArrayList<String> imageUrl = new ArrayList<>();
+    private final ArrayList<String> imageUrl = new ArrayList<>();
     private final boolean isSelected = true;
 
     @Before

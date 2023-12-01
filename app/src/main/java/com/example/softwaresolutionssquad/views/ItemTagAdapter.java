@@ -16,8 +16,8 @@ import com.example.softwaresolutionssquad.R;
 import java.util.ArrayList;
 
 public class ItemTagAdapter extends ArrayAdapter<String> {
-    private ArrayList<String> tags;
-    private Context context;
+    private final ArrayList<String> tags;
+    private final Context context;
     public ItemTagAdapter(Context context, ArrayList<String> tags) {
         super(context, 0, tags);
         this.context = context;
