@@ -36,6 +36,7 @@ import java.util.Locale;
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
     private Context context;
     private ArrayList<String> imageUris;
+    private ArrayList<String> newImages;
 
     /**
      * Constructor for InventoryListAdapter.
@@ -43,9 +44,10 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
      * @param context the current context (Activity, Application, etc)
      * @param imageUris the data objects to represent in the ListView
      */
-    public ImageAdapter(Context context, ArrayList<String> imageUris) {
+    public ImageAdapter(Context context, ArrayList<String> imageUris, ArrayList<String> newImages) {
         this.context = context;
         this.imageUris = imageUris;
+        this.newImages = newImages;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -79,11 +81,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         });
 
         holder.deleteButton.setOnClickListener(v -> {
+            System.err.println(imageUris);
+            System.err.println(newImages);
+            newImages.remove(imageUris.get(position));
             imageUris.remove(position); // Remove the image URI from the list
-            notifyItemRemoved(position); // Notify the adapter of the item removed
-            notifyItemRangeChanged(position, imageUris.size()); // Update the positions of remaining items
-            // Optionally, if you want to delete the image from Firebase Storage as well,
-            // you should call a method here that handles the deletion using Firebase API.
+//            notifyItemRemoved(position); // Notify the adapter of the item removed
+//            notifyItemRangeChanged(position, imageUris.size());
+            notifyDataSetChanged();
         });
     }
 
