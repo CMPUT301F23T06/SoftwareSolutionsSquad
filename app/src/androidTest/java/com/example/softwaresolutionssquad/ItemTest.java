@@ -55,6 +55,10 @@ public class ItemTest {
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
     private String uniqueDescription, makeValue, modelValue;
+
+    // Flag to track if cleanUp is called from testEditItem
+    private boolean isEditTest = false;
+
     private Boolean editing = false;
     private static final String TEST_USER = "UiTestUser";
     /**
@@ -108,16 +112,22 @@ public class ItemTest {
 
         // Click the Next/Save button to move to next the item
         onView(withId(R.id.btnNext)).perform(scrollTo(), click());
-        sleep(2000);
+        sleep(1000);
 
         // Click the Save button to add the item
-        onView(withId(R.id.btnCreate)).perform(scrollTo(), click());
-        sleep(5000);
+        onView(withId(R.id.btnCreate)).perform(click());
 
         // Now verify the item was added
         onData(withItemContent(uniqueDescription))
                 .inAdapterView(withId(R.id.inventory_list_view))
                 .check(matches(isDisplayed()));
+
+        // Call cleanUp specifically for AddItem test
+        // Only call cleanUp if not in edit test
+        if (!isEditTest) {
+            cleanUp(false);
+        }
+
     }
 
     /**
@@ -125,15 +135,17 @@ public class ItemTest {
      */
     @Test
     public void testEditItem() throws InterruptedException {
+        // Set flag to indicate this is the EditItem test
+        isEditTest = true;
+
         // First add a new item
         testAddNewItem();
 
-        // Click on the item in the list to edit
+        // Find the newly added item by its unique description and click on it to edit
         onData(withItemContent(uniqueDescription))
                 .inAdapterView(withId(R.id.inventory_list_view))
                 .perform(click());
 
-        editing = true;
         makeValue = "Fuji";
         modelValue = "F20";
 
@@ -146,34 +158,43 @@ public class ItemTest {
         onView(withId(R.id.editTextNumberDecimal)).perform(clearText(), typeText("100"), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.edtCommentTitle)).perform(clearText(), typeText("Bad condition!"), ViewActions.closeSoftKeyboard());
 
-        // Click the "next" or "save" button to update the item
+        // Click the Next/Save button to move to next the item
         onView(withId(R.id.btnNext)).perform(scrollTo(), click());
-        sleep(100); // It's better to use Espresso's IdlingResource instead of sleep
-        onView(withId(R.id.btnCreate)).perform(click());
         sleep(1000);
 
-        // Now verify the item was updated
+        // Click the Save button to add the item
+        onView(withId(R.id.btnCreate)).perform(click());
+
+        // Now verify the item was added
         onData(withItemContent(uniqueDescription))
                 .inAdapterView(withId(R.id.inventory_list_view))
                 .check(matches(isDisplayed()));
+
+        // Call cleanUp specifically for EditItem test
+        cleanUp(true);
+
+        // Reset the flag
+        isEditTest = false;
     }
 
     /**
      * Cleans up after each test.
      */
-    @After
-    public void cleanUp() throws InterruptedException {
+//    @After
+    public void cleanUp(Boolean isFromEditTest) throws InterruptedException {
 
-        sleep(10000);
-        onData(withItemContent(uniqueDescription))
-                .inAdapterView(withId(R.id.inventory_list_view))
-                .onChildView(withId(R.id.checkItem))
-                .perform(click());
+        if (!isFromEditTest || (isFromEditTest && isEditTest)) {
+            sleep(10000);
+            onData(withItemContent(uniqueDescription))
+                    .inAdapterView(withId(R.id.inventory_list_view))
+                    .onChildView(withId(R.id.checkItem))
+                    .perform(click());
 
-        sleep(1500);
+            sleep(1500);
 
-        // Click the delete button to delete the item
-        onView(withId(R.id.delete_button)).perform(click());
+            // Click the delete button to delete the item
+            onView(withId(R.id.delete_button)).perform(click());
+        }
     }
 
     // filtering, date, keyword, model, make tests in progress
