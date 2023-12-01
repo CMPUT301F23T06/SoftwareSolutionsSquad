@@ -58,7 +58,7 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
     private ProgressBar loadingSpinner;
     private ArrayList<String> set_of_checked_tags = new ArrayList<>();
 
-    private Button deleteButton, tagBtn;
+    private Button tagBtn;
     private LinearLayout buttonsLayout;
     private Context context;
     // Buttons used to enable filtering based on date, keyword, make, and tags
