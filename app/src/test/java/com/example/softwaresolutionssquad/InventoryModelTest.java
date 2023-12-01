@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -68,7 +69,7 @@ public class InventoryModelTest {
 
     @Test
     public void testRemoveItems() {
-        inventoryModel.removeItems(Arrays.asList(item2));
+        inventoryModel.removeItems(Collections.singletonList(item2));
         assertFalse(inventoryModel.getInventoryItems().contains(item2));
     }
 

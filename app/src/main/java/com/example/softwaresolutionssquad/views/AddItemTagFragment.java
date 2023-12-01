@@ -39,7 +39,7 @@ public class AddItemTagFragment extends DialogFragment {
         }
 
         public void setListener(OnFragmentInteractionListener listener) {
-                this.listener = (OnFragmentInteractionListener) listener;
+                this.listener = listener;
         }
 
         @Nullable

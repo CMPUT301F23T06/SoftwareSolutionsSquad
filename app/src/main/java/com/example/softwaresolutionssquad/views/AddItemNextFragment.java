@@ -58,9 +58,9 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
     private Button cancelBtn;
     private Button addTagBtn;
     private TextView titleTextView;
-    private InventoryItem item;
+    private final InventoryItem item;
     private CollectionReference itemsRef;
-    private Boolean newItem;
+    private final Boolean newItem;
     private Button createBtn;
     private GridView tagGrid;
     private ArrayList<String> tags = new ArrayList<>();
@@ -71,7 +71,7 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
     private Uri imageUri;
     String imageUrl;
     private ArrayList<String> imageUrisList;
-    private ArrayList<String> newImages = new ArrayList<>();
+    private final ArrayList<String> newImages = new ArrayList<>();
     ImageAdapter imageAdapter;
 
     public AddItemNextFragment(InventoryItem item, boolean newItem) {
