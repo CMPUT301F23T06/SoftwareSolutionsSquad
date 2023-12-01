@@ -111,10 +111,10 @@ public class ItemTest {
         onView(withId(R.id.btnNext)).perform(scrollTo(), click());
 
         intending(hasAction(Intent.ACTION_PICK)).respondWith(getGalleryPickResult());
-        onView(withId(R.id.btnSelectImage)).perform(click());
+        onView(withId(R.id.btnSelectImage)).perform(scrollTo(), click());
 
         intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(getCameraCaptureResult());
-        onView(withId(R.id.btnTakePhoto)).perform(click());
+        onView(withId(R.id.btnTakePhoto)).perform(scrollTo(), click());
 
         onView(withId(R.id.btnCreate)).perform(scrollTo(), click());
         sleep(1000);
