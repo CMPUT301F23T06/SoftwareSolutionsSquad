@@ -7,6 +7,14 @@ import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObject2;
+import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.UiScrollable;
+import androidx.test.uiautomator.UiSelector;
+import androidx.test.uiautomator.Until;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -30,20 +38,34 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.intending;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.contains;
 
 import static java.lang.Thread.sleep;
 import static kotlin.jvm.internal.Intrinsics.checkNotNull;
 
+import android.app.Activity;
+import android.app.Instrumentation;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 
 /**
@@ -57,6 +79,7 @@ public class ItemTest {
     private String uniqueDescription, makeValue, modelValue;
     private Boolean editing = false;
     private static final String TEST_USER = "UiTestUser";
+    UiDevice device;
     /**
      * Sets up the test environment before each test.
      */
@@ -79,7 +102,7 @@ public class ItemTest {
      */
 
     @Test
-    public void testAddNewItem() throws InterruptedException {
+    public void testAddNewItem() throws InterruptedException, UiObjectNotFoundException {
         // Assume we have a unique description for each test run, for example using a timestamp
         uniqueDescription = "New Camera " + System.currentTimeMillis();
         makeValue = "Canon";
@@ -109,6 +132,23 @@ public class ItemTest {
         // Click the Next/Save button to save the item
         onView(withId(R.id.btnNext)).perform(scrollTo(), click());
         sleep(1000);
+
+        device = UiDevice.getInstance(getInstrumentation());
+
+        onView(withId(R.id.btnSelectImage)).perform(click());
+        sleep(1000);
+
+        UiObject picturesButton = device.findObject(new UiSelector().textContains("Pictures"));
+        picturesButton.click();
+        sleep(1000);
+
+        UiObject image = device.findObject(new UiSelector().textContains("Today"));
+        image.click();
+        sleep(1000);
+
+        UiObject doneButton = device.findObject(new UiSelector().textContains("Done")); // Adjust the text if needed
+        doneButton.click();
+
         onView(withId(R.id.btnCreate)).perform(click());
         sleep(1000);
 
@@ -122,7 +162,7 @@ public class ItemTest {
      * Tests editing an existing item in the inventory.
      */
     @Test
-    public void testEditItem() throws InterruptedException {
+    public void testEditItem() throws InterruptedException, UiObjectNotFoundException {
         // First add a new item
         testAddNewItem();
 
