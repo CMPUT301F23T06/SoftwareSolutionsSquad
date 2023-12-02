@@ -251,6 +251,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:backgroundTint="@color/button_blue_color"
             android:text="Add Tags" /> <!-- Add margin for spacing -->
 
     </LinearLayout>
@@ -275,6 +276,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="$0.00"
+            android:textColor="@color/green"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 

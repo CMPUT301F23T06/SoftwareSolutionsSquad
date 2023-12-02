@@ -3,6 +3,7 @@ package com.example.softwaresolutionssquad.controllers;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -171,6 +172,10 @@ public class TagFilterController {
     public void toggleTagFilterVisibility() {
         if (tagFilter.getVisibility() == View.GONE) {
             tagFilter.setVisibility(View.VISIBLE);
+            tagButton.setTextColor(Color.WHITE);
+            keywordButton.setTextColor(Color.BLACK);
+            dateButton.setTextColor(Color.BLACK);
+            makeButton.setTextColor(Color.BLACK);
             ViewCompat.setBackgroundTintList(keywordButton, null);
             ViewCompat.setBackgroundTintList(dateButton, null);
             ViewCompat.setBackgroundTintList(makeButton, null);
@@ -179,6 +184,7 @@ public class TagFilterController {
             tagsTextView.setText("");
             selectedTagsIndices.clear();
         } else {
+            tagButton.setTextColor(Color.BLACK);
             tagFilter.setVisibility(View.GONE);
             ViewCompat.setBackgroundTintList(tagButton, null);
         }
