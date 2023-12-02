@@ -3,6 +3,7 @@ package com.example.softwaresolutionssquad.controllers;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -142,7 +143,7 @@ public class DateFilterController {
         };
 
         LocalDate setDate = LocalDate.parse(selectedDateEditText.getText());
-        DatePickerDialog datePickerDialog = new DatePickerDialog(context, dateSetListener, setDate.getYear(), setDate.getMonthValue() - 1, setDate.getDayOfMonth());
+        DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.DatePickerDialogTheme, dateSetListener, setDate.getYear(), setDate.getMonthValue() - 1, setDate.getDayOfMonth());
         Instant otherDateInstant = LocalDate.parse(otherDateEditText.getText()).atStartOfDay(ZoneId.systemDefault()).toInstant();
 
         if (isStartDate) {
@@ -194,6 +195,7 @@ public class DateFilterController {
      * @param button the button to update
      */
     private void setButtonActiveBackground(TextView button) {
+        button.setTextColor(Color.WHITE);
         ViewCompat.setBackgroundTintList(button, ColorStateList.valueOf(context.getResources().getColor(R.color.app_blue, null)));
     }
 
@@ -203,8 +205,10 @@ public class DateFilterController {
      * @param button the button to reset
      */
     private void resetButtonBackground(TextView button) {
+        button.setTextColor(Color.BLACK);
         ViewCompat.setBackgroundTintList(button, null);
     }
+
 
     /**
      * Resets the ListView adapter to display all items and clears any filter conditions.

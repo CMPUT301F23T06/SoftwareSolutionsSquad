@@ -2,6 +2,7 @@ package com.example.softwaresolutionssquad.controllers;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -111,6 +112,7 @@ public class KeywordFilterController {
         // Toggle keyword filter visibility and reset its state
         boolean isKeywordFilterVisible = keyFilter.getVisibility() == View.VISIBLE;
         keyFilter.setVisibility(isKeywordFilterVisible ? View.GONE : View.VISIBLE);
+        keywordButton.setTextColor(isKeywordFilterVisible ? Color.BLACK : Color.WHITE);
         ViewCompat.setBackgroundTintList(keywordButton, isKeywordFilterVisible ? null :
                 ColorStateList.valueOf(context.getResources().getColor(R.color.app_blue, null)));
         resetFilterButtons();
@@ -147,6 +149,9 @@ public class KeywordFilterController {
     private void resetFilterButtons() {
         keywords.setText("");
         inventoryListView.setAdapter(inventoryListAdapter);
+        dateButton.setTextColor(Color.BLACK);
+        makeButton.setTextColor(Color.BLACK);
+        tagButton.setTextColor(Color.BLACK);
         ViewCompat.setBackgroundTintList(dateButton, null);
         ViewCompat.setBackgroundTintList(makeButton, null);
         ViewCompat.setBackgroundTintList(tagButton, null);

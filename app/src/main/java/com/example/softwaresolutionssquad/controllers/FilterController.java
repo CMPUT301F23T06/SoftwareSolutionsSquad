@@ -3,6 +3,7 @@ package com.example.softwaresolutionssquad.controllers;
 import com.example.softwaresolutionssquad.R;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -124,6 +125,7 @@ public class FilterController {
         ViewCompat.setBackgroundTintList(makeButton, defaultColor);
         ViewCompat.setBackgroundTintList(tagButton, defaultColor);
         ViewCompat.setBackgroundTintList(keywordButton, filterActive ? activeColor : defaultColor);
+
     }
 
     /**

@@ -52,6 +52,8 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
     private ProgressBar loadingSpinner;
     private final ArrayList<String> set_of_checked_tags = new ArrayList<>();
 
+    private TextView welcomeTextView;
+
     private Button tagBtn;
     private LinearLayout buttonsLayout;
     private Context context;
@@ -78,6 +80,11 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_layout, container, false);
         String username = ((MyApp) requireActivity().getApplication()).getUserViewModel().getUsername();
+
+        welcomeTextView = view.findViewById(R.id.Welcome);
+        welcomeTextView.setText(String.format("Welcome, %s!", username));
+
+
         itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");
         estimatedValue = view.findViewById(R.id.total_estimated_value);
 
@@ -313,7 +320,7 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
         double totalSum = inventoryItems.stream()
                 .mapToDouble(InventoryItem::getEstimatedValue)
                 .sum();
-        estimatedValue.setText(String.format(Locale.US, "%.2f", totalSum));
+        estimatedValue.setText(String.format(Locale.US, "$ %.2f", totalSum));
     }
 
     /***

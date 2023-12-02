@@ -5,12 +5,14 @@
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
     <style name="AlertDialogPositiveButtonStyle">
-        <item name="android:textColor">@color/button_blue_color</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:backgroundTint">@color/button_blue_color</item>
         <!-- Add other button style attributes here -->
     </style>
 
     <style name="AlertDialogNegativeButtonStyle">
         <item name="android:textColor">@color/button_blue_color</item>
+        <item name="android:backgroundTint">@null</item>
         <!-- Add other button style attributes here -->
     </style>
 

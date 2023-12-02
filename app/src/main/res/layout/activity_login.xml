@@ -24,7 +24,7 @@
         android:layout_marginStart="55sp"
         android:layout_marginTop="140sp"
         android:layout_marginEnd="35sp"
-        android:text="@string/email_address"
+        android:text="Username"
         android:textStyle="bold" />
 
     <EditText
@@ -75,13 +75,7 @@
         android:backgroundTint="@color/app_blue"
         android:text="@string/login" />
 
-    <TextView
-        android:id="@+id/login_page_forgot_password_click_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/forgot_password"
-        android:layout_marginTop="20dp"
-        android:textAlignment="center" />
+
 
     <TextView
         android:id="@+id/login_page_create_account_textview"
