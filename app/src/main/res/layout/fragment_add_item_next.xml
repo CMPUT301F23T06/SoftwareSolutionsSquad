@@ -64,27 +64,11 @@
         android:textSize="22sp"
         android:textStyle="bold" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnSelectImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select Image" />
-
-        <Button
-            android:id="@+id/btnTakePhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Take Photo" />
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -96,6 +80,27 @@
             tools:listitem="@layout/list_item_image"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnSelectImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:backgroundTint="@color/gray_color"
+            android:text="Select Image" />
+
+        <Button
+            android:id="@+id/btnTakePhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/gray_color"
+            android:text="Take Photo" />
+    </LinearLayout>
     <!-- Button section at the bottom -->
     <LinearLayout
         android:layout_width="match_parent"

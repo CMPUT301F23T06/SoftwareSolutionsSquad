@@ -143,7 +143,7 @@ public class DateFilterController {
         };
 
         LocalDate setDate = LocalDate.parse(selectedDateEditText.getText());
-        DatePickerDialog datePickerDialog = new DatePickerDialog(context, dateSetListener, setDate.getYear(), setDate.getMonthValue() - 1, setDate.getDayOfMonth());
+        DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.DatePickerDialogTheme, dateSetListener, setDate.getYear(), setDate.getMonthValue() - 1, setDate.getDayOfMonth());
         Instant otherDateInstant = LocalDate.parse(otherDateEditText.getText()).atStartOfDay(ZoneId.systemDefault()).toInstant();
 
         if (isStartDate) {

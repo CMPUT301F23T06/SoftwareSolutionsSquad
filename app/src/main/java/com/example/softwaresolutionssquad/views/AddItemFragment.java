@@ -169,7 +169,7 @@ public class AddItemFragment extends Fragment {
                 if (officialDate == null || estimated_val.equals("")) { // Use .equals() for string comparison
                     // Show an alert dialog if validation fails
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Alert Title"); // Optional title
+                    builder.setTitle("Error"); // Optional title
                     builder.setMessage("Please at least fill in the value and date!");
                     AlertDialog alertDialog = builder.create();
                     alertDialog.show();

@@ -320,7 +320,7 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
         double totalSum = inventoryItems.stream()
                 .mapToDouble(InventoryItem::getEstimatedValue)
                 .sum();
-        estimatedValue.setText(String.format(Locale.US, "%.2f", totalSum));
+        estimatedValue.setText(String.format(Locale.US, "$ %.2f", totalSum));
     }
 
     /***

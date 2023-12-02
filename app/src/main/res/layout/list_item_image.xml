@@ -6,19 +6,22 @@
         android:orientation="horizontal"
         android:background="@drawable/round"
         android:gravity="center_vertical"
-        android:padding="8dp"
+        android:padding="2dp"
         >
 
         <ImageView
             android:id="@+id/imageViewItem"
-            android:layout_width="73dp"
-            android:layout_height="68dp"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="match_parent"
             android:src="@android:drawable/ic_menu_gallery" />
 
         <ImageButton
             android:id="@+id/deleteButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:backgroundTint="@color/button_blue_color"
             android:src="@drawable/delete_icon" />
 
         <!-- Use an appropriate delete icon -->

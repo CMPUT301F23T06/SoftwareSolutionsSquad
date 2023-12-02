@@ -97,7 +97,7 @@ public class TagFilterController {
         for (int i : selectedTagsIndices) {
             selected[i] = true;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.CustomAlertDialogTheme);
         builder.setTitle("Select Tag(s)")
                 .setCancelable(false)
                 .setMultiChoiceItems(allTagsArray, selected, this::onTagSelected)

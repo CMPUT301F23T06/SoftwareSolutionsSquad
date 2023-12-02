@@ -97,7 +97,7 @@ public class MakeFilterController {
         for (int i : selectedMakesIndices) {
             selected[i] = true;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.CustomAlertDialogTheme);
         builder.setTitle("Select Make(s)")
                 .setCancelable(false)
                 .setMultiChoiceItems(allMakesArray, selected, this::onMakeSelected)

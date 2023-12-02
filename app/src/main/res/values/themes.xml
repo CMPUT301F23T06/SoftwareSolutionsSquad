@@ -23,4 +23,14 @@
         <item name="android:buttonBarNegativeButtonStyle">@style/AlertDialogNegativeButtonStyle</item>
     </style>
 
+    <style name="DatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <!-- Customize the background color -->
+        <item name="android:background">#ccd8d9</item>
+
+        <!-- Customize other attributes as needed -->
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="colorAccent">@color/button_blue_color</item>
+
+    </style>
+
 </resources>
