@@ -12,6 +12,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.Matchers.allOf;
 import static java.lang.Thread.sleep;
 import static kotlin.jvm.internal.Intrinsics.checkNotNull;
@@ -25,6 +26,12 @@ import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.UiSelector;
+import androidx.test.uiautomator.Until;
 
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.example.softwaresolutionssquad.views.MainActivity;
@@ -52,7 +59,7 @@ public class ItemTest {
 
     // Flag to track if cleanUp is called from testEditItem
     private boolean isEditTest = false;
-
+    UiDevice device = UiDevice.getInstance(getInstrumentation());
     /**
      * Sets up the test environment before each test.
      */
@@ -70,7 +77,7 @@ public class ItemTest {
      */
 
     @Test
-    public void testAddNewItem() throws InterruptedException {
+    public void testAddNewItem() throws InterruptedException, UiObjectNotFoundException {
         // Assume we have a unique description for each test run, for example using a timestamp
         uniqueDescription = "New Camera " + System.currentTimeMillis();
         makeValue = "Canon";
@@ -101,8 +108,41 @@ public class ItemTest {
         onView(withId(R.id.btnNext)).perform(scrollTo(), click());
         sleep(1000);
 
-        // Click the Save button to add the item
+        onView(withId(R.id.btnSelectImage)).perform(click());
+        device.wait(Until.hasObject(By.textContains("Pictures")), 10000);
+
+        UiObject picturesButton = device.findObject(new UiSelector().textContains("Pictures"));
+        picturesButton.click();
+        device.wait(Until.hasObject(By.textContains("Nov")), 10000);
+
+        UiObject image = device.findObject(new UiSelector().textContains("Nov"));
+        image.click();
+        device.wait(Until.hasObject(By.textContains("Done")), 10000);
+
+        UiObject doneButton = device.findObject(new UiSelector().textContains("Done"));
+        doneButton.click();
+        sleep(2000);
+
+        onView(withId(R.id.btnTakePhoto)).perform(click());
+        UiObject permissions = device.findObject(new UiSelector().textContains("Only"));
+
+        if (permissions.waitForExists(5000)) {
+            permissions.click();
+        }
+
+        device.wait(Until.hasObject(By.descContains("shutter")), 10000);
+
+        UiObject takePhotoButton = device.findObject(new UiSelector().descriptionContains("shutter"));
+        sleep(2000);
+        takePhotoButton.click();
+        device.wait(Until.hasObject(By.desc("done")), 10000);
+
+        UiObject confirmButton = device.findObject(new UiSelector().descriptionContains("done"));
+        confirmButton.click();
+        sleep(2000);
+
         onView(withId(R.id.btnCreate)).perform(click());
+        sleep(5000);
 
         // Now verify the item was added
         onData(withItemContent(uniqueDescription))
@@ -121,7 +161,7 @@ public class ItemTest {
      * Tests editing an existing item in the inventory.
      */
     @Test
-    public void testEditItem() throws InterruptedException {
+    public void testEditItem() throws InterruptedException, UiObjectNotFoundException {
         // Set flag to indicate this is the EditItem test
         isEditTest = true;
 
@@ -149,8 +189,42 @@ public class ItemTest {
         onView(withId(R.id.btnNext)).perform(scrollTo(), click());
         sleep(1000);
 
+        onView(withId(R.id.btnSelectImage)).perform(click());
+        device.wait(Until.hasObject(By.textContains("Pictures")), 10000);
+
+        UiObject picturesButton = device.findObject(new UiSelector().textContains("Pictures"));
+        picturesButton.click();
+        device.wait(Until.hasObject(By.textContains("Nov")), 10000);
+
+        UiObject image = device.findObject(new UiSelector().textContains("Nov"));
+        image.click();
+        device.wait(Until.hasObject(By.textContains("Done")), 10000);
+
+        UiObject doneButton = device.findObject(new UiSelector().textContains("Done"));
+        doneButton.click();
+        sleep(2000);
+
+        onView(withId(R.id.btnTakePhoto)).perform(click());
+        UiObject permissions = device.findObject(new UiSelector().textContains("Only"));
+
+        if (permissions.waitForExists(5000)) {
+            permissions.click();
+        }
+
+        device.wait(Until.hasObject(By.descContains("shutter")), 10000);
+
+        UiObject takePhotoButton = device.findObject(new UiSelector().descriptionContains("shutter"));
+        sleep(2000);
+        takePhotoButton.click();
+        device.wait(Until.hasObject(By.desc("done")), 10000);
+
+        UiObject confirmButton = device.findObject(new UiSelector().descriptionContains("done"));
+        confirmButton.click();
+        sleep(2000);
+
         // Click the Save button to add the item
         onView(withId(R.id.btnCreate)).perform(click());
+        sleep(5000);
 
         // Now verify the item was added
         onData(withItemContent(uniqueDescription))
