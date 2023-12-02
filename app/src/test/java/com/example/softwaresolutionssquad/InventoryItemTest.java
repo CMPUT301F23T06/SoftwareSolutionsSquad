@@ -129,6 +129,19 @@ public class InventoryItemTest {
     }
 
     @Test
+    public void testGetImageUrls() {
+        assertEquals(imageUrl, item.getImageUrl());
+    }
+
+    @Test
+    public void setImageUrl() {
+        String newImageUrl = "content://com.google.android.apps.photos.contentprovider/-1/1/content%3A%2F%2Fmedia%2Fexternal%2Fimages%2Fmedia%2F1000000093/ORIGINAL/NONE/image%2Fjpeg/564331501";
+        imageUrl.add(newImageUrl);
+        item.setImageUrl(imageUrl);
+        assertEquals(imageUrl, item.getImageUrl());
+    }
+
+    @Test
     public void testIsSelected() {
         assertEquals(isSelected, item.getSelected());
     }
