@@ -144,6 +144,8 @@ public class ItemTest {
         onView(withId(R.id.btnCreate)).perform(click());
         sleep(5000);
 
+        onView(withId(R.id.navigation_home)).perform(click());
+
         // Now verify the item was added
         onData(withItemContent(uniqueDescription))
                 .inAdapterView(withId(R.id.inventory_list_view))
