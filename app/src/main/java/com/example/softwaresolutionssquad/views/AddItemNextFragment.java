@@ -100,14 +100,12 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
 
         imageAdapter = new ImageAdapter(getContext(), imageUrisList, newImages);
         attachedImages = view.findViewById(R.id.recyclerViewImages);
-        int spanCount = 3; // The number of columns in the grid
-        int spacing = getResources().getDimensionPixelSize(R.dimen.grid_spacing); // The amount of spacing, in pixels, you want
-        boolean includeEdge = true; // Whether to include the edge spacing
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
+        int horizontalSpaceHeight = 2;
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         attachedImages.setLayoutManager(layoutManager);
 
         attachedImages.setAdapter(imageAdapter);
-        attachedImages.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
+        attachedImages.addItemDecoration(new HorizontalSpaceItemDecoration(horizontalSpaceHeight));
 
         selectImage = view.findViewById(R.id.btnSelectImage);
         takePhoto = view.findViewById(R.id.btnTakePhoto);

@@ -71,7 +71,10 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     public void onBindViewHolder(ViewHolder holder, int position) {
         Uri imageUri = Uri.parse(imageUris.get(position));
 //        holder.imageView.setImageURI(imageUri);
-        Glide.with(context).load(imageUris.get(position)).into(holder.imageView);
+        Glide.with(context)
+                .load(imageUris.get(position))
+                .override(holder.imageView.getWidth(), holder.imageView.getHeight())
+                .into(holder.imageView);
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,9 +88,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
             System.err.println(newImages);
             newImages.remove(imageUris.get(position));
             imageUris.remove(position); // Remove the image URI from the list
-//            notifyItemRemoved(position); // Notify the adapter of the item removed
-//            notifyItemRangeChanged(position, imageUris.size());
-            notifyDataSetChanged();
+            notifyItemRemoved(position); // Notify the adapter of the item removed
+            notifyItemRangeChanged(position, imageUris.size());
         });
     }
 
@@ -103,7 +105,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         ImageView imageView = fullScreenDialog.findViewById(R.id.fullscreenImageView);
         ImageButton closeButton = fullScreenDialog.findViewById(R.id.closeButton);
 
-        Glide.with(context).load(imageUri).into(imageView);
+        Glide.with(context)
+                .load(imageUri)
+                .into(imageView);
 
         closeButton.setOnClickListener(v -> fullScreenDialog.dismiss());
         imageView.setOnClickListener(v -> fullScreenDialog.dismiss()); // Optional: allows closing by clicking the image

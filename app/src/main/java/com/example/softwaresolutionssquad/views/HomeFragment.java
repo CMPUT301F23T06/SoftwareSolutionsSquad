@@ -47,7 +47,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
-public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCheckedItemShowButtonsListener, AddItemTagFragment.OnFragmentInteractionListener {
+public class HomeFragment extends Fragment implements InventoryListAdapter.OnCheckedItemShowButtonsListener, AddItemTagFragment.OnFragmentInteractionListener {
     private ListView inventoryListView;
     private ArrayList<InventoryItem> inventoryItems;
     private DatabaseController databaseController;

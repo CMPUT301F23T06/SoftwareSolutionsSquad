@@ -1,16 +1,17 @@
 
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_width="120dp"
         android:orientation="horizontal"
         android:padding="8dp"
         >
 
-        <ImageView
+    <ImageView
             android:id="@+id/imageViewItem"
             android:layout_width="73dp"
             android:layout_height="68dp"
+            android:scaleType="centerCrop"
             android:gravity="center_vertical"
             android:src="@android:drawable/ic_menu_gallery" />
 
@@ -18,6 +19,7 @@
         android:id="@+id/deleteButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:layout_marginStart="5dp"
         android:src="@drawable/delete_icon" />
 
     <!-- Use an appropriate delete icon -->
