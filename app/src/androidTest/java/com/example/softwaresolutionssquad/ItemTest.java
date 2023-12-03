@@ -53,9 +53,6 @@ import java.time.LocalDate;
  */
 @RunWith(AndroidJUnit4.class)
 public class ItemTest {
-
-    @Rule
-    public GrantPermissionRule permissionCamera = GrantPermissionRule.grant(Manifest.permission.CAMERA);
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
     private String uniqueDescription, makeValue, modelValue;
@@ -112,16 +109,16 @@ public class ItemTest {
         sleep(1000);
 
         onView(withId(R.id.btnSelectImage)).perform(click());
-        device.wait(Until.hasObject(By.textContains("Pictures")), 10000);
 
+        device.wait(Until.hasObject(By.textContains("Pictures")), 10000);
         UiObject picturesButton = device.findObject(new UiSelector().textContains("Pictures"));
         picturesButton.click();
-        device.wait(Until.hasObject(By.textContains("Nov")), 10000);
 
-        UiObject image = device.findObject(new UiSelector().textContains("Nov"));
+        device.wait(Until.hasObject(By.checkable(true)), 10000);
+        UiObject image = device.findObject(new UiSelector().checkable(true));
         image.click();
-        device.wait(Until.hasObject(By.textContains("Done")), 10000);
 
+        device.wait(Until.hasObject(By.textContains("Done")), 10000);
         UiObject doneButton = device.findObject(new UiSelector().textContains("Done"));
         doneButton.click();
         sleep(2000);
@@ -197,9 +194,9 @@ public class ItemTest {
 
         UiObject picturesButton = device.findObject(new UiSelector().textContains("Pictures"));
         picturesButton.click();
-        device.wait(Until.hasObject(By.textContains("Nov")), 10000);
+        device.wait(Until.hasObject(By.checkable(true)), 10000);
 
-        UiObject image = device.findObject(new UiSelector().textContains("Nov"));
+        UiObject image = device.findObject(new UiSelector().checkable(true));
         image.click();
         device.wait(Until.hasObject(By.textContains("Done")), 10000);
 
