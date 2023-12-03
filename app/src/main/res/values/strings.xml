@@ -24,16 +24,11 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string-array name="order_options">
-        <item>Date ASC</item>
-        <item>Date DESC</item>
-        <item>DESCR ASC</item>
-        <item>DESCR DESC</item>
-        <item>Make ASC</item>
-        <item>Make DESC</item>
-        <item>EST_VAL ASC</item>
-        <item>EST_VAL DESC</item>
-        <item>TAG ASC</item>
-        <item>TAG DESC</item>
+        <item>Date</item>
+        <item>Description</item>
+        <item>Make</item>
+        <item>Estimated Value</item>
+        <item>Tag</item>
     </string-array>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
