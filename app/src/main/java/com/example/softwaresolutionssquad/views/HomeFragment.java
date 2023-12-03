@@ -27,7 +27,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.softwaresolutionssquad.R;
-import com.example.softwaresolutionssquad.controllers.DatabaseController;
 import com.example.softwaresolutionssquad.controllers.DateFilterController;
 import com.example.softwaresolutionssquad.controllers.KeywordFilterController;
 import com.example.softwaresolutionssquad.controllers.MakeFilterController;
@@ -50,7 +49,6 @@ import java.util.stream.Collectors;
 public class HomeFragment extends Fragment implements InventoryListAdapter.OnCheckedItemShowButtonsListener, AddItemTagFragment.OnFragmentInteractionListener {
     private ListView inventoryListView;
     private ArrayList<InventoryItem> inventoryItems;
-    private DatabaseController databaseController;
     private InventoryListAdapter inventoryListAdapter;
     private CollectionReference itemsRef;
     private Button deleteButton;
@@ -211,8 +209,8 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         EditText keywords = view.findViewById(R.id.keywords);
 
 
-        // Allow user to filter all items in an inputted date range
-        DateFilterController dateFilterController = new DateFilterController(
+        // Allow user to filter all items in an inputted date range. we only need instantiation because it helps with onclick
+        new DateFilterController(
                 context, // Context
                 dateFilter,
                 startDate,
@@ -229,7 +227,7 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                 inventoryItems // The data list
         );
 
-        KeywordFilterController keywordFilterController = new KeywordFilterController(
+        new KeywordFilterController(
                 context, // context
                 keyFilter,
                 keywords,

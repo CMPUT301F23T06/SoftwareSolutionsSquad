@@ -103,7 +103,7 @@ public class KeywordFilterController {
     /**
      * Toggles the visibility of keyword filter and resets other filters.
      */
-    private void toggleFilters() {
+    public void toggleFilters() {
         // Hide other filters
         dateFilter.setVisibility(View.GONE);
         makeFilter.setVisibility(View.GONE);
@@ -123,7 +123,7 @@ public class KeywordFilterController {
      *
      * @param keywordText the text to filter by
      */
-    private void applyKeywordFilter(String keywordText) {
+    public void applyKeywordFilter(String keywordText) {
         String[] keywordArray = keywordText.toLowerCase().split("\\s+");
         Predicate<InventoryItem> filterCondition = item ->
                 Arrays.stream(keywordArray).anyMatch(keyword -> item.getDescription().toLowerCase().contains(keyword));

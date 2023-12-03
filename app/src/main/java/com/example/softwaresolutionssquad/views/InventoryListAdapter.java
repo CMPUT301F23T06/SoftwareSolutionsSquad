@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -41,6 +42,11 @@ public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
         this.context = context;
     }
 
+    public void updateItems(List<InventoryItem> newItems) {
+        items.clear();
+        items.addAll(newItems);
+        this.notifyDataSetChanged();
+    }
     /**
      * Interface for delete button visibility callback.
      */
