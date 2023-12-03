@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
 
+    private BottomNavigationView bottomNavigationView;
+
     // The onCreate method is called when the Activity is starting
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         setFragment(HomeFragment);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.navigation_bar);
+        bottomNavigationView = findViewById(R.id.navigation_bar);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.frag_container, fragment);
         transaction.commit();
+
 
     }
 
