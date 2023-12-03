@@ -64,7 +64,7 @@ public class SignupActivity extends AppCompatActivity {
         signupButton = findViewById(R.id.signup_page_signup_button);
         loginButton = findViewById(R.id.signup_page_existing_user_click_text);
         nameInput = findViewById(R.id.signup_page_name_edittext);
-        usernameInput = findViewById(R.id.signup_page_signup_email_edittext);
+        usernameInput = findViewById(R.id.signup_page_signup_username_edittext);
         passwordInput = findViewById(R.id.signup_page_signup_password_edittext);
         errorMessageTextView = findViewById(R.id.signup_page_error_message);
     }
