@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         loginButton = findViewById(R.id.login_page_login_button);
-        usernameEditText = findViewById(R.id.login_page_login_email_edittext);
+        usernameEditText = findViewById(R.id.login_page_login_username_edittext);
         passwordEditText = findViewById(R.id.login_page_login_password_edittext);
         createAccountTextView = findViewById(R.id.login_page_create_account_click_text);
         errorMessageTextView = findViewById(R.id.login_page_error_message);
