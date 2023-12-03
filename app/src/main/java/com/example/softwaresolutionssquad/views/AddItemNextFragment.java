@@ -158,8 +158,14 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
                         onUpdatePressed(item);
                     }
                     if (getActivity() != null) {
-                        HomeFragment homeFragment = new HomeFragment();
-                        ((MainActivity) getActivity()).setFragment(homeFragment);
+                        if (newItem) {
+                            AddItemFragment addItemFragment = new AddItemFragment();
+                            ((MainActivity) getActivity()).setFragment(addItemFragment);
+                            Toast.makeText(getActivity(), "Item added successfully!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            HomeFragment homeFragment = new HomeFragment();
+                            ((MainActivity) getActivity()).setFragment(homeFragment);
+                        }
                     }
                 });
 //            } else {

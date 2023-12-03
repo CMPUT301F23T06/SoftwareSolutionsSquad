@@ -259,7 +259,7 @@ public class AddItemFragment extends Fragment {
             currentItem.getPurchaseDate();
         }
 
-        new DatePickerDialog(getContext(), dateSetListener, currentDate.getYear(),
+        new DatePickerDialog(getContext(), R.style.DatePickerDialogTheme, dateSetListener, currentDate.getYear(),
                 currentDate.getMonthValue() - 1, // Month is 0-indexed in DatePickerDialog
                 currentDate.getDayOfMonth()).show();
     }
