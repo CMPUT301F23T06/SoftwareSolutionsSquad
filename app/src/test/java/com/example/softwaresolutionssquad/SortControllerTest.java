@@ -33,7 +33,7 @@ public class SortControllerTest {
 
         inventoryItems = new ArrayList<>();
 
-        controller = new SortController(mockInventoryListAdapter, inventoryItems);
+        controller = new SortController(mockInventoryListAdapter, inventoryItems, Boolean.TRUE);
     }
 
     /**

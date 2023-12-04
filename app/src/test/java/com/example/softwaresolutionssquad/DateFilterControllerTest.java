@@ -12,13 +12,18 @@ import static org.junit.Assert.*;
 import android.content.Context;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.softwaresolutionssquad.controllers.DateFilterController;
+import com.example.softwaresolutionssquad.controllers.SortController;
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.example.softwaresolutionssquad.views.InventoryListAdapter;
+
+import net.bytebuddy.TypeCache;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -40,6 +45,9 @@ public class DateFilterControllerTest {
     @Mock private ListView mockInventoryListView;
 
     @Mock private TextView mockEstimatedValue;
+    @Mock private Spinner mockSpinnerOrder;
+    @Mock private ImageView mockSortOrderIcon;
+    @Mock private SortController mockSortController;
     private ArrayList<InventoryItem> inventoryItems;
     private DateFilterController controller;
 
@@ -69,8 +77,9 @@ public class DateFilterControllerTest {
                 mockInventoryListAdapter,
                 mockInventoryListView,
                 inventoryItems,
-                null,
-                null
+                mockSpinnerOrder,
+                mockSortOrderIcon,
+                mockSortController
         );
     }
 
@@ -115,7 +124,7 @@ public class DateFilterControllerTest {
         verify(mockStartDateEditText).setText(startDateCaptor.capture());
         verify(mockEndDateEditText).setText(endDateCaptor.capture());
 
-        assertEquals("2010-01-01", startDateCaptor.getValue());
+        assertEquals("2023-01-01", startDateCaptor.getValue());
         assertEquals(LocalDate.now().toString(), endDateCaptor.getValue());
     }
 }
