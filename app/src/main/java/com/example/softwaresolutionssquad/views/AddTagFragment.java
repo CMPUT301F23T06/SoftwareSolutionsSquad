@@ -20,15 +20,27 @@ public class AddTagFragment extends DialogFragment {
     private EditText tagName;
     private OnFragmentInteractionListener listener;
 
+    /**
+     * Interface for handling interaction with the fragment. Provides a method to communicate the selected tag back to the calling component.
+     */
     public interface OnFragmentInteractionListener {
         void onOkPressed(String tag);
     }
 
+    /**
+     * Sets the listener for fragment interaction events.
+     * @param listener The listener to handle fragment interaction callbacks.
+     */
     public void setListener(OnFragmentInteractionListener listener) {
         this.listener = listener;
     }
 
 
+    /**
+     * Creates the dialog for the AddTagFragment with custom layout and handlers for positive and negative actions.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     * @return A new Dialog instance to be displayed by the fragment.
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {

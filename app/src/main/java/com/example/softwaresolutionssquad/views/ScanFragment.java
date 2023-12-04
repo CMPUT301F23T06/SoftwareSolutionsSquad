@@ -33,10 +33,19 @@ public class ScanFragment extends DialogFragment {
     private CameraSource cameraSource;
     private static final int REQUEST_CAMERA_PERMISSION = 201;
 
+    /**
+     * Constructor for ScanFragment. Initializes the fragment with a TextView to display the scanned barcode.
+     * @param textToAutofill The TextView where the scanned barcode data will be displayed.
+     */
     public ScanFragment(TextView textToAutofill) {
         this.barcodeText = textToAutofill;
     }
 
+    /**
+     * Creates the dialog for the ScanFragment with custom layout and initializations for the barcode scanner.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     * @return A new Dialog instance to be displayed by the fragment.
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -50,6 +59,10 @@ public class ScanFragment extends DialogFragment {
 
         return builder.setView(view).setNegativeButton("Cancel", null).create();
     }
+
+    /**
+     * Initializes the barcode scanner and camera source, setting up the necessary detectors and listeners.
+     */
 
     private void initializeScanner() {
         barcodeDetector = new BarcodeDetector.Builder(getContext()).setBarcodeFormats(Barcode.ALL_FORMATS).build();

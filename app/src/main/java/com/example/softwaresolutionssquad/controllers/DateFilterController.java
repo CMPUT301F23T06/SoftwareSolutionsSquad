@@ -19,6 +19,7 @@ import com.example.softwaresolutionssquad.views.InventoryListAdapter;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -272,7 +273,12 @@ public class DateFilterController {
      * Sets default dates in the date filter fields when the filter is first activated.
      */
     public void setDefaultDates() {
-        startDateEditText.setText("2023-01-01"); // Default start date
+
+        // Get the current year
+        int currentYear = Year.now().getValue();
+
+        // Set the default start date to the beginning of the current year
+        startDateEditText.setText(String.format(Locale.US, "%d-01-01", currentYear));
         endDateEditText.setText(LocalDate.now().toString()); // Current date as default end date
     }
 

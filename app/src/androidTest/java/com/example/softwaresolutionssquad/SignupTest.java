@@ -45,6 +45,10 @@ public class SignupTest {
     public ActivityScenarioRule<SignupActivity> scenario = new
             ActivityScenarioRule<>(SignupActivity.class);
 
+    /**
+     * Tests the functionality of returning to the login screen from the signup screen.
+     * @throws InterruptedException if the thread is interrupted while sleeping.
+     */
     @Test
     public void TestReturnToLogin() throws InterruptedException {
         // Arrange
@@ -57,6 +61,9 @@ public class SignupTest {
         Intents.release();
     }
 
+    /**
+     * Tests the signup functionality with an empty name field.
+     */
     @Test
     public void TestEmptyName() {
         // Arrange
@@ -72,6 +79,9 @@ public class SignupTest {
         Intents.release();
     }
 
+    /**
+     * Tests the signup functionality with an empty password field.
+     */
     @Test
     public void TestEmptyPassword() {
         // Arrange
@@ -87,6 +97,9 @@ public class SignupTest {
         Intents.release();
     }
 
+    /**
+     * Tests the signup functionality with an empty username field.
+     */
     @Test
     public void TestEmptyUsername() {
         // Arrange
@@ -103,6 +116,10 @@ public class SignupTest {
         Intents.release();
     }
 
+    /**
+     * Tests the signup functionality with an existing username in the database.
+     * @throws InterruptedException if the thread is interrupted while sleeping.
+     */
     @Test
     public void TestExistingUsername() throws InterruptedException {
         // Arrange
@@ -123,6 +140,9 @@ public class SignupTest {
         Intents.release();
     }
 
+    /**
+     * Tests the signup functionality with valid inputs.
+     */
     @Test
     public void TestSignup() {
         try {

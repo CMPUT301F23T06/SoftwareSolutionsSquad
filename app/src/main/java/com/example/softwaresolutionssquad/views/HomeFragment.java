@@ -72,10 +72,20 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
 
     public View view;
 
+<<<<<<< HEAD
+=======
+    /**
+     * Required empty constructor for instantiating the fragment.
+     */
+>>>>>>> main
     public HomeFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Called when the fragment is first attached to its context. Sets up the context field.
+     * @param context The context to which the fragment is attached.
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -85,6 +95,13 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
     // Member to keep track of current sort order, default is true for ascending
     private boolean isAscendingOrder = true;
 
+    /**
+     * Creates and returns the view hierarchy associated with the fragment. Initializes UI components and sets up interactions.
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container The parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     * @return The View for the fragment's UI, or null.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_home_layout, container, false);
@@ -143,7 +160,11 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
 
 
 
+<<<<<<< HEAD
         SortController sortController = new SortController(inventoryListAdapter, inventoryItems, true);
+=======
+        SortController sortController = new SortController(inventoryListAdapter, inventoryItems);
+>>>>>>> main
 
         // Set the listener for when an item is selected in the Spinner
         spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -207,7 +228,7 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteSelectedItems();      // Implement the deletion logic here
+                deleteSelectedItems();
             }
         });
 
@@ -247,8 +268,12 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                 inventoryListView,
                 inventoryItems, // The data list
                 spinnerOrder,
+<<<<<<< HEAD
                 SortOrderIcon,
                 sortController
+=======
+                SortOrderIcon
+>>>>>>> main
         );
 
         new KeywordFilterController(
@@ -267,8 +292,12 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                 inventoryListView,
                 inventoryItems,
                 spinnerOrder,
+<<<<<<< HEAD
                 SortOrderIcon,
                 sortController
+=======
+                SortOrderIcon
+>>>>>>> main
         );
         // Allow user to filter items based on the presence of keywords in description
         TextView makes = view.findViewById(R.id.make);
@@ -292,7 +321,6 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
             dateFilter.setVisibility(View.GONE);
             keyFilter.setVisibility(View.GONE);
             tagFilter.setVisibility(View.GONE);
-            // ...
             makeFilterController.toggleMakeFilterVisibility();
         });
         // Allow user to filter items based on tags associated with items
@@ -316,7 +344,6 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
             dateFilter.setVisibility(View.GONE);
             keyFilter.setVisibility(View.GONE);
             makeFilter.setVisibility(View.GONE);
-            // ...
             tagFilterController.toggleTagFilterVisibility();
         });
 
@@ -324,19 +351,27 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         return view;
     }
 
-    // Helper method to map spinner position to SortController position
+    /**
+     * Maps the spinner position to the corresponding position in the SortController.
+     * @param spinnerPosition The position selected in the spinner.
+     * @return The corresponding position for sorting.
+     */
     private int getSortPositionFromSpinner(int spinnerPosition) {
         // Map spinner position to SortController's expected position
         // Assuming the spinner positions align with the SortController cases
         return isAscendingOrder ? spinnerPosition * 2 : spinnerPosition * 2 + 1;
     }
 
-    // Method to show the delete button if any items are selected
+    /**
+     * Controls the visibility of delete button based on the selection state of items.
+     */
     public void showButtonsIfNeeded() {
         buttonsLayout.setVisibility(inventoryItems.stream().anyMatch(InventoryItem::getSelected) ? View.VISIBLE : View.GONE);
     }
 
-    // Method to delete selected items
+    /**
+     * Deletes the selected items from the Firestore and updates the UI accordingly.
+     */
     private void deleteSelectedItems() {
 //        getlatestListOfItems();
         // Collect all items that are marked for deletion
@@ -363,14 +398,22 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         HomeFragment homeFragment = new HomeFragment();
         ((MainActivity) getActivity()).setFragment(homeFragment);
         Toast.makeText(getActivity(), "Item(s) deleted successfully!", Toast.LENGTH_SHORT).show();
+<<<<<<< HEAD
 //        inventoryListView.setAdapter(inventoryListAdapter);
 
 
+=======
+>>>>>>> main
     }
 
-    // Method to update total estimated value of InventoryItems
+    /**
+     * Updates the total estimated value of the items and displays it in the UI.
+     */
     private void updateTotalValue() {
+<<<<<<< HEAD
 //        getlatestListOfItems();
+=======
+>>>>>>> main
         double totalSum = inventoryListAdapter.getItems().stream()
                 .mapToDouble(InventoryItem::getEstimatedValue)
                 .sum();
@@ -425,5 +468,8 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         }
         this.inventoryItems = items;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
 }

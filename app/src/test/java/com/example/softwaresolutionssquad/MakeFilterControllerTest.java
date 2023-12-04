@@ -39,6 +39,9 @@ public class MakeFilterControllerTest {
     private List<InventoryItem> mockInventoryItems;
     private MakeFilterController controller;
 
+    /**
+     * Sets up the test environment before each test. Initializes mock objects and the MakeFilterController.
+     */
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -64,9 +67,11 @@ public class MakeFilterControllerTest {
     @Test
     public void testConstructorInitialization() {
         assertNotNull(controller);
-        // Add more assertions as needed to verify initial state
     }
 
+    /**
+     * Tests the functionality of toggling make filter visibility.
+     */
     @Test
     public void testToggleMakeFilterVisibility() {
         // Initial state should be hidden
@@ -81,10 +86,11 @@ public class MakeFilterControllerTest {
         assertEquals(0, mockMakeFilter.getVisibility());
     }
 
+    /**
+     * Tests the filtered results functionality of the MakeFilterController.
+     */
     @Test
     public void testFilteredResults() {
-        // Assuming you have a method in controller to set the filter condition
-        // and another to apply it, you can test like this:
 
         // Set a mock filter condition
         Predicate<InventoryItem> mockCondition = item -> true; // Example condition
@@ -94,5 +100,4 @@ public class MakeFilterControllerTest {
         // Verify the inventory list is updated
         verify(mockInventoryListView).setAdapter(any(InventoryListAdapter.class));
     }
-
 }

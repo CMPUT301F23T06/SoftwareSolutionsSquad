@@ -18,6 +18,9 @@ public class ComparatorFactoryTest {
     private ArrayList<InventoryItem> items;
     private InventoryItem item1, item2, item3;
 
+    /**
+     * Sets up the test environment before each test. Initializes mock inventory items.
+     */
     @Before
     public void setUp() {
         ArrayList<String> imagesItem1 = new ArrayList<>();
@@ -46,6 +49,9 @@ public class ComparatorFactoryTest {
         Collections.addAll(items, item1, item2, item3);
     }
 
+    /**
+     * Tests the date comparator provided by ComparatorFactory.
+     */
     @Test
     public void testDateComparator() {
         Comparator<InventoryItem> dateComparator = ComparatorFactory.getDateComparator();
@@ -55,6 +61,9 @@ public class ComparatorFactoryTest {
         assertEquals(item2, items.get(2));
     }
 
+    /**
+     * Tests the description comparator provided by ComparatorFactory.
+     */
     @Test
     public void testDescriptionComparator() {
         Comparator<InventoryItem> descriptionComparator = ComparatorFactory.getDescriptionComparator();
@@ -65,6 +74,9 @@ public class ComparatorFactoryTest {
         assertEquals(item2, items.get(2)); // Monitor
     }
 
+    /**
+     * Tests the make comparator provided by ComparatorFactory.
+     */
     @Test
     public void testMakeComparator() {
         Comparator<InventoryItem> makeComparator = ComparatorFactory.getMakeComparator();
@@ -75,6 +87,9 @@ public class ComparatorFactoryTest {
         assertEquals(item3, items.get(2)); // Logitech
     }
 
+    /**
+     * Tests the estimated value comparator provided by ComparatorFactory.
+     */
     @Test
     public void testEstimatedValueComparator() {
         Comparator<InventoryItem> valueComparator = ComparatorFactory.getEstimatedValueComparator();
@@ -85,6 +100,9 @@ public class ComparatorFactoryTest {
         assertEquals(item1, items.get(2)); // 1200.00
     }
 
+    /**
+     * Tests the tag comparator provided by ComparatorFactory.
+     */
     @Test
     public void testTagComparator() {
         Comparator<InventoryItem> tagComparator = ComparatorFactory.getTagComparator();
@@ -95,4 +113,3 @@ public class ComparatorFactoryTest {
         assertEquals(item2, items.get(2));
     }
 }
-

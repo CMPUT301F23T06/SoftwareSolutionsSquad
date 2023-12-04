@@ -28,7 +28,10 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
 
-    // The onCreate method is called when the Activity is starting
+    /**
+     * Called when the activity is starting. Initializes the activity, sets up the UI layout, and configures fragments.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down, this contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,11 +75,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Provides access to the FirebaseFirestore instance for database operations.
+     * @return The FirebaseFirestore instance.
+     */
     public FirebaseFirestore getDb() {
         return db;
     }
 
 
+    /**
+     * Sets the provided fragment into the fragment container of this activity.
+     * @param fragment The fragment to be displayed in the container.
+     */
     public void setFragment(Fragment fragment) {
         FrameLayout fragmentContainer = findViewById(R.id.frag_container);
         fragmentContainer.setVisibility(View.VISIBLE);
@@ -86,9 +97,5 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.frag_container, fragment);
         transaction.commit();
-
-
     }
-
-
 }
