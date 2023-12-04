@@ -160,12 +160,6 @@
         android:layout_weight="1"
         android:orientation="horizontal"
         android:gravity="bottom">
-        <Button
-            android:id="@+id/btnNext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/button_blue_color"
-            android:text="Next" />
 
         <!-- This View will take up all the available space in between the buttons -->
         <View
@@ -174,11 +168,12 @@
             android:layout_weight="1" />
 
         <Button
-            android:id="@+id/btnCancel"
+            android:id="@+id/btnNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/gray_color"
-            android:text="Cancel" />
+            android:backgroundTint="@color/button_blue_color"
+            android:text="Next" />
+
     </LinearLayout>
 
     </LinearLayout>
