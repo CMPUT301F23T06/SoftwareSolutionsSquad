@@ -273,6 +273,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="@color/button_blue_color"
         android:padding="16dp"
         android:gravity="center_vertical">
 
@@ -281,7 +282,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Total Estimated Value:"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:text="TOTAL"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -289,7 +292,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="$0.00"
-            android:textColor="@color/green"
+            android:textColor="@color/white"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 

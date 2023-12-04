@@ -14,12 +14,9 @@ import androidx.annotation.Nullable;
 
 import com.example.softwaresolutionssquad.R;
 import com.example.softwaresolutionssquad.models.InventoryItem;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -28,6 +25,8 @@ import java.util.Locale;
  */
 public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
     private final ArrayList<InventoryItem> items;
+
+    private final ArrayList<InventoryItem> originalItems;
     private final Context context;
 
     /**
@@ -39,13 +38,36 @@ public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
     public InventoryListAdapter(Context context, ArrayList<InventoryItem> items) {
         super(context, 0, items);
         this.items = items;
+        this.originalItems = new ArrayList<>(items);
         this.context = context;
     }
 
-    public void updateItems(List<InventoryItem> newItems) {
+    public void addToOriginal(ArrayList<InventoryItem> items) {
+        originalItems.clear();
+        originalItems.addAll(items);
+    }
+
+    public ArrayList<InventoryItem> getOriginalItems() {
+        return originalItems;
+    }
+
+    public void updateItems(ArrayList<InventoryItem> newItems) {
         items.clear();
         items.addAll(newItems);
         this.notifyDataSetChanged();
+    }
+
+    /**
+     * Resets the list of items to its original state.
+     */
+    public void resetItems() {
+        items.clear();
+        items.addAll(this.originalItems);
+        this.notifyDataSetChanged();
+    }
+
+    public ArrayList<InventoryItem> getItems(){
+        return items;
     }
     /**
      * Interface for delete button visibility callback.

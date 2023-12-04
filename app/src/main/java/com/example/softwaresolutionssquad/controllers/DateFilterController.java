@@ -47,7 +47,10 @@ public class DateFilterController {
     public final InventoryListAdapter inventoryListAdapter;
     public final ListView inventoryListView;
     public Predicate<InventoryItem> filterCondition;
-    public final ArrayList<InventoryItem> inventoryItems;
+    public ArrayList<InventoryItem> inventoryItems;
+
+    private TextView estimatedValue;
+
     private boolean isAscendingOrder = true;
 
     /**
@@ -70,6 +73,7 @@ public class DateFilterController {
      */
     public DateFilterController(Context context,
                                 LinearLayout dateFilterLayout,
+                                TextView estimatedValue,
                                 EditText startDateEditText,
                                 EditText endDateEditText,
                                 TextView dateFilterButton,
@@ -85,6 +89,7 @@ public class DateFilterController {
                                 Spinner spinnerOrder,
                                 ImageView sortOrderIcon) {
         this.context = context;
+        this.estimatedValue = estimatedValue;
         this.dateFilterLayout = dateFilterLayout;
         this.startDateEditText = startDateEditText;
         this.endDateEditText = endDateEditText;
@@ -112,6 +117,13 @@ public class DateFilterController {
         endDateEditText.setOnClickListener(view -> showDatePicker(endDateEditText, startDateEditText, false));
     }
 
+    private void updateTotalValue(InventoryListAdapter items) {
+        double totalSum = items.getItems().stream()
+                .mapToDouble(InventoryItem::getEstimatedValue)
+                .sum();
+        estimatedValue.setText(String.format(Locale.US, "$ %.2f", totalSum));
+    }
+
 
 
     /**
@@ -136,6 +148,8 @@ public class DateFilterController {
             resetButtonBackground(dateFilterButton);
         }
     }
+
+
 
     /**
      * Displays date picker dialog and updates date fields accordingly.
@@ -200,10 +214,11 @@ public class DateFilterController {
      * @param condition the condition to filter the list
      */
     public void displayFilteredResults(Predicate<InventoryItem> condition) {
+        inventoryItems = inventoryListAdapter.getOriginalItems();
         ArrayList<InventoryItem> filteredResults = inventoryItems.stream().filter(condition).collect(Collectors.toCollection(ArrayList::new));
-        InventoryListAdapter new_adapter = new InventoryListAdapter(context, filteredResults);
-        inventoryListView.setAdapter(new_adapter);
-        SortController sortController = new SortController(new_adapter, filteredResults);
+        inventoryListAdapter.updateItems(filteredResults);
+        updateTotalValue(inventoryListAdapter);
+        SortController sortController = new SortController(inventoryListAdapter, filteredResults);
         spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
@@ -259,7 +274,9 @@ public class DateFilterController {
      * Resets the ListView adapter to display all items and clears any filter conditions.
      */
     public void resetListViewAdapter() {
-        inventoryListView.setAdapter(inventoryListAdapter);
+
+        inventoryListAdapter.resetItems();
+        updateTotalValue(inventoryListAdapter);
     }
 
     /**

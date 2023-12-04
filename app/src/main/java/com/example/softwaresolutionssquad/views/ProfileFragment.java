@@ -37,6 +37,7 @@ public class ProfileFragment extends Fragment {
 
     private String userName;
 
+    private TextView user;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -47,11 +48,13 @@ public class ProfileFragment extends Fragment {
         itemCountTextView = view.findViewById(R.id.itemAmount);
         tagCountTextView = view.findViewById(R.id.tagAmount);
         logoutBar = view.findViewById(R.id.logoutBar);
+        user = view.findViewById(R.id.textUser);
         tagsRef = ((MainActivity) getActivity()).getDb().collection("Tags");
         itemsRef = ((MainActivity)  getActivity()).getDb().collection("Item");
         MyApp myApp = (MyApp) requireActivity().getApplication();
         UserViewModel userViewModel = myApp.getUserViewModel();
         userName = userViewModel.getUsername();
+        user.setText(String.format("Hello, %s", userName));
         Log.d("user", userName);
         getTagCount();
         getItemCount();

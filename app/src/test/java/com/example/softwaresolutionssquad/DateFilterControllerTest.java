@@ -38,6 +38,8 @@ public class DateFilterControllerTest {
     @Mock private LinearLayout mockTagFilterLayout;
     @Mock private InventoryListAdapter mockInventoryListAdapter;
     @Mock private ListView mockInventoryListView;
+
+    @Mock private TextView mockEstimatedValue;
     private ArrayList<InventoryItem> inventoryItems;
     private DateFilterController controller;
 
@@ -51,6 +53,7 @@ public class DateFilterControllerTest {
         controller = new DateFilterController(
                 mockContext,
                 mockDateFilterLayout,
+                mockEstimatedValue,
                 mockStartDateEditText,
                 mockEndDateEditText,
                 mockDateFilterButton,
@@ -62,7 +65,9 @@ public class DateFilterControllerTest {
                 mockTagFilterLayout,
                 mockInventoryListAdapter,
                 mockInventoryListView,
-                inventoryItems
+                inventoryItems,
+                null,
+                null
         );
     }
 
