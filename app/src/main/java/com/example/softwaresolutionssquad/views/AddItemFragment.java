@@ -52,7 +52,9 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -254,9 +256,13 @@ public class AddItemFragment extends Fragment {
             currentItem.getPurchaseDate();
         }
 
-        new DatePickerDialog(getContext(), R.style.DatePickerDialogTheme, dateSetListener, currentDate.getYear(),
+        DatePickerDialog dpd = new DatePickerDialog(getContext(), R.style.DatePickerDialogTheme, dateSetListener, currentDate.getYear(),
                 currentDate.getMonthValue() - 1, // Month is 0-indexed in DatePickerDialog
-                currentDate.getDayOfMonth()).show();
+                currentDate.getDayOfMonth());
+
+        Instant currentDate = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant();
+        dpd.getDatePicker().setMaxDate(currentDate.toEpochMilli());
+        dpd.show();
     }
 
 

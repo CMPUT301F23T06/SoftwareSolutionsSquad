@@ -38,7 +38,8 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/circle"
             android:gravity="center"
-            android:text="Date" />
+            android:text="Date"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/keyword_btn"
@@ -48,7 +49,8 @@
             android:layout_marginRight="10dp"
             android:gravity="center"
             android:text="Keywords"
-            android:background="@drawable/circle" />
+            android:background="@drawable/circle"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/make_btn"
@@ -58,7 +60,8 @@
             android:layout_marginRight="10dp"
             android:gravity="center"
             android:text="Make"
-            android:background="@drawable/circle" />
+            android:background="@drawable/circle"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tag_btn"
@@ -67,7 +70,8 @@
             android:layout_weight="1"
             android:background="@drawable/circle"
             android:gravity="center"
-            android:text="Tags" />
+            android:text="Tags"
+            android:textStyle="bold"/>
     </LinearLayout>
 
     <LinearLayout
@@ -85,6 +89,12 @@
             android:layout_weight="1"
             android:focusable="false"
             android:clickable="true"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="to"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"/>
         <EditText
             android:id="@+id/dateEnd"
             android:layout_width="match_parent"
@@ -146,7 +156,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="10dp"
         android:gravity="end"
         android:orientation="horizontal">
 
@@ -155,6 +165,7 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_gravity="end"
+            android:layout_marginEnd="5dp"
             android:src="@drawable/up_down_arrows_sorting_resized" />
 
         <Spinner

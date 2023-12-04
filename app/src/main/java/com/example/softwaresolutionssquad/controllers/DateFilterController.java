@@ -145,11 +145,13 @@ public class DateFilterController {
         LocalDate setDate = LocalDate.parse(selectedDateEditText.getText());
         DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.DatePickerDialogTheme, dateSetListener, setDate.getYear(), setDate.getMonthValue() - 1, setDate.getDayOfMonth());
         Instant otherDateInstant = LocalDate.parse(otherDateEditText.getText()).atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant currentDate = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant();
 
         if (isStartDate) {
             datePickerDialog.getDatePicker().setMaxDate(otherDateInstant.toEpochMilli());
         } else {
             datePickerDialog.getDatePicker().setMinDate(otherDateInstant.toEpochMilli());
+            datePickerDialog.getDatePicker().setMaxDate(currentDate.toEpochMilli());
         }
 
         datePickerDialog.show();
@@ -221,7 +223,7 @@ public class DateFilterController {
      * Sets default dates in the date filter fields when the filter is first activated.
      */
     public void setDefaultDates() {
-        startDateEditText.setText("2010-01-01"); // Default start date
+        startDateEditText.setText("1900-01-01"); // Default start date
         endDateEditText.setText(LocalDate.now().toString()); // Current date as default end date
     }
 
