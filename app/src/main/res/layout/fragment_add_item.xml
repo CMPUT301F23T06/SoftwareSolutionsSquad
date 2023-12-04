@@ -66,7 +66,7 @@
 
             <ImageButton
                 android:id="@+id/btnScanDescription"
-                android:layout_width="50dp"
+                android:layout_width="35dp"
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter"
                 android:background="@null"
@@ -116,7 +116,7 @@
 
             <ImageButton
                 android:id="@+id/btnScanSerial"
-                android:layout_width="50dp"
+                android:layout_width="35dp"
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter"
                 android:background="@null"
