@@ -161,6 +161,11 @@ public class AddItemFragment extends Fragment {
                     return;
                 }
                 Double official_estimated_value = Double.parseDouble(estimated_val);
+                // Format the value to two decimal places
+                String formattedValue = String.format(Locale.getDefault(), "%.2f", official_estimated_value);
+                // Parse the formatted value back to double
+                official_estimated_value = Double.parseDouble(formattedValue);
+
                 String comm = commentEditText.getText().toString().trim();
                 String documentID = retrieveDocId(currentItem);
 //                ArrayList<String> imageUrl = imageUrisList != null ? imageUrisList : new ArrayList<>();
@@ -272,7 +277,7 @@ public class AddItemFragment extends Fragment {
         makeEditText.setText(item.getMake());
         modelEditText.setText(item.getModel());
         serialNumberEditText.setText(item.getSerialNumber());
-        estimatedValueEditText.setText(String.valueOf(item.getEstimatedValue()));
+        estimatedValueEditText.setText(String.format(Locale.getDefault(), "%.2f", item.getEstimatedValue()));
         commentEditText.setText(item.getComment());
     }
 

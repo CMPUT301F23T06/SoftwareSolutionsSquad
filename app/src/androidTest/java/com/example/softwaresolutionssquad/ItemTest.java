@@ -21,6 +21,7 @@ import android.Manifest;
 import android.view.View;
 import android.widget.DatePicker;
 
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
@@ -191,6 +192,10 @@ public class ItemTest {
         onView(withId(R.id.btnNext)).perform(scrollTo(), click());
         sleep(1000);
 
+        // Click on the delete button of the first image in the RecyclerView
+        onView(withId(R.id.recyclerViewImages)).perform(clickDeleteButtonInFirstItem());
+
+
         onView(withId(R.id.btnSelectImage)).perform(click());
         device.wait(Until.hasObject(By.textContains("Pictures")), 10000);
 
@@ -239,6 +244,38 @@ public class ItemTest {
         // Reset the flag
         isEditTest = false;
     }
+
+    // Custom ViewAction to perform an operation on a child view within a RecyclerView item
+    public static ViewAction clickDeleteButtonInFirstItem() {
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return allOf(isDisplayed(), isAssignableFrom(RecyclerView.class));
+            }
+
+            @Override
+            public String getDescription() {
+                return "Click delete button in the first item of RecyclerView";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                RecyclerView recyclerView = (RecyclerView) view;
+                RecyclerView.ViewHolder firstViewHolder = recyclerView.findViewHolderForAdapterPosition(0);
+                if (firstViewHolder != null) {
+                    View deleteButton = firstViewHolder.itemView.findViewById(R.id.deleteButton);
+                    if (deleteButton != null) {
+                        deleteButton.performClick();
+                    } else {
+                        throw new IllegalStateException("Delete button not found in the first item of RecyclerView");
+                    }
+                } else {
+                    throw new IllegalStateException("First item of RecyclerView not found");
+                }
+            }
+        };
+    }
+
 
     @Test
     public void testScanners() throws InterruptedException {

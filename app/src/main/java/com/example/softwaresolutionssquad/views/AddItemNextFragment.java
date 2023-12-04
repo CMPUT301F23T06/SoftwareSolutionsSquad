@@ -128,12 +128,6 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
         }
 
         itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");
-//        cancelBtn.setOnClickListener(v -> {
-//            if (getActivity() != null) {
-//                HomeFragment homeFragment = new HomeFragment();
-//                ((MainActivity) getActivity()).setFragment(homeFragment);
-//            }
-//        });
 
         addTagBtn.setOnClickListener(v -> {
             AddItemTagFragment addItemTagFragment = new AddItemTagFragment();
@@ -148,7 +142,6 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
         });
 
         createBtn.setOnClickListener(v -> {
-//            if (newImages.size() > 0) {
                 uploadImageToFirebase(newImages, uploaded -> {
                     imageUrisList.removeAll(newImages);
                     item.setImageUrl(imageUrisList);
@@ -168,17 +161,6 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
                         }
                     }
                 });
-//            } else {
-//                if (newItem) {
-//                    createNewItem(item);
-//                } else {
-//                    onUpdatePressed(item);
-//                }
-//                if (getActivity() != null) {
-//                    HomeFragment homeFragment = new HomeFragment();
-//                    ((MainActivity) getActivity()).setFragment(homeFragment);
-//                }
-//            }
         });
         return view;
     }
