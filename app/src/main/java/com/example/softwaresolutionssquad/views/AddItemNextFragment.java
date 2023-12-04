@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.softwaresolutionssquad.R;
 import com.example.softwaresolutionssquad.models.InventoryItem;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.storage.FirebaseStorage;
@@ -152,13 +153,17 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
                     }
                     if (getActivity() != null) {
                         if (newItem) {
-                            AddItemFragment addItemFragment = new AddItemFragment();
-                            ((MainActivity) getActivity()).setFragment(addItemFragment);
+//                            AddItemFragment addItemFragment = new AddItemFragment();
+//                            ((MainActivity) getActivity()).setFragment(addItemFragment);
                             Toast.makeText(getActivity(), "Item added successfully!", Toast.LENGTH_SHORT).show();
                         } else {
-                            HomeFragment homeFragment = new HomeFragment();
-                            ((MainActivity) getActivity()).setFragment(homeFragment);
+                            Toast.makeText(getActivity(), "Item updated successfully!", Toast.LENGTH_SHORT).show();
                         }
+                        HomeFragment homeFragment = new HomeFragment();
+                        ((MainActivity) getActivity()).setFragment(homeFragment);
+                        Activity activity = getActivity();
+                        BottomNavigationView bottomNavigationView = activity.findViewById(R.id.navigation_bar);
+                        bottomNavigationView.setSelectedItemId(R.id.navigation_home);
                     }
                 });
         });
