@@ -28,6 +28,8 @@ import java.util.Locale;
  */
 public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
     private final ArrayList<InventoryItem> items;
+
+    private final ArrayList<InventoryItem> originalItems;
     private final Context context;
 
     /**
@@ -39,12 +41,27 @@ public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
     public InventoryListAdapter(Context context, ArrayList<InventoryItem> items) {
         super(context, 0, items);
         this.items = items;
+        this.originalItems = new ArrayList<>(items);
         this.context = context;
+    }
+
+    public void addToOriginal(ArrayList<InventoryItem> items) {
+        originalItems.clear();
+        originalItems.addAll(items);
     }
 
     public void updateItems(ArrayList<InventoryItem> newItems) {
         items.clear();
         items.addAll(newItems);
+        this.notifyDataSetChanged();
+    }
+
+    /**
+     * Resets the list of items to its original state.
+     */
+    public void resetItems() {
+        items.clear();
+        items.addAll(this.originalItems);
         this.notifyDataSetChanged();
     }
 

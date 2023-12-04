@@ -22,6 +22,7 @@ import com.example.softwaresolutionssquad.views.InventoryListAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,8 @@ public class KeywordFilterController {
     private final ListView inventoryListView;
     private final ArrayList<InventoryItem> inventoryItems;
 
+    private TextView estimatedValue;
+
     private boolean isAscendingOrder = true;
 
     /**
@@ -67,6 +70,7 @@ public class KeywordFilterController {
     public KeywordFilterController(Context context,
                                    LinearLayout keyFilter,
                                    EditText keywords,
+                                   TextView estimatedValue,
                                    TextView keywordButton,
                                    TextView dateButton,
                                    TextView makeButton,
@@ -95,6 +99,7 @@ public class KeywordFilterController {
         this.inventoryItems = inventoryItems;
         this.spinnerOrder = spinnerOrder;
         this.sortordericon = sortOrderIcon;
+        this.estimatedValue = estimatedValue;
         setupKeywordFilter();
     }
 
@@ -109,6 +114,13 @@ public class KeywordFilterController {
                 applyKeywordFilter(s.toString());
             }
         });
+    }
+
+    private void updateTotalValue(InventoryListAdapter items) {
+        double totalSum = items.getItems().stream()
+                .mapToDouble(InventoryItem::getEstimatedValue)
+                .sum();
+        estimatedValue.setText(String.format(Locale.US, "$ %.2f", totalSum));
     }
 
     /**
@@ -150,9 +162,9 @@ public class KeywordFilterController {
         ArrayList<InventoryItem> filteredResults = inventoryItems.stream()
                 .filter(condition)
                 .collect(Collectors.toCollection(ArrayList::new));
-        InventoryListAdapter new_adapter = new InventoryListAdapter(context, filteredResults);
-        inventoryListView.setAdapter(new_adapter);
-        SortController sortController = new SortController(new_adapter, filteredResults);
+        inventoryListAdapter.updateItems(filteredResults);
+        updateTotalValue(inventoryListAdapter);
+        SortController sortController = new SortController(inventoryListAdapter, filteredResults);
         spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
@@ -188,7 +200,8 @@ public class KeywordFilterController {
      */
     private void resetFilterButtons() {
         keywords.setText("");
-        inventoryListView.setAdapter(inventoryListAdapter);
+        inventoryListAdapter.resetItems();
+        updateTotalValue(inventoryListAdapter);
         dateButton.setTextColor(Color.BLACK);
         makeButton.setTextColor(Color.BLACK);
         tagButton.setTextColor(Color.BLACK);

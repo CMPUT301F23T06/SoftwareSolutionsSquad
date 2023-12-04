@@ -34,6 +34,8 @@ public class MakeFilterControllerTest {
     @Mock private TextView mockTagButton;
     @Mock private InventoryListAdapter mockInventoryListAdapter;
     @Mock private ListView mockInventoryListView;
+
+    @Mock private TextView mockEstimateValue;
     private List<InventoryItem> mockInventoryItems;
     private MakeFilterController controller;
 
@@ -46,6 +48,7 @@ public class MakeFilterControllerTest {
 
         controller = new MakeFilterController(
                 mockContext,
+                mockEstimateValue,
                 mockMakesTextView,
                 mockMakeFilter,
                 mockKeywordButton,
@@ -54,7 +57,7 @@ public class MakeFilterControllerTest {
                 mockTagButton,
                 mockInventoryListAdapter,
                 mockInventoryListView,
-                mockInventoryItems
+                (ArrayList<InventoryItem>) mockInventoryItems
         );
     }
 

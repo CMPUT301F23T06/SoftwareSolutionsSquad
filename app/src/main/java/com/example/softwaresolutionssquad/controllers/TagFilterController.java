@@ -19,6 +19,7 @@ import androidx.core.view.ViewCompat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,8 @@ public class TagFilterController {
     private final TextView keywordButton;
     private final TextView dateButton;
     private final TextView makeButton;
+
+    private TextView estimatedValue;
     private final TextView tagButton;
 
     /**
@@ -57,6 +60,7 @@ public class TagFilterController {
      */
     public TagFilterController(Context context,
                                TextView tagsTextView,
+                               TextView estimatedValue,
                                LinearLayout tagFilter,
                                TextView keywordButton,
                                TextView dateButton,
@@ -67,6 +71,7 @@ public class TagFilterController {
                                List<InventoryItem> inventoryItems) {
         this.context = context;
         this.tagsTextView = tagsTextView;
+        this.estimatedValue = estimatedValue;
         this.inventoryListAdapter = inventoryListAdapter;
         this.inventoryListView = inventoryListView;
         this.inventoryItems = inventoryItems;
@@ -119,6 +124,13 @@ public class TagFilterController {
         }
     }
 
+    private void updateTotalValue(InventoryListAdapter items) {
+        double totalSum = items.getItems().stream()
+                .mapToDouble(InventoryItem::getEstimatedValue)
+                .sum();
+        estimatedValue.setText(String.format(Locale.US, "$ %.2f", totalSum));
+    }
+
     /**
      * Handles tag selection within the dialog.
      *
@@ -149,7 +161,8 @@ public class TagFilterController {
         }
         tagsTextView.setText(String.join(", ", selectedTagsList));
         if (selectedTagsList.isEmpty()) {
-            inventoryListView.setAdapter(inventoryListAdapter);
+            inventoryListAdapter.resetItems();
+            updateTotalValue(inventoryListAdapter);
         } else {
             filterCondition = item -> item.getTags().stream().anyMatch(tag -> selectedTagsList.contains(tag));
             filteredResults(filterCondition);
@@ -180,14 +193,16 @@ public class TagFilterController {
             ViewCompat.setBackgroundTintList(dateButton, null);
             ViewCompat.setBackgroundTintList(makeButton, null);
             ViewCompat.setBackgroundTintList(tagButton, ColorStateList.valueOf(context.getResources().getColor(R.color.app_blue, null)));
-            inventoryListView.setAdapter(inventoryListAdapter);
+            inventoryListAdapter.resetItems();
+            updateTotalValue(inventoryListAdapter);
             tagsTextView.setText("");
             selectedTagsIndices.clear();
         } else {
             tagButton.setTextColor(Color.BLACK);
             tagFilter.setVisibility(View.GONE);
             ViewCompat.setBackgroundTintList(tagButton, null);
-            inventoryListView.setAdapter(inventoryListAdapter);
+            inventoryListAdapter.resetItems();
+            updateTotalValue(inventoryListAdapter);
         }
     }
 
@@ -200,8 +215,8 @@ public class TagFilterController {
         List<InventoryItem> filteredResults = inventoryItems.stream()
                 .filter(condition)
                 .collect(Collectors.toList());
-        InventoryListAdapter filterListAdapter = new InventoryListAdapter(context, new ArrayList<>(filteredResults));
-        inventoryListView.setAdapter(filterListAdapter);
+        inventoryListAdapter.updateItems((ArrayList<InventoryItem>) filteredResults);
+        updateTotalValue(inventoryListAdapter);
     }
 
     /**

@@ -19,6 +19,7 @@ import androidx.core.view.ViewCompat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ public class MakeFilterController {
     private final LinearLayout makeFilter;
     private final InventoryListAdapter inventoryListAdapter;
     private final ListView inventoryListView;
-    private final List<InventoryItem> inventoryItems;
+    private final ArrayList<InventoryItem> inventoryItems;
     private final ArrayList<String> allMakesList;
     private final ArrayList<Integer> selectedMakesIndices;
     private Predicate<InventoryItem> filterCondition;
@@ -40,6 +41,8 @@ public class MakeFilterController {
     private final TextView dateButton;
     private final TextView makeButton;
     private final TextView tagButton;
+
+    private TextView estimatedValue;
 
     /**
      * Constructs a MakeFilterController.
@@ -56,6 +59,7 @@ public class MakeFilterController {
      * @param inventoryItems         The list of inventory items.
      */
     public MakeFilterController(Context context,
+                                TextView estimatedValue,
                                 TextView makesTextView,
                                 LinearLayout makeFilter,
                                 TextView keywordButton,
@@ -64,7 +68,7 @@ public class MakeFilterController {
                                 TextView tagButton,
                                 InventoryListAdapter inventoryListAdapter,
                                 ListView inventoryListView,
-                                List<InventoryItem> inventoryItems) {
+                                ArrayList<InventoryItem> inventoryItems) {
         this.context = context;
         this.makesTextView = makesTextView;
         this.inventoryListAdapter = inventoryListAdapter;
@@ -77,6 +81,7 @@ public class MakeFilterController {
         this.makeButton = makeButton;
         this.tagButton = tagButton;
         this.makeFilter = makeFilter;
+        this.estimatedValue = estimatedValue;
         initializeMakeButton();
     }
 
@@ -151,6 +156,7 @@ public class MakeFilterController {
         makesTextView.setText(String.join(", ", selectedMakesList));
         if (selectedMakesList.isEmpty()) {
             inventoryListView.setAdapter(inventoryListAdapter);
+            updateTotalValue(inventoryListAdapter);
         } else {
             filterCondition = item -> selectedMakesList.contains(item.getMake());
             filteredResults(filterCondition);
@@ -181,15 +187,24 @@ public class MakeFilterController {
             ViewCompat.setBackgroundTintList(dateButton, null);
             ViewCompat.setBackgroundTintList(tagButton, null);
             ViewCompat.setBackgroundTintList(makeButton, ColorStateList.valueOf(context.getResources().getColor(R.color.app_blue, null)));
-            inventoryListView.setAdapter(inventoryListAdapter);
+            inventoryListAdapter.resetItems();
+            updateTotalValue(inventoryListAdapter);
             makesTextView.setText("");
             selectedMakesIndices.clear();
         } else {
             makeFilter.setVisibility(View.GONE);
             makeButton.setTextColor(Color.BLACK);
             ViewCompat.setBackgroundTintList(makeButton, null);
-            inventoryListView.setAdapter(inventoryListAdapter);
+            inventoryListAdapter.resetItems();
+            updateTotalValue(inventoryListAdapter);
         }
+    }
+
+    private void updateTotalValue(InventoryListAdapter items) {
+        double totalSum = items.getItems().stream()
+                .mapToDouble(InventoryItem::getEstimatedValue)
+                .sum();
+        estimatedValue.setText(String.format(Locale.US, "$ %.2f", totalSum));
     }
 
     /**
@@ -198,11 +213,11 @@ public class MakeFilterController {
      * @param condition The predicate to apply as the filter condition.
      */
     public void filteredResults(Predicate<InventoryItem> condition) {
-        List<InventoryItem> filteredResults = inventoryItems.stream()
+        ArrayList<InventoryItem> filteredResults = inventoryItems.stream()
                 .filter(condition)
-                .collect(Collectors.toList());
-        InventoryListAdapter filterListAdapter = new InventoryListAdapter(context, new ArrayList<>(filteredResults));
-        inventoryListView.setAdapter(filterListAdapter);
+                .collect(Collectors.toCollection(ArrayList::new));
+        inventoryListAdapter.updateItems(filteredResults);
+        updateTotalValue(inventoryListAdapter);
     }
 
     /**

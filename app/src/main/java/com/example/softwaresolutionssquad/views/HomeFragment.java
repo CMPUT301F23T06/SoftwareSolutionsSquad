@@ -127,9 +127,12 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                     loadingSpinner.setVisibility(View.GONE); // Hide spinner on error
                 } else {
                     inventoryItems.clear();
+                    ArrayList<InventoryItem> origData = new ArrayList<>();
                     for (QueryDocumentSnapshot doc: value) {
+                        origData.add(doc.toObject(InventoryItem.class));
                         inventoryItems.add(doc.toObject(InventoryItem.class));
                     }
+                    inventoryListAdapter.addToOriginal(origData);
                     inventoryListAdapter.notifyDataSetChanged();
                     updateTotalValue();
                     loadingSpinner.setVisibility(View.GONE); // Hide spinner after loading data
@@ -171,6 +174,7 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         inventoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 InventoryItem selectedItem = inventoryItems.get(position);
                 AddItemFragment addItemFragment = AddItemFragment.newInstance(selectedItem);
 
@@ -228,6 +232,7 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         new DateFilterController(
                 context, // Context
                 dateFilter,
+                estimatedValue,
                 startDate,
                 endDate,
                 dateButton,
@@ -248,6 +253,7 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                 context, // context
                 keyFilter,
                 keywords,
+                estimatedValue,
                 keywordButton,
                 dateButton,
                 makeButton,
@@ -265,6 +271,7 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         TextView makes = view.findViewById(R.id.make);
         MakeFilterController makeFilterController = new MakeFilterController(
                 context,
+                estimatedValue,
                 makes,
                 makeFilter,
                 keywordButton,
@@ -289,6 +296,7 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         TagFilterController tagFilterController = new TagFilterController(
                 context,
                 tags,
+                estimatedValue,
                 tagFilter,
                 keywordButton,
                 dateButton,
