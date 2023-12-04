@@ -1,5 +1,7 @@
 package com.example.softwaresolutionssquad.models;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +48,7 @@ public class InventoryItem implements Serializable {
         this.serialNumber = serialNumber;
         this.estimatedValue = estimatedValue;
         this.comment = comment;
-        this.tags = new ArrayList<String>();
+        this.tags = new ArrayList<>();
         this.docId = docId;
         this.imageUrl = imageUrl;
         this.username = username;
@@ -85,7 +87,7 @@ public class InventoryItem implements Serializable {
      */
     public InventoryItem() {
         // Default constructor
-        this.tags = new ArrayList<String>();
+        this.tags = new ArrayList<>();
     }
 
     // Accessors and Mutators for each property
@@ -147,6 +149,9 @@ public class InventoryItem implements Serializable {
 
     public ArrayList<String> getTags() { return tags; }
 
+    /**
+     * Sorts the tags of the item
+     */
     public ArrayList<String> getSortedTags() {
         ArrayList<String> sortedTags = tags;
         Collections.sort(sortedTags);
@@ -154,13 +159,15 @@ public class InventoryItem implements Serializable {
     }
 
 
+    /**
+     * Adds a tag to the items tag list
+     */
     public void addTag(String tag) {
         if (!tags.contains(tag)) {
             tags.add(tag);
         }
     }
 
-    public void deleteTag(String tag) { tags.remove(tag); }
 
     public boolean getSelected() {
         return isSelected;
@@ -195,6 +202,7 @@ public class InventoryItem implements Serializable {
      *
      * @return a string representation of the InventoryItem's properties
      */
+    @NonNull
     @Override
     public String toString() {
         return "InventoryItem{" +

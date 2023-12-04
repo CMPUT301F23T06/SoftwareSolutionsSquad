@@ -1,45 +1,18 @@
 package com.example.softwaresolutionssquad.views;
 
-import android.Manifest;
-import android.app.Dialog;
-import android.content.ClipData;
-import android.content.pm.PackageManager;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.core.content.ContextCompat;
-
-
-import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.ContentResolver;
 import android.app.AlertDialog;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.example.softwaresolutionssquad.R;
 import com.google.firebase.firestore.CollectionReference;
@@ -47,9 +20,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -111,7 +81,6 @@ public class AddItemFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             currentItem = (InventoryItem) getArguments().getSerializable(ITEM_KEY);
-            Log.d("item", currentItem.getTags().toString());
         }
     }
 
@@ -135,7 +104,6 @@ public class AddItemFragment extends Fragment {
 
         // Set an onClickListener for the Next button
         nextButton.setOnClickListener(v -> {
-            // TODO: Logic for saving the data and transitioning to the next screen
 
             // Extract data from UI elements
             String date = purchaseDateEditText.getText().toString().trim();
@@ -265,21 +233,9 @@ public class AddItemFragment extends Fragment {
         dpd.show();
     }
 
-
-
     /**
-     * Shows an alert dialog with a specified title and message.
-     * @param title   The title of the alert dialog.
-     * @param message The message of the alert dialog.
+     * Gets item id from FireStore
      */
-    private void showAlertDialog(String title, String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(title);
-        builder.setMessage(message);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
-
     private String retrieveDocId(InventoryItem item) {
         if (item != null) {
             return item.getDocId();
@@ -289,6 +245,9 @@ public class AddItemFragment extends Fragment {
         }
     }
 
+    /**
+     * Populates the field when we load an already existing item
+     */
     private void prepopulateFields(InventoryItem item) {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
         purchaseDateEditText.setText(sdf.format(item.getPurchaseDate()));
@@ -300,16 +259,23 @@ public class AddItemFragment extends Fragment {
         commentEditText.setText(item.getComment());
     }
 
+    /**
+     * Updates the date based on user selection
+     */
     private final DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
         LocalDate dateSet = LocalDate.of(year, monthOfYear + 1, dayOfMonth);
         updateLabel(dateSet);
     };
+
 
     private void updateLabel(LocalDate dateSet) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE_FORMAT);
         purchaseDateEditText.setText(dateSet.format(dtf));
     }
 
+    /**
+     * Opens the Fragment for Scanning
+     */
     private void openScanIntent(EditText textToAutofill) {
         ScanFragment scanFragment = new ScanFragment(textToAutofill);
         scanFragment.show(getActivity().getSupportFragmentManager(), "ADD_TAG");

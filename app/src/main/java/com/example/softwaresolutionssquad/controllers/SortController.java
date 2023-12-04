@@ -30,10 +30,20 @@ public class SortController {
         this.fromHome = fromHome;
     }
 
+    /**
+     * Setter for inventoryItems.
+     *
+     * @param items       the list of inventory items to be sorted
+     */
     public void setInventoryItems(List<InventoryItem> items) {
         this.inventoryItems = items;
     }
 
+    /**
+     * Setter for fromHome.
+     *
+     * @param fromHome  if the sort was called from HomeFragment initial oad
+     */
     public void setFromHome(Boolean fromHome) {
         this.fromHome = fromHome;
     }

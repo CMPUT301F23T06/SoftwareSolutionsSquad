@@ -41,10 +41,10 @@ public class TagFilterController {
     private final TextView dateButton;
     private final TextView makeButton;
 
-    private TextView estimatedValue;
+    private final TextView estimatedValue;
     private final TextView tagButton;
 
-    private SortController sortController;
+    private final SortController sortController;
 
     /**
      * Constructs a TagFilterController.
@@ -121,7 +121,7 @@ public class TagFilterController {
      */
     private void populateTagsListIfNeeded() {
         if (allTagsList.isEmpty()) {
-            HashSet<String> tags = new HashSet<String>();
+            HashSet<String> tags = new HashSet<>();
             for (InventoryItem item : inventoryItems) {
                 tags.addAll(item.getTags());
             }
@@ -129,6 +129,9 @@ public class TagFilterController {
         }
     }
 
+    /**
+     * Updates the Total Amount
+     */
     private void updateTotalValue(InventoryListAdapter items) {
         double totalSum = items.getItems().stream()
                 .mapToDouble(InventoryItem::getEstimatedValue)
@@ -171,7 +174,7 @@ public class TagFilterController {
             sortController.setFromHome(false);
             updateTotalValue(inventoryListAdapter);
         } else {
-            filterCondition = item -> item.getTags().stream().anyMatch(tag -> selectedTagsList.contains(tag));
+            filterCondition = item -> item.getTags().stream().anyMatch(selectedTagsList::contains);
             filteredResults(filterCondition);
         }
     }
@@ -233,13 +236,4 @@ public class TagFilterController {
         updateTotalValue(inventoryListAdapter);
     }
 
-    /**
-     * Retrieves a color from the resource.
-     *
-     * @param colorId The resource ID of the color to retrieve.
-     * @return The resolved color value.
-     */
-    private int getColor(int colorId) {
-        return context.getResources().getColor(colorId, null);
-    }
 }

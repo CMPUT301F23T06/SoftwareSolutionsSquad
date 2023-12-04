@@ -1,6 +1,5 @@
 package com.example.softwaresolutionssquad.views;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseBooleanArray;

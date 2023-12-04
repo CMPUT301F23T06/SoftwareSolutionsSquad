@@ -28,8 +28,7 @@ import java.io.IOException;
 
 public class ScanFragment extends DialogFragment {
     private SurfaceView surfaceView;
-    private TextView barcodeText;
-    private BarcodeDetector barcodeDetector;
+    private final TextView barcodeText;
     private CameraSource cameraSource;
     private static final int REQUEST_CAMERA_PERMISSION = 201;
 
@@ -65,12 +64,12 @@ public class ScanFragment extends DialogFragment {
      */
 
     private void initializeScanner() {
-        barcodeDetector = new BarcodeDetector.Builder(getContext()).setBarcodeFormats(Barcode.ALL_FORMATS).build();
+        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(getContext()).setBarcodeFormats(Barcode.ALL_FORMATS).build();
         cameraSource = new CameraSource.Builder(getContext(), barcodeDetector)
             .setRequestedPreviewSize(1920, 1080).setAutoFocusEnabled(true).build();
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
-            public void surfaceCreated(SurfaceHolder holder) {
+            public void surfaceCreated(@NonNull SurfaceHolder holder) {
                 try {
                     boolean haveCameraPermission =
                             ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
@@ -86,18 +85,18 @@ public class ScanFragment extends DialogFragment {
             }
 
             @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
             }
 
             @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
+            public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
                 cameraSource.stop();
             }
         });
 
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
             @Override
-            public void receiveDetections(Detector.Detections<Barcode> detector) {
+            public void receiveDetections(@NonNull Detector.Detections<Barcode> detector) {
                 final SparseArray<Barcode> barcodes = detector.getDetectedItems();
                 if (barcodes.size() > 0) {
                     barcodeText.setText(barcodes.valueAt(0).displayValue);

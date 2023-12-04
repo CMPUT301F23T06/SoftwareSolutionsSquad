@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,15 +41,14 @@ public class KeywordFilterController {
     private final LinearLayout makeFilter;
     private final LinearLayout tagFilter;
     private final Context context;
-    private InventoryListAdapter inventoryListAdapter;
+    private final InventoryListAdapter inventoryListAdapter;
     private final ListView inventoryListView;
     private ArrayList<InventoryItem> inventoryItems;
 
-    private SortController sortController;
+    private final SortController sortController;
 
-    private TextView estimatedValue;
+    private final TextView estimatedValue;
 
-    private boolean isAscendingOrder = true;
 
     /**
      * Constructs a KeywordFilterController.
@@ -68,6 +66,7 @@ public class KeywordFilterController {
      * @param inventoryListAdapter   the adapter for the inventory list
      * @param inventoryListView      the ListView for inventory display
      * @param inventoryItems         the list of inventory items
+     * @param sortController         sortController for sorting
      */
     public KeywordFilterController(Context context,
                                    LinearLayout keyFilter,
@@ -174,11 +173,6 @@ public class KeywordFilterController {
 
     }
 
-    private int getSortPositionFromSpinner(int spinnerPosition) {
-        // Map spinner position to SortController's expected position
-        // Assuming the spinner positions align with the SortController cases
-        return isAscendingOrder ? spinnerPosition * 2 : spinnerPosition * 2 + 1;
-    }
 
 
     /**
@@ -198,15 +192,6 @@ public class KeywordFilterController {
         ViewCompat.setBackgroundTintList(tagButton, null);
     }
 
-    /**
-     * Helper method to get color from resources.
-     *
-     * @param colorId the resource ID of the color
-     * @return the resolved color value
-     */
-    private int getColor(int colorId) {
-        return context.getResources().getColor(colorId, null);
-    }
 
     /**
      * Adapter for TextWatcher with no-op implementations of beforeTextChanged and onTextChanged.

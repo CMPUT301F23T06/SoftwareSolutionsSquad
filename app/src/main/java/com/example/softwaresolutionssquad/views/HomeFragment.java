@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,15 +14,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -54,8 +51,6 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
     private CollectionReference itemsRef;
     private Button deleteButton;
     private ProgressBar loadingSpinner;
-    private final ArrayList<String> set_of_checked_tags = new ArrayList<>();
-
     private TextView welcomeTextView;
 
     private Button tagBtn;
@@ -65,8 +60,6 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
     private TextView dateButton, keywordButton, makeButton, tagButton;
     // Linear layouts containing necessary elements for filtering types
     private LinearLayout dateFilter, keyFilter, makeFilter, tagFilter;
-    // Predicate for filters to use when determining which items match conditions
-    private Predicate<InventoryItem> filterCondition;
 
     private TextView estimatedValue;
 
@@ -77,7 +70,7 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
     }
@@ -414,16 +407,6 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         itemsRef.document(item.getDocId()).set(item)
                 .addOnSuccessListener(aVoid -> Log.d("UpdateItem", "DocumentSnapshot successfully updated!"))
                 .addOnFailureListener(e -> Log.w("UpdateItem", "Error updating document", e));
-    }
-
-    public void getlatestListOfItems() {
-        int itemCount = inventoryListAdapter.getCount();
-        ArrayList<InventoryItem> items = new ArrayList<>();
-        for (int i = 0; i < itemCount; i++) {
-            InventoryItem item = inventoryListAdapter.getItem(i);
-            items.add(item);
-        }
-        this.inventoryItems = items;
     }
 
 }

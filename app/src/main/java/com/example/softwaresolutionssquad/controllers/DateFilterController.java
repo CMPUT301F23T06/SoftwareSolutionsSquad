@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,7 +25,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import com.example.softwaresolutionssquad.controllers.SortController;
 
 /**
  * Controller for filtering inventory items by date range.
@@ -50,11 +48,11 @@ public class DateFilterController {
     public Predicate<InventoryItem> filterCondition;
     public ArrayList<InventoryItem> inventoryItems;
 
-    private TextView estimatedValue;
+    private final TextView estimatedValue;
 
-    private boolean isAscendingOrder = true;
 
-    private SortController sortController;
+
+    private final SortController sortController;
 
     /**
      * Constructs a new DateFilterController.
@@ -73,6 +71,7 @@ public class DateFilterController {
      * @param inventoryListAdapter adapter for the inventory list
      * @param inventoryListView    view representing the list of inventory items
      * @param inventoryItems       list of all inventory items
+     * @param sortController       sortController for sorting
      */
     public DateFilterController(Context context,
                                 LinearLayout dateFilterLayout,
@@ -123,6 +122,9 @@ public class DateFilterController {
         endDateEditText.setOnClickListener(view -> showDatePicker(endDateEditText, startDateEditText, false));
     }
 
+    /**
+     * Updates Estimated Value
+     */
     private void updateTotalValue(InventoryListAdapter items) {
         double totalSum = items.getItems().stream()
                 .mapToDouble(InventoryItem::getEstimatedValue)
@@ -232,12 +234,6 @@ public class DateFilterController {
         sortController.setFromHome(false);
     }
 
-    // Helper method to map spinner position to SortController position
-    private int getSortPositionFromSpinner(int spinnerPosition) {
-        // Map spinner position to SortController's expected position
-        // Assuming the spinner positions align with the SortController cases
-        return isAscendingOrder ? spinnerPosition * 2 : spinnerPosition * 2 + 1;
-    }
 
     /**
      * Helper method to set the background of a button to indicate it is active.

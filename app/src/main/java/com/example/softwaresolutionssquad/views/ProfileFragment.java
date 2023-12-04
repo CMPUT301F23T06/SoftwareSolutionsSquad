@@ -14,9 +14,6 @@ import com.example.softwaresolutionssquad.R;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class ProfileFragment extends Fragment {
 

@@ -18,7 +18,6 @@ import androidx.core.view.ViewCompat;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -42,9 +41,9 @@ public class MakeFilterController {
     private final TextView makeButton;
     private final TextView tagButton;
 
-    private SortController sortController;
+    private final SortController sortController;
 
-    private TextView estimatedValue;
+    private final TextView estimatedValue;
 
     /**
      * Constructs a MakeFilterController.
@@ -59,6 +58,7 @@ public class MakeFilterController {
      * @param inventoryListAdapter   The adapter for the inventory list view.
      * @param inventoryListView      The list view for displaying inventory items.
      * @param inventoryItems         The list of inventory items.
+     * @param sortController         SortController for sorting
      */
     public MakeFilterController(Context context,
                                 TextView estimatedValue,
@@ -211,6 +211,9 @@ public class MakeFilterController {
         }
     }
 
+    /**
+     * Updates the Total Value Text Element
+     */
     private void updateTotalValue(InventoryListAdapter items) {
         double totalSum = items.getItems().stream()
                 .mapToDouble(InventoryItem::getEstimatedValue)
@@ -234,13 +237,4 @@ public class MakeFilterController {
         updateTotalValue(inventoryListAdapter);
     }
 
-    /**
-     * Retrieves a color from the resource.
-     *
-     * @param colorId The resource ID of the color to retrieve.
-     * @return The resolved color value.
-     */
-    private int getColor(int colorId) {
-        return context.getResources().getColor(colorId, null);
-    }
 }

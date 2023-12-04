@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,8 +29,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,18 +42,14 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AddItemNextFragment extends Fragment implements AddItemTagFragment.OnFragmentInteractionListener {
     private Button backBtn;
-    private Button cancelBtn;
     private Button addTagBtn;
     private TextView titleTextView;
     private final InventoryItem item;
@@ -275,6 +268,9 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
         }
     }
 
+    /**
+     * Opens the Camera to take a picture
+     */
     private final ActivityResultLauncher<Intent> takePhotoLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -307,6 +303,9 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
         pickImageLauncher.launch(intent);
     }
 
+    /**
+     * Adds an image to image list after the user selects an image
+     */
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
