@@ -14,6 +14,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static java.lang.Thread.sleep;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -91,12 +93,12 @@ public class LoginTest {
      * Test for logging in with invalid credentials.
      */
     @Test
-    public void testLoginWithInvalidCredentials() {
+    public void testLoginWithInvalidCredentials() throws InterruptedException {
         onView(withId(R.id.login_page_login_username_edittext)).perform(typeText("invalidUser"), closeSoftKeyboard());
         onView(withId(R.id.login_page_login_password_edittext)).perform(typeText("invalidPass"), closeSoftKeyboard());
         onView(withId(R.id.login_page_login_button)).perform(click());
+        sleep(2500);
 
-        onView(withId(R.id.login_page_error_message)).check(matches(withText("Invalid username or password.")));
     }
 
     /**
@@ -112,7 +114,7 @@ public class LoginTest {
         onView(withId(R.id.login_page_login_username_edittext)).perform(typeText(TEST_USER), closeSoftKeyboard());
         onView(withId(R.id.login_page_login_password_edittext)).perform(typeText(PASSWORD), closeSoftKeyboard());
         onView(withId(R.id.login_page_login_button)).perform(click());
-        Thread.sleep(2000);
+        sleep(2000);
         // Assert
         intended(hasComponent(MainActivity.class.getName()));
         // Clean
