@@ -41,6 +41,9 @@ public class KeywordFilterControllerTest {
     private ArrayList<InventoryItem> inventoryItems;
     private KeywordFilterController controller;
 
+    /**
+     * Sets up the test environment before each test. Initializes mock objects and the KeywordFilterController.
+     */
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -72,12 +75,18 @@ public class KeywordFilterControllerTest {
 
     }
 
+    /**
+     * Tests the initialization of the KeywordFilterController constructor.
+     */
     @Test
     public void testConstructorInitialization() {
         assertNotNull(controller);
-        // Add more assertions as needed to verify initial state
+
     }
 
+    /**
+     * Tests the functionality of toggling keyword filter visibility.
+     */
     @Test
     public void testToggleFilters() {
         // Initial state should be hidden
@@ -92,6 +101,9 @@ public class KeywordFilterControllerTest {
         assertEquals(0, mockKeyFilter.getVisibility());
     }
 
+    /**
+     * Tests the functionality of toggling keyword filter visibility.
+     */
     @Test
     public void testApplyKeywordFilter() {
         // Set up a keyword
@@ -104,7 +116,4 @@ public class KeywordFilterControllerTest {
         // This assumes that your InventoryListAdapter correctly handles the filtered list
         verify(mockInventoryListView).setAdapter(any(InventoryListAdapter.class));
     }
-
-    // More test methods can be added as needed
-
 }

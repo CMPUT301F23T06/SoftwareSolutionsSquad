@@ -61,8 +61,10 @@ public class ItemTest {
     // Flag to track if cleanUp is called from testEditItem
     private boolean isEditTest = false;
     UiDevice device = UiDevice.getInstance(getInstrumentation());
+
     /**
-     * Sets up the test environment before each test.
+     * Sets up the test environment before each test. Waits for a specific time and initializes the test scenario.
+     * @throws InterruptedException if the thread is interrupted while sleeping.
      */
     @Before
     public void setUp() throws InterruptedException {
@@ -74,9 +76,10 @@ public class ItemTest {
     }
 
     /**
-     * Tests adding a new item to the inventory.
+     * Tests adding a new item to the inventory, including setting fields and verifying the addition.
+     * @throws InterruptedException if the thread is interrupted while sleeping.
+     * @throws UiObjectNotFoundException if a UI element is not found.
      */
-
     @Test
     public void testAddNewItem() throws InterruptedException, UiObjectNotFoundException {
         // Assume we have a unique description for each test run, for example using a timestamp
@@ -161,7 +164,9 @@ public class ItemTest {
     }
 
     /**
-     * Tests editing an existing item in the inventory.
+     * Tests editing an existing item in the inventory, including changing fields and verifying the update.
+     * @throws InterruptedException if the thread is interrupted while sleeping.
+     * @throws UiObjectNotFoundException if a UI element is not found.
      */
     @Test
     public void testEditItem() throws InterruptedException, UiObjectNotFoundException {
@@ -245,7 +250,10 @@ public class ItemTest {
         isEditTest = false;
     }
 
-    // Custom ViewAction to perform an operation on a child view within a RecyclerView item
+    /**
+     * Custom action for clicking the delete button in the first item of a RecyclerView.
+     * @return A ViewAction that performs the click operation.
+     */
     public static ViewAction clickDeleteButtonInFirstItem() {
         return new ViewAction() {
             @Override
@@ -289,9 +297,10 @@ public class ItemTest {
     }
 
     /**
-     * Cleans up after each test.
+     * Cleans up after each test by deleting the created or edited item.
+     * @param isFromEditTest A flag indicating if the cleanup is called from the edit item test.
+     * @throws InterruptedException if the thread is interrupted while sleeping.
      */
-//    @After
     public void cleanUp(Boolean isFromEditTest) throws InterruptedException {
 
         if (!isFromEditTest || (isFromEditTest && isEditTest)) {
@@ -308,7 +317,6 @@ public class ItemTest {
         }
     }
 
-    // filtering, date, keyword, model, make tests in progress
 
     /**
      * Custom matcher method to find an item in the ListView with the given content

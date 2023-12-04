@@ -24,16 +24,21 @@ public class SortControllerTest {
     private List<InventoryItem> inventoryItems;
     private SortController controller;
 
+    /**
+     * Sets up the test environment before each test. Initializes mock objects and the SortController.
+     */
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
         inventoryItems = new ArrayList<>();
-        // Optionally add mock inventory items to the list
 
         controller = new SortController(mockInventoryListAdapter, inventoryItems);
     }
 
+    /**
+     * Tests the onItemSelected functionality of the SortController.
+     */
     @Test
     public void testOnItemSelected() {
         // Test for each case in the switch statement
@@ -53,14 +58,13 @@ public class SortControllerTest {
             }
             verify(mockInventoryListAdapter).notifyDataSetChanged();
 
-            // Verify that notifyDataSetChanged was called on the adapter
         }
 
     }
 
     private void setUpInventoryItems() {
         inventoryItems.clear();
-        // Populate inventoryItems with initial state
+
     }
 
     private Comparator<InventoryItem> getExpectedComparator(int position) {
@@ -78,5 +82,4 @@ public class SortControllerTest {
         return position % 2 == 0;
     }
 
-    // More test methods as needed...
 }

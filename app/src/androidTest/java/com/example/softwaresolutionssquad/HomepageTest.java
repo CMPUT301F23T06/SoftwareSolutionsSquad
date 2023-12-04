@@ -42,6 +42,10 @@ public class HomepageTest {
 
     public List<InventoryItem> items = new ArrayList<>();
 
+    /**
+     * Sets up the test environment before each test. Waits for a specific time and sets the user context.
+     * @throws InterruptedException if the thread is interrupted while sleeping.
+     */
     @Before
     public void setUp() throws InterruptedException {
         sleep(2500);
@@ -52,6 +56,10 @@ public class HomepageTest {
         });
     }
 
+    /**
+     * Test for applying tags to multiple items. Verifies if the tags are correctly applied to selected items.
+     * @throws InterruptedException if the thread is interrupted while sleeping.
+     */
     @Test
     public void testTagsToMultipleItems() throws InterruptedException {
         onView(withId(R.id.inventory_list_view)).check(matches(isDisplayed()));
@@ -72,9 +80,11 @@ public class HomepageTest {
         onView(withId(R.id.okButton)).perform(click());
 
         verifyFirstItemTags();
-
-        // Add assertions or verifications as needed
     }
+
+    /**
+     * Verifies the tags of the first two items in the list.
+     */
     private void verifyFirstItemTags() {
         activityScenarioRule.getScenario().onActivity(activity -> {
             ListView listView = activity.findViewById(R.id.inventory_list_view);
@@ -87,7 +97,6 @@ public class HomepageTest {
             assertEquals(item2.getTags().get(1), "b");
 
             // Perform checks here
-            // Additional assertions to verify updates...
             int itemCount = adapter.getCount();
             for (int i = 0; i < itemCount; i++) {
                 InventoryItem item = adapter.getItem(i);
@@ -95,10 +104,12 @@ public class HomepageTest {
             }
         });
     }
+
+    /**
+     * Simulates the selection of tags in the tag list.
+     */
     private void simulateTagSelection() {
         // Simulate selecting tags
-        // Adjust this section based on how your tags are displayed and interacted with
-        // For example:
         onData(anything())
                 .inAdapterView(withId(R.id.tagListView))
                 .atPosition(0)
@@ -109,6 +120,11 @@ public class HomepageTest {
                 .perform(click());
     }
 
+
+    /**
+     * Generates mock inventory data for testing purposes.
+     * @return List of mock InventoryItem objects.
+     */
     private List<InventoryItem> getMockInventoryData() {
         // Generate and return mock data
         List<InventoryItem> mockData = new ArrayList<>();

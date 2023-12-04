@@ -38,6 +38,9 @@ public class LoginTest {
         put("displayName", "UI Test");
     }};
 
+    /**
+     * Test for navigating to the Create Account screen from the Login screen.
+     */
     @Rule
     public ActivityScenarioRule<LoginActivity> activityScenarioRule = new ActivityScenarioRule<>(LoginActivity.class);
 
@@ -53,12 +56,18 @@ public class LoginTest {
         Intents.release();
     }
 
+    /**
+     * Test for the login button functionality with empty fields.
+     */
     @Test
     public void testLoginButtonWithEmptyFields() {
         onView(withId(R.id.login_page_login_button)).perform(click());
         onView(withId(R.id.login_page_error_message)).check(matches(withText("Please enter both username and password.")));
     }
 
+    /**
+     * Test for the login button functionality with only username provided.
+     */
     @Test
     public void testLoginButtonWithUsernameOnly() {
         onView(withId(R.id.login_page_login_username_edittext)).perform(typeText(TEST_USER), closeSoftKeyboard());
@@ -67,6 +76,9 @@ public class LoginTest {
         onView(withId(R.id.login_page_error_message)).check(matches(withText("Please enter both username and password.")));
     }
 
+    /**
+     * Test for the login button functionality with only password provided.
+     */
     @Test
     public void testLoginButtonWithPasswordOnly() {
         onView(withId(R.id.login_page_login_password_edittext)).perform(typeText(PASSWORD), closeSoftKeyboard());
@@ -75,6 +87,9 @@ public class LoginTest {
         onView(withId(R.id.login_page_error_message)).check(matches(withText("Please enter both username and password.")));
     }
 
+    /**
+     * Test for logging in with invalid credentials.
+     */
     @Test
     public void testLoginWithInvalidCredentials() {
         onView(withId(R.id.login_page_login_username_edittext)).perform(typeText("invalidUser"), closeSoftKeyboard());
@@ -84,6 +99,10 @@ public class LoginTest {
         onView(withId(R.id.login_page_error_message)).check(matches(withText("Invalid username or password.")));
     }
 
+    /**
+     * Test for a successful login.
+     * @throws InterruptedException if the thread is interrupted while sleeping.
+     */
     @Test
     public void testLogin() throws InterruptedException {
         // Arrange

@@ -38,10 +38,21 @@ public class ProfileFragment extends Fragment {
     private String userName;
 
     private TextView user;
+
+    /**
+     * Required empty constructor for instantiating the fragment.
+     */
     public ProfileFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Called to have the fragment instantiate its user interface view. Initializes UI components and sets up interactions.
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container The parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, the fragment is being re-constructed from a previous saved state.
+     * @return The View for the fragment's UI.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile_layout, container, false);
@@ -67,6 +78,9 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Retrieves the count of items associated with the current user from Firestore and updates the UI.
+     */
     private void getItemCount() {
         itemsRef.whereEqualTo("username", userName).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -84,6 +98,9 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    /**
+     * Retrieves the count of tags associated with the current user from Firestore and updates the UI.
+     */
     private void getTagCount() {
         tagsRef.whereEqualTo("user", userName).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {

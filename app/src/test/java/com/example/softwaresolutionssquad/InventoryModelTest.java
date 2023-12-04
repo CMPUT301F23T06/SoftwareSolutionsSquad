@@ -18,6 +18,9 @@ public class InventoryModelTest {
     private InventoryModel inventoryModel;
     private InventoryItem item1, item2, item3;
 
+    /**
+     * Sets up the test environment before each test.
+     */
     @Before
     public void setUp() {
         ArrayList<String> imagesItem1 = new ArrayList<>();
@@ -37,6 +40,9 @@ public class InventoryModelTest {
         inventoryModel = new InventoryModel(items);
     }
 
+    /**
+     * Tests various getter and setter methods of the InventoryModel class.
+     */
     @Test
     public void testGetInventoryItems() {
         List<InventoryItem> items = inventoryModel.getInventoryItems();
