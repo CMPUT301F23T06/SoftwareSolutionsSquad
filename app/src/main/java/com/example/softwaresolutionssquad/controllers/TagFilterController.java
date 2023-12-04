@@ -187,6 +187,7 @@ public class TagFilterController {
             tagButton.setTextColor(Color.BLACK);
             tagFilter.setVisibility(View.GONE);
             ViewCompat.setBackgroundTintList(tagButton, null);
+            inventoryListView.setAdapter(inventoryListAdapter);
         }
     }
 

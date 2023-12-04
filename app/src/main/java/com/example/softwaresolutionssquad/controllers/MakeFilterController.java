@@ -188,6 +188,7 @@ public class MakeFilterController {
             makeFilter.setVisibility(View.GONE);
             makeButton.setTextColor(Color.BLACK);
             ViewCompat.setBackgroundTintList(makeButton, null);
+            inventoryListView.setAdapter(inventoryListAdapter);
         }
     }
 
