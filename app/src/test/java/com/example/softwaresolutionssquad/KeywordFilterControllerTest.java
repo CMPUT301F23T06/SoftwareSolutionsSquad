@@ -36,6 +36,8 @@ public class KeywordFilterControllerTest {
     @Mock private LinearLayout mockTagFilter;
     @Mock private InventoryListAdapter mockInventoryListAdapter;
     @Mock private ListView mockInventoryListView;
+
+    @Mock private TextView mockEstimatedValue;
     private ArrayList<InventoryItem> inventoryItems;
     private KeywordFilterController controller;
 
@@ -53,6 +55,7 @@ public class KeywordFilterControllerTest {
                 mockContext,
                 mockKeyFilter,
                 mockKeywords,
+                mockEstimatedValue,
                 mockKeywordButton,
                 mockDateButton,
                 mockMakeButton,
@@ -62,7 +65,9 @@ public class KeywordFilterControllerTest {
                 mockTagFilter,
                 mockInventoryListAdapter,
                 mockInventoryListView,
-                inventoryItems
+                inventoryItems,
+                null,
+                null
         );
 
     }

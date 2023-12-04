@@ -34,6 +34,8 @@ public class TagFilterControllerTest {
     @Mock private TextView mockTagButton;
     @Mock private InventoryListAdapter mockInventoryListAdapter;
     @Mock private ListView mockInventoryListView;
+
+    @Mock private TextView mockEstimatedValue;
     private List<InventoryItem> mockInventoryItems;
     private TagFilterController controller;
 
@@ -47,6 +49,7 @@ public class TagFilterControllerTest {
         controller = new TagFilterController(
                 mockContext,
                 mockTagsTextView,
+                mockEstimatedValue,
                 mockTagFilter,
                 mockKeywordButton,
                 mockDateButton,

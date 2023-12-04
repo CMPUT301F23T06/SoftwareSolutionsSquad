@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@drawable/login_page"
     android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
-        android:background="@drawable/login_page"
         android:layout_height="match_parent">
         <TextView
             android:layout_width="match_parent"
@@ -18,12 +18,25 @@
             android:textSize="40sp"
             android:padding="16dp"/>
 
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:id="@+id/textUser"
+            android:text="Hello, Pratham"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="125sp"
+            >
+
+        </TextView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_horizontal"
-            android:layout_marginTop="250sp">
+            android:layout_marginTop="75sp">
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

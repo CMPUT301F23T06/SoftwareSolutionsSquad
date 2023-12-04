@@ -23,7 +23,7 @@ public class ComparatorFactory {
      * @return Comparator for InventoryItem
      */
     public static Comparator<InventoryItem> getDescriptionComparator() {
-        return Comparator.comparing(InventoryItem::getDescription);
+        return Comparator.comparing((InventoryItem item) -> item.getDescription().toLowerCase());
     }
 
     /**
@@ -32,7 +32,7 @@ public class ComparatorFactory {
      * @return Comparator for InventoryItem
      */
     public static Comparator<InventoryItem> getMakeComparator() {
-        return Comparator.comparing(InventoryItem::getMake);
+        return Comparator.comparing((InventoryItem item) -> item.getMake().toLowerCase());
     }
 
     /**

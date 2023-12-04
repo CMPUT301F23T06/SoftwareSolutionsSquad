@@ -19,6 +19,7 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -69,6 +70,8 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
 
     private TextView estimatedValue;
 
+    public View view;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -84,7 +87,7 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home_layout, container, false);
+        view = inflater.inflate(R.layout.fragment_home_layout, container, false);
         String username = ((MyApp) requireActivity().getApplication()).getUserViewModel().getUsername();
 
         welcomeTextView = view.findViewById(R.id.Welcome);
@@ -104,7 +107,6 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         inventoryListAdapter = new InventoryListAdapter(context, inventoryItems);
         inventoryListView = view.findViewById(R.id.inventory_list_view);
         inventoryListView.setAdapter(inventoryListAdapter);
-        updateTotalValue();
 
         buttonsLayout = view.findViewById(R.id.buttons_layout); // Assign ID to your LinearLayout
 
@@ -126,15 +128,20 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                     loadingSpinner.setVisibility(View.GONE); // Hide spinner on error
                 } else {
                     inventoryItems.clear();
+                    ArrayList<InventoryItem> origData = new ArrayList<>();
                     for (QueryDocumentSnapshot doc: value) {
+                        origData.add(doc.toObject(InventoryItem.class));
                         inventoryItems.add(doc.toObject(InventoryItem.class));
                     }
-                    updateTotalValue();
+                    inventoryListAdapter.addToOriginal(origData);
                     inventoryListAdapter.notifyDataSetChanged();
+                    updateTotalValue();
                     loadingSpinner.setVisibility(View.GONE); // Hide spinner after loading data
                 }
             }
         });
+
+
 
         SortController sortController = new SortController(inventoryListAdapter, inventoryItems);
 
@@ -152,10 +159,23 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
             }
         });
 
+        ImageView SortOrderIcon = view.findViewById(R.id.sort_view); // Replace with your actual ImageView ID
+
+        // OnClickListener for sort icon
+        SortOrderIcon.setOnClickListener(v -> {
+            // Toggle the sort order
+            isAscendingOrder = !isAscendingOrder;
+
+            // Perform sorting with the current criterion and order
+            int criterionPosition = spinnerOrder.getSelectedItemPosition();
+            sortController.onItemSelected(getSortPositionFromSpinner(criterionPosition));
+        });
+
 
         inventoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 InventoryItem selectedItem = inventoryItems.get(position);
                 AddItemFragment addItemFragment = AddItemFragment.newInstance(selectedItem);
 
@@ -213,6 +233,7 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         new DateFilterController(
                 context, // Context
                 dateFilter,
+                estimatedValue,
                 startDate,
                 endDate,
                 dateButton,
@@ -224,13 +245,16 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                 tagFilter,
                 inventoryListAdapter,
                 inventoryListView,
-                inventoryItems // The data list
+                inventoryItems, // The data list
+                spinnerOrder,
+                SortOrderIcon
         );
 
         new KeywordFilterController(
                 context, // context
                 keyFilter,
                 keywords,
+                estimatedValue,
                 keywordButton,
                 dateButton,
                 makeButton,
@@ -240,12 +264,15 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                 tagFilter,
                 inventoryListAdapter,
                 inventoryListView,
-                inventoryItems
+                inventoryItems,
+                spinnerOrder,
+                SortOrderIcon
         );
         // Allow user to filter items based on the presence of keywords in description
         TextView makes = view.findViewById(R.id.make);
         MakeFilterController makeFilterController = new MakeFilterController(
                 context,
+                estimatedValue,
                 makes,
                 makeFilter,
                 keywordButton,
@@ -270,6 +297,7 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         TagFilterController tagFilterController = new TagFilterController(
                 context,
                 tags,
+                estimatedValue,
                 tagFilter,
                 keywordButton,
                 dateButton,
@@ -286,18 +314,6 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
             makeFilter.setVisibility(View.GONE);
             // ...
             tagFilterController.toggleTagFilterVisibility();
-        });
-
-        ImageView SortOrderIcon = view.findViewById(R.id.sort_view); // Replace with your actual ImageView ID
-
-        // OnClickListener for sort icon
-        SortOrderIcon.setOnClickListener(v -> {
-            // Toggle the sort order
-            isAscendingOrder = !isAscendingOrder;
-
-            // Perform sorting with the current criterion and order
-            int criterionPosition = spinnerOrder.getSelectedItemPosition();
-            sortController.onItemSelected(getSortPositionFromSpinner(criterionPosition));
         });
 
         // Inflate the layout for this fragment
@@ -318,8 +334,9 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
 
     // Method to delete selected items
     private void deleteSelectedItems() {
+//        getlatestListOfItems();
         // Collect all items that are marked for deletion
-        List<InventoryItem> itemsToRemove = inventoryItems.stream()
+        List<InventoryItem> itemsToRemove = inventoryListAdapter.getItems().stream()
                 .filter(InventoryItem::getSelected)
                 .collect(Collectors.toList());
 
@@ -339,12 +356,18 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                     .addOnFailureListener(e -> Log.w("DeleteItem", "Error deleting document", e));
         }
         buttonsLayout.setVisibility(View.GONE);
+        HomeFragment homeFragment = new HomeFragment();
+        ((MainActivity) getActivity()).setFragment(homeFragment);
+        Toast.makeText(getActivity(), "Item(s) deleted successfully!", Toast.LENGTH_SHORT).show();
+//        inventoryListView.setAdapter(inventoryListAdapter);
+
 
     }
 
     // Method to update total estimated value of InventoryItems
     private void updateTotalValue() {
-        double totalSum = inventoryItems.stream()
+//        getlatestListOfItems();
+        double totalSum = inventoryListAdapter.getItems().stream()
                 .mapToDouble(InventoryItem::getEstimatedValue)
                 .sum();
         estimatedValue.setText(String.format(Locale.US, "$ %.2f", totalSum));
@@ -356,7 +379,7 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
      */
     @Override
     public void onOkPressed(ArrayList<String> selectedTags) {
-        List<InventoryItem> itemsToAddTagsTo = inventoryItems.stream()
+        List<InventoryItem> itemsToAddTagsTo = inventoryListAdapter.getItems().stream()
                 .filter(InventoryItem::getSelected)
                 .collect(Collectors.toList());
 
@@ -374,6 +397,9 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                 updateItemInFirestore(item);
             }
         });
+        HomeFragment homeFragment = new HomeFragment();
+        ((MainActivity) getActivity()).setFragment(homeFragment);
+        Toast.makeText(getActivity(), "Tag[s) added successfully!", Toast.LENGTH_SHORT).show();
     }
 
     /***
@@ -384,6 +410,16 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
         itemsRef.document(item.getDocId()).set(item)
                 .addOnSuccessListener(aVoid -> Log.d("UpdateItem", "DocumentSnapshot successfully updated!"))
                 .addOnFailureListener(e -> Log.w("UpdateItem", "Error updating document", e));
+    }
+
+    public void getlatestListOfItems() {
+        int itemCount = inventoryListAdapter.getCount();
+        ArrayList<InventoryItem> items = new ArrayList<>();
+        for (int i = 0; i < itemCount; i++) {
+            InventoryItem item = inventoryListAdapter.getItem(i);
+            items.add(item);
+        }
+        this.inventoryItems = items;
     }
 
 }
