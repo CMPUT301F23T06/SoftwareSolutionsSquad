@@ -53,6 +53,8 @@ public class DateFilterController {
 
     private boolean isAscendingOrder = true;
 
+    private SortController sortController;
+
     /**
      * Constructs a new DateFilterController.
      *
@@ -87,7 +89,9 @@ public class DateFilterController {
                                 ListView inventoryListView,
                                 ArrayList<InventoryItem> inventoryItems,
                                 Spinner spinnerOrder,
-                                ImageView sortOrderIcon) {
+                                ImageView sortOrderIcon,
+                                SortController sortController
+    ) {
         this.context = context;
         this.estimatedValue = estimatedValue;
         this.dateFilterLayout = dateFilterLayout;
@@ -105,6 +109,7 @@ public class DateFilterController {
         this.inventoryItems = inventoryItems;
         this.spinnerOrder = spinnerOrder;
         this.sortordericon = sortOrderIcon;
+        this.sortController = sortController;
         initializeDateFilter();
     }
 
@@ -142,10 +147,14 @@ public class DateFilterController {
             setButtonActiveBackground(dateFilterButton);
             resetListViewAdapter();
             setDefaultDates();
+            sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
+            sortController.setFromHome(false);
         } else {
             dateFilterLayout.setVisibility(View.GONE);
             resetListViewAdapter();
             resetButtonBackground(dateFilterButton);
+            sortController.setFromHome(true);
+            sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
         }
     }
 
@@ -218,28 +227,8 @@ public class DateFilterController {
         ArrayList<InventoryItem> filteredResults = inventoryItems.stream().filter(condition).collect(Collectors.toCollection(ArrayList::new));
         inventoryListAdapter.updateItems(filteredResults);
         updateTotalValue(inventoryListAdapter);
-        SortController sortController = new SortController(inventoryListAdapter, filteredResults);
-        spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                sortController.onItemSelected(position*2);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // If no item is selected, no action is needed
-            }
-        });
-
-        sortordericon.setOnClickListener(v -> {
-            // Toggle the sort order
-            isAscendingOrder = !isAscendingOrder;
-
-            // Perform sorting with the current criterion and order
-            int criterionPosition = spinnerOrder.getSelectedItemPosition();
-            sortController.onItemSelected(getSortPositionFromSpinner(criterionPosition));
-        });
+        sortController.setInventoryItems(filteredResults);
+        sortController.setFromHome(false);
     }
 
     // Helper method to map spinner position to SortController position
@@ -283,7 +272,7 @@ public class DateFilterController {
      * Sets default dates in the date filter fields when the filter is first activated.
      */
     public void setDefaultDates() {
-        startDateEditText.setText("2010-01-01"); // Default start date
+        startDateEditText.setText("2023-01-01"); // Default start date
         endDateEditText.setText(LocalDate.now().toString()); // Current date as default end date
     }
 

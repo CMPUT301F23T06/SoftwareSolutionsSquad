@@ -42,6 +42,8 @@ public class MakeFilterController {
     private final TextView makeButton;
     private final TextView tagButton;
 
+    private SortController sortController;
+
     private TextView estimatedValue;
 
     /**
@@ -68,7 +70,9 @@ public class MakeFilterController {
                                 TextView tagButton,
                                 InventoryListAdapter inventoryListAdapter,
                                 ListView inventoryListView,
-                                ArrayList<InventoryItem> inventoryItems) {
+                                ArrayList<InventoryItem> inventoryItems,
+                                SortController sortController
+    ) {
         this.context = context;
         this.makesTextView = makesTextView;
         this.inventoryListAdapter = inventoryListAdapter;
@@ -82,6 +86,7 @@ public class MakeFilterController {
         this.tagButton = tagButton;
         this.makeFilter = makeFilter;
         this.estimatedValue = estimatedValue;
+        this.sortController = sortController;
         initializeMakeButton();
     }
 
@@ -156,6 +161,8 @@ public class MakeFilterController {
         makesTextView.setText(String.join(", ", selectedMakesList));
         if (selectedMakesList.isEmpty()) {
             inventoryListAdapter.resetItems();
+            sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
+            sortController.setFromHome(false);
             updateTotalValue(inventoryListAdapter);
         } else {
             filterCondition = item -> selectedMakesList.contains(item.getMake());
@@ -188,6 +195,8 @@ public class MakeFilterController {
             ViewCompat.setBackgroundTintList(tagButton, null);
             ViewCompat.setBackgroundTintList(makeButton, ColorStateList.valueOf(context.getResources().getColor(R.color.app_blue, null)));
             inventoryListAdapter.resetItems();
+            sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
+            sortController.setFromHome(false);
             updateTotalValue(inventoryListAdapter);
             makesTextView.setText("");
             selectedMakesIndices.clear();
@@ -196,6 +205,8 @@ public class MakeFilterController {
             makeButton.setTextColor(Color.BLACK);
             ViewCompat.setBackgroundTintList(makeButton, null);
             inventoryListAdapter.resetItems();
+            sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
+            sortController.setFromHome(true);
             updateTotalValue(inventoryListAdapter);
         }
     }
@@ -218,6 +229,8 @@ public class MakeFilterController {
                 .filter(condition)
                 .collect(Collectors.toCollection(ArrayList::new));
         inventoryListAdapter.updateItems(filteredResults);
+        sortController.setInventoryItems(filteredResults);
+        sortController.setFromHome(false);
         updateTotalValue(inventoryListAdapter);
     }
 

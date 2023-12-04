@@ -44,6 +44,8 @@ public class TagFilterController {
     private TextView estimatedValue;
     private final TextView tagButton;
 
+    private SortController sortController;
+
     /**
      * Constructs a TagFilterController.
      *
@@ -68,7 +70,9 @@ public class TagFilterController {
                                TextView tagButton,
                                InventoryListAdapter inventoryListAdapter,
                                ListView inventoryListView,
-                               List<InventoryItem> inventoryItems) {
+                               List<InventoryItem> inventoryItems,
+                               SortController sortController
+    ) {
         this.context = context;
         this.tagsTextView = tagsTextView;
         this.estimatedValue = estimatedValue;
@@ -82,6 +86,7 @@ public class TagFilterController {
         this.makeButton = makeButton;
         this.tagButton = tagButton;
         this.tagFilter = tagFilter;
+        this.sortController = sortController;
         initializeTagButton();
     }
 
@@ -162,6 +167,8 @@ public class TagFilterController {
         tagsTextView.setText(String.join(", ", selectedTagsList));
         if (selectedTagsList.isEmpty()) {
             inventoryListAdapter.resetItems();
+            sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
+            sortController.setFromHome(false);
             updateTotalValue(inventoryListAdapter);
         } else {
             filterCondition = item -> item.getTags().stream().anyMatch(tag -> selectedTagsList.contains(tag));
@@ -194,6 +201,8 @@ public class TagFilterController {
             ViewCompat.setBackgroundTintList(makeButton, null);
             ViewCompat.setBackgroundTintList(tagButton, ColorStateList.valueOf(context.getResources().getColor(R.color.app_blue, null)));
             inventoryListAdapter.resetItems();
+            sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
+            sortController.setFromHome(false);
             updateTotalValue(inventoryListAdapter);
             tagsTextView.setText("");
             selectedTagsIndices.clear();
@@ -202,6 +211,8 @@ public class TagFilterController {
             tagFilter.setVisibility(View.GONE);
             ViewCompat.setBackgroundTintList(tagButton, null);
             inventoryListAdapter.resetItems();
+            sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
+            sortController.setFromHome(true);
             updateTotalValue(inventoryListAdapter);
         }
     }
@@ -217,6 +228,8 @@ public class TagFilterController {
                 .filter(condition)
                 .collect(Collectors.toList());
         inventoryListAdapter.updateItems((ArrayList<InventoryItem>) filteredResults);
+        sortController.setInventoryItems(filteredResults);
+        sortController.setFromHome(false);
         updateTotalValue(inventoryListAdapter);
     }
 

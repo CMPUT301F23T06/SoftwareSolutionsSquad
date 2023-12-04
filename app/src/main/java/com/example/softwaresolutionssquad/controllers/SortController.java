@@ -4,6 +4,7 @@ import com.example.softwaresolutionssquad.models.ComparatorFactory;
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.example.softwaresolutionssquad.views.InventoryListAdapter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -13,7 +14,9 @@ import java.util.List;
  */
 public class SortController {
     private final InventoryListAdapter inventoryListAdapter;
-    private final List<InventoryItem> inventoryItems;
+    private List<InventoryItem> inventoryItems;
+
+    private Boolean fromHome;
 
     /**
      * Constructs a SortController with the specified adapter and inventory items.
@@ -21,9 +24,18 @@ public class SortController {
      * @param inventoryListAdapter the adapter for the inventory list
      * @param inventoryItems       the list of inventory items to be sorted
      */
-    public SortController(InventoryListAdapter inventoryListAdapter, List<InventoryItem> inventoryItems) {
+    public SortController(InventoryListAdapter inventoryListAdapter, List<InventoryItem> inventoryItems, Boolean fromHome) {
         this.inventoryListAdapter = inventoryListAdapter;
         this.inventoryItems = inventoryItems;
+        this.fromHome = fromHome;
+    }
+
+    public void setInventoryItems(List<InventoryItem> items) {
+        this.inventoryItems = items;
+    }
+
+    public void setFromHome(Boolean fromHome) {
+        this.fromHome = fromHome;
     }
 
     /**
@@ -92,6 +104,10 @@ public class SortController {
         } else {
             Collections.sort(inventoryItems, Collections.reverseOrder(comparator));
         }
-        inventoryListAdapter.notifyDataSetChanged();
+        if (fromHome) {
+            inventoryListAdapter.notifyDataSetChanged();
+        } else {
+            inventoryListAdapter.updateItems((ArrayList<InventoryItem>) inventoryItems);
+        }
     }
 }

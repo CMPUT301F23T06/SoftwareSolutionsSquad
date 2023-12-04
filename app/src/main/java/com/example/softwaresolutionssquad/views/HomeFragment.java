@@ -143,7 +143,7 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
 
 
 
-        SortController sortController = new SortController(inventoryListAdapter, inventoryItems);
+        SortController sortController = new SortController(inventoryListAdapter, inventoryItems, true);
 
         // Set the listener for when an item is selected in the Spinner
         spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -247,7 +247,8 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                 inventoryListView,
                 inventoryItems, // The data list
                 spinnerOrder,
-                SortOrderIcon
+                SortOrderIcon,
+                sortController
         );
 
         new KeywordFilterController(
@@ -266,7 +267,8 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                 inventoryListView,
                 inventoryItems,
                 spinnerOrder,
-                SortOrderIcon
+                SortOrderIcon,
+                sortController
         );
         // Allow user to filter items based on the presence of keywords in description
         TextView makes = view.findViewById(R.id.make);
@@ -281,7 +283,8 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                 tagButton,
                 inventoryListAdapter,
                 inventoryListView,
-                inventoryItems
+                inventoryItems,
+                sortController
         );
         // Allow user to filter items based on specified makes
         makeButton.setOnClickListener(v -> {
@@ -305,7 +308,8 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                 tagButton,
                 inventoryListAdapter,
                 inventoryListView,
-                inventoryItems
+                inventoryItems,
+                sortController
         );
         tagButton.setOnClickListener(v -> {
             // Hide other filters here if they are part of MainActivity
