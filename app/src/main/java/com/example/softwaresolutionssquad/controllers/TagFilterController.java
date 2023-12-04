@@ -167,11 +167,8 @@ public class TagFilterController {
         tagsTextView.setText(String.join(", ", selectedTagsList));
         if (selectedTagsList.isEmpty()) {
             inventoryListAdapter.resetItems();
-<<<<<<< HEAD
             sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
             sortController.setFromHome(false);
-=======
->>>>>>> main
             updateTotalValue(inventoryListAdapter);
         } else {
             filterCondition = item -> item.getTags().stream().anyMatch(tag -> selectedTagsList.contains(tag));
@@ -204,11 +201,8 @@ public class TagFilterController {
             ViewCompat.setBackgroundTintList(makeButton, null);
             ViewCompat.setBackgroundTintList(tagButton, ColorStateList.valueOf(context.getResources().getColor(R.color.app_blue, null)));
             inventoryListAdapter.resetItems();
-<<<<<<< HEAD
             sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
             sortController.setFromHome(false);
-=======
->>>>>>> main
             updateTotalValue(inventoryListAdapter);
             tagsTextView.setText("");
             selectedTagsIndices.clear();
@@ -217,11 +211,8 @@ public class TagFilterController {
             tagFilter.setVisibility(View.GONE);
             ViewCompat.setBackgroundTintList(tagButton, null);
             inventoryListAdapter.resetItems();
-<<<<<<< HEAD
             sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
             sortController.setFromHome(false);
-=======
->>>>>>> main
             updateTotalValue(inventoryListAdapter);
         }
     }
@@ -237,11 +228,8 @@ public class TagFilterController {
                 .filter(condition)
                 .collect(Collectors.toList());
         inventoryListAdapter.updateItems((ArrayList<InventoryItem>) filteredResults);
-<<<<<<< HEAD
         sortController.setInventoryItems(filteredResults);
         sortController.setFromHome(false);
-=======
->>>>>>> main
         updateTotalValue(inventoryListAdapter);
     }
 
