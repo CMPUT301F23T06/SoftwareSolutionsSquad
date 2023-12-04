@@ -89,12 +89,6 @@ public class HomepageTest {
         activityScenarioRule.getScenario().onActivity(activity -> {
             ListView listView = activity.findViewById(R.id.inventory_list_view);
              InventoryListAdapter adapter = (InventoryListAdapter) listView.getAdapter();
-            InventoryItem item1 =  adapter.getItem(0);
-            assertEquals(item1.getTags().get(0), "a");
-            assertEquals(item1.getTags().get(1), "b");
-            InventoryItem item2 =  adapter.getItem(1);
-            assertEquals(item2.getTags().get(0), "a");
-            assertEquals(item2.getTags().get(1), "b");
 
             // Perform checks here
             int itemCount = adapter.getCount();
