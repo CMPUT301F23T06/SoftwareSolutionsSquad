@@ -156,12 +156,12 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
                             Toast.makeText(getActivity(), "Item added successfully!", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getActivity(), "Item updated successfully!", Toast.LENGTH_SHORT).show();
-                            HomeFragment homeFragment = new HomeFragment();
-                            ((MainActivity) getActivity()).setFragment(homeFragment);
-                            Activity activity = getActivity();
-                            BottomNavigationView bottomNavigationView = activity.findViewById(R.id.navigation_bar);
-                            bottomNavigationView.setSelectedItemId(R.id.navigation_home);
                         }
+                        HomeFragment homeFragment = new HomeFragment();
+                        ((MainActivity) getActivity()).setFragment(homeFragment);
+                        Activity activity = getActivity();
+                        BottomNavigationView bottomNavigationView = activity.findViewById(R.id.navigation_bar);
+                        bottomNavigationView.setSelectedItemId(R.id.navigation_home);
                     }
                 });
         });
