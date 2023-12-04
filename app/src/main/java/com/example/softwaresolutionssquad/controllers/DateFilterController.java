@@ -221,7 +221,7 @@ public class DateFilterController {
      * Sets default dates in the date filter fields when the filter is first activated.
      */
     public void setDefaultDates() {
-        startDateEditText.setText("2010-01-01"); // Default start date
+        startDateEditText.setText("1900-01-01"); // Default start date
         endDateEditText.setText(LocalDate.now().toString()); // Current date as default end date
     }
 
