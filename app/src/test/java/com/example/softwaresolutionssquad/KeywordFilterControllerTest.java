@@ -12,8 +12,10 @@ import android.content.Context;
 import android.text.Editable;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.softwaresolutionssquad.controllers.KeywordFilterController;
@@ -38,6 +40,8 @@ public class KeywordFilterControllerTest {
     @Mock private ListView mockInventoryListView;
 
     @Mock private TextView mockEstimatedValue;
+    @Mock private Spinner mockSpinnerOrder;
+    @Mock private ImageView mockSortOrderIcon;
     private ArrayList<InventoryItem> inventoryItems;
     private KeywordFilterController controller;
 
@@ -69,8 +73,8 @@ public class KeywordFilterControllerTest {
                 mockInventoryListAdapter,
                 mockInventoryListView,
                 inventoryItems,
-                null,
-                null
+                mockSpinnerOrder,
+                mockSortOrderIcon
         );
 
     }
