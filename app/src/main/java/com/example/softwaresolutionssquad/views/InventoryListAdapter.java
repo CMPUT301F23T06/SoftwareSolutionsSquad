@@ -92,7 +92,7 @@ public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
 
         descriptionTextView.setText(currentItem.getDescription());
         makeTextView.setText(currentItem.getMake());
-        estimatedValueTextView.setText(String.format("$%s", currentItem.getEstimatedValue()));
+        estimatedValueTextView.setText(String.format("$%.2f", currentItem.getEstimatedValue()));
 
         CheckBox checkBox = listItemView.findViewById(R.id.checkItem);
         checkBox.setTag(position);
