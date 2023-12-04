@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.softwaresolutionssquad.controllers.KeywordFilterController;
+import com.example.softwaresolutionssquad.controllers.SortController;
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.example.softwaresolutionssquad.views.InventoryListAdapter;
 
@@ -38,7 +39,7 @@ public class KeywordFilterControllerTest {
     @Mock private LinearLayout mockTagFilter;
     @Mock private InventoryListAdapter mockInventoryListAdapter;
     @Mock private ListView mockInventoryListView;
-
+    @Mock private SortController mockSortController;
     @Mock private TextView mockEstimatedValue;
     @Mock private Spinner mockSpinnerOrder;
     @Mock private ImageView mockSortOrderIcon;
@@ -74,7 +75,8 @@ public class KeywordFilterControllerTest {
                 mockInventoryListView,
                 inventoryItems,
                 mockSpinnerOrder,
-                mockSortOrderIcon
+                mockSortOrderIcon,
+                mockSortController
         );
 
     }
@@ -113,6 +115,7 @@ public class KeywordFilterControllerTest {
         // Set up a keyword
         String keyword = "test";
         when(mockKeywords.getText().toString()).thenReturn(keyword);
+        mockInventoryListView.setAdapter(mockInventoryListAdapter);
 
         // Trigger the filter
         controller.applyKeywordFilter(keyword);

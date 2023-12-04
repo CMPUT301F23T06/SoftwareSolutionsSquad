@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.softwaresolutionssquad.controllers.MakeFilterController;
+import com.example.softwaresolutionssquad.controllers.SortController;
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.example.softwaresolutionssquad.views.InventoryListAdapter;
 
@@ -34,7 +35,7 @@ public class MakeFilterControllerTest {
     @Mock private TextView mockTagButton;
     @Mock private InventoryListAdapter mockInventoryListAdapter;
     @Mock private ListView mockInventoryListView;
-
+    @Mock private SortController mockSortController;
     @Mock private TextView mockEstimateValue;
     private List<InventoryItem> mockInventoryItems;
     private MakeFilterController controller;
@@ -60,7 +61,8 @@ public class MakeFilterControllerTest {
                 mockTagButton,
                 mockInventoryListAdapter,
                 mockInventoryListView,
-                (ArrayList<InventoryItem>) mockInventoryItems
+                (ArrayList<InventoryItem>) mockInventoryItems,
+                mockSortController
         );
     }
 
@@ -95,6 +97,7 @@ public class MakeFilterControllerTest {
         // Set a mock filter condition
         Predicate<InventoryItem> mockCondition = item -> true; // Example condition
         controller.filteredResults(mockCondition);
+        mockInventoryListView.setAdapter(mockInventoryListAdapter);
 
         // Apply the filter
         // Verify the inventory list is updated
