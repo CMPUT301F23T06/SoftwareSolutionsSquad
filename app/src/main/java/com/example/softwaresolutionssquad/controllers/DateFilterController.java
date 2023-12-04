@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.core.view.ViewCompat;
 import com.example.softwaresolutionssquad.R;
@@ -22,6 +25,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import com.example.softwaresolutionssquad.controllers.SortController;
 
 /**
  * Controller for filtering inventory items by date range.
@@ -30,6 +34,8 @@ public class DateFilterController {
     public final EditText startDateEditText;
     public final EditText endDateEditText;
     public final TextView dateFilterButton;
+    public final Spinner spinnerOrder;
+    public final ImageView sortordericon;
     public final TextView keywordFilterButton;
     public final TextView makeFilterButton;
     public final TextView tagFilterButton;
@@ -42,6 +48,7 @@ public class DateFilterController {
     public final ListView inventoryListView;
     public Predicate<InventoryItem> filterCondition;
     public final ArrayList<InventoryItem> inventoryItems;
+    private boolean isAscendingOrder = true;
 
     /**
      * Constructs a new DateFilterController.
@@ -74,7 +81,9 @@ public class DateFilterController {
                                 LinearLayout tagFilterLayout,
                                 InventoryListAdapter inventoryListAdapter,
                                 ListView inventoryListView,
-                                ArrayList<InventoryItem> inventoryItems) {
+                                ArrayList<InventoryItem> inventoryItems,
+                                Spinner spinnerOrder,
+                                ImageView sortOrderIcon) {
         this.context = context;
         this.dateFilterLayout = dateFilterLayout;
         this.startDateEditText = startDateEditText;
@@ -89,6 +98,8 @@ public class DateFilterController {
         this.inventoryListAdapter = inventoryListAdapter;
         this.inventoryListView = inventoryListView;
         this.inventoryItems = inventoryItems;
+        this.spinnerOrder = spinnerOrder;
+        this.sortordericon = sortOrderIcon;
         initializeDateFilter();
     }
 
@@ -100,6 +111,8 @@ public class DateFilterController {
         startDateEditText.setOnClickListener(view -> showDatePicker(startDateEditText, endDateEditText, true));
         endDateEditText.setOnClickListener(view -> showDatePicker(endDateEditText, startDateEditText, false));
     }
+
+
 
     /**
      * Toggles visibility of filter layouts and resets filter conditions.
@@ -188,7 +201,37 @@ public class DateFilterController {
      */
     public void displayFilteredResults(Predicate<InventoryItem> condition) {
         ArrayList<InventoryItem> filteredResults = inventoryItems.stream().filter(condition).collect(Collectors.toCollection(ArrayList::new));
-        inventoryListView.setAdapter(new InventoryListAdapter(context, filteredResults));
+        InventoryListAdapter new_adapter = new InventoryListAdapter(context, filteredResults);
+        inventoryListView.setAdapter(new_adapter);
+        SortController sortController = new SortController(new_adapter, filteredResults);
+        spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                sortController.onItemSelected(position*2);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // If no item is selected, no action is needed
+            }
+        });
+
+        sortordericon.setOnClickListener(v -> {
+            // Toggle the sort order
+            isAscendingOrder = !isAscendingOrder;
+
+            // Perform sorting with the current criterion and order
+            int criterionPosition = spinnerOrder.getSelectedItemPosition();
+            sortController.onItemSelected(getSortPositionFromSpinner(criterionPosition));
+        });
+    }
+
+    // Helper method to map spinner position to SortController position
+    private int getSortPositionFromSpinner(int spinnerPosition) {
+        // Map spinner position to SortController's expected position
+        // Assuming the spinner positions align with the SortController cases
+        return isAscendingOrder ? spinnerPosition * 2 : spinnerPosition * 2 + 1;
     }
 
     /**
