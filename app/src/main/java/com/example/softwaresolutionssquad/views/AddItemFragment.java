@@ -75,6 +75,7 @@ public class AddItemFragment extends Fragment {
     private EditText estimatedValueEditText;
     private EditText commentEditText;
     private Button nextButton;
+    private Button cancelButton;
     private InventoryItem currentItem;
 
     private TextView title;
@@ -202,6 +203,17 @@ public class AddItemFragment extends Fragment {
             }
         });
 
+        if (currentItem == null) {
+            cancelButton.setVisibility(View.GONE);
+        }
+        cancelButton.setOnClickListener(v -> {
+            // Show the HomeFragment
+            if (getActivity() instanceof MainActivity) {
+                HomeFragment homeFragment = new HomeFragment();
+                ((MainActivity) getActivity()).setFragment(homeFragment);
+            }
+        });
+
         // Prepopulate fields if currentItem is not null (i.e., we're editing an existing item)
         if (currentItem != null) {
             title.setText("Update Item");
@@ -225,6 +237,7 @@ public class AddItemFragment extends Fragment {
         estimatedValueEditText = view.findViewById(R.id.editTextNumberDecimal);
         commentEditText = view.findViewById(R.id.edtCommentTitle);
         nextButton = view.findViewById(R.id.btnNext);
+        cancelButton = view.findViewById(R.id.btnCancel);
         title = view.findViewById(R.id.title);
         storageRef = FirebaseStorage.getInstance().getReference();
         scanDescription = view.findViewById(R.id.btnScanDescription);
