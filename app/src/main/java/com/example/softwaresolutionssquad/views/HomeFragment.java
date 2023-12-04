@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -11,23 +12,26 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.softwaresolutionssquad.R;
-import com.example.softwaresolutionssquad.controllers.DatabaseController;
 import com.example.softwaresolutionssquad.controllers.DateFilterController;
 import com.example.softwaresolutionssquad.controllers.KeywordFilterController;
 import com.example.softwaresolutionssquad.controllers.MakeFilterController;
-import com.example.softwaresolutionssquad.controllers.SortController;
 import com.example.softwaresolutionssquad.controllers.TagFilterController;
+import com.example.softwaresolutionssquad.controllers.SortController;
 import com.example.softwaresolutionssquad.models.InventoryItem;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
@@ -42,10 +46,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
-public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCheckedItemShowButtonsListener, AddItemTagFragment.OnFragmentInteractionListener {
+public class HomeFragment extends Fragment implements InventoryListAdapter.OnCheckedItemShowButtonsListener, AddItemTagFragment.OnFragmentInteractionListener {
     private ListView inventoryListView;
     private ArrayList<InventoryItem> inventoryItems;
-    private DatabaseController databaseController;
     private InventoryListAdapter inventoryListAdapter;
     private CollectionReference itemsRef;
     private Button deleteButton;
@@ -75,6 +78,9 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
         super.onAttach(context);
         this.context = context;
     }
+
+    // Member to keep track of current sort order, default is true for ascending
+    private boolean isAscendingOrder = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -130,13 +136,14 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
             }
         });
 
+        SortController sortController = new SortController(inventoryListAdapter, inventoryItems);
+
         // Set the listener for when an item is selected in the Spinner
         spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            final SortController sortController = new SortController(inventoryListAdapter, inventoryItems);
 
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                sortController.onItemSelected(position);
+                sortController.onItemSelected(position*2);
             }
 
             @Override
@@ -202,8 +209,8 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
         EditText keywords = view.findViewById(R.id.keywords);
 
 
-        // Allow user to filter all items in an inputted date range
-        DateFilterController dateFilterController = new DateFilterController(
+        // Allow user to filter all items in an inputted date range. we only need instantiation because it helps with onclick
+        new DateFilterController(
                 context, // Context
                 dateFilter,
                 startDate,
@@ -220,7 +227,7 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
                 inventoryItems // The data list
         );
 
-        KeywordFilterController keywordFilterController = new KeywordFilterController(
+        new KeywordFilterController(
                 context, // context
                 keyFilter,
                 keywords,
@@ -280,8 +287,28 @@ public class HomeFragment extends Fragment implements  InventoryListAdapter.OnCh
             // ...
             tagFilterController.toggleTagFilterVisibility();
         });
+
+        ImageView SortOrderIcon = view.findViewById(R.id.sort_view); // Replace with your actual ImageView ID
+
+        // OnClickListener for sort icon
+        SortOrderIcon.setOnClickListener(v -> {
+            // Toggle the sort order
+            isAscendingOrder = !isAscendingOrder;
+
+            // Perform sorting with the current criterion and order
+            int criterionPosition = spinnerOrder.getSelectedItemPosition();
+            sortController.onItemSelected(getSortPositionFromSpinner(criterionPosition));
+        });
+
         // Inflate the layout for this fragment
         return view;
+    }
+
+    // Helper method to map spinner position to SortController position
+    private int getSortPositionFromSpinner(int spinnerPosition) {
+        // Map spinner position to SortController's expected position
+        // Assuming the spinner positions align with the SortController cases
+        return isAscendingOrder ? spinnerPosition * 2 : spinnerPosition * 2 + 1;
     }
 
     // Method to show the delete button if any items are selected

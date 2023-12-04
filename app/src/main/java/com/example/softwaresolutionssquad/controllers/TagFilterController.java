@@ -187,6 +187,7 @@ public class TagFilterController {
             tagButton.setTextColor(Color.BLACK);
             tagFilter.setVisibility(View.GONE);
             ViewCompat.setBackgroundTintList(tagButton, null);
+            inventoryListView.setAdapter(inventoryListAdapter);
         }
     }
 
@@ -195,7 +196,7 @@ public class TagFilterController {
      *
      * @param condition The predicate to apply as the filter condition.
      */
-    private void filteredResults(Predicate<InventoryItem> condition) {
+    public void filteredResults(Predicate<InventoryItem> condition) {
         List<InventoryItem> filteredResults = inventoryItems.stream()
                 .filter(condition)
                 .collect(Collectors.toList());

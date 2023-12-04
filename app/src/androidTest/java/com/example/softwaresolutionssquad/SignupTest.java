@@ -36,7 +36,7 @@ import java.util.Map;
 @RunWith(AndroidJUnit4.class)
 public class SignupTest {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final String TESTUSER = "UiTestUser@test.com";
+    private final String TESTUSER = "UiTestUser";
     private final String PASSWORD = "UiTestPass";
     private final Map<String, Object> userData = new HashMap() {
         { put("username", TESTUSER); put("password", Utils.hashPassword(PASSWORD)); put("displayName", "UI Test"); }
@@ -58,7 +58,7 @@ public class SignupTest {
     }
 
     @Test
-    public void TestEmptyUsername() {
+    public void TestEmptyName() {
         // Arrange
         Intents.init();
         // Act
@@ -78,7 +78,7 @@ public class SignupTest {
         Intents.init();
         // Act
         onView(withId(R.id.signup_page_name_edittext)).perform(typeText("TestName"));
-        onView(withId(R.id.signup_page_signup_email_edittext)).perform(typeText("test@example.com"), closeSoftKeyboard());
+        onView(withId(R.id.signup_page_signup_username_edittext)).perform(typeText(TESTUSER), closeSoftKeyboard());
         onView(withId(R.id.signup_page_signup_button)).perform(click());
         // Assert
         onView(withId(R.id.signup_page_error_message))
@@ -88,13 +88,13 @@ public class SignupTest {
     }
 
     @Test
-    public void TestEmptyEmail() {
+    public void TestEmptyUsername() {
         // Arrange
         Intents.init();
         // Act
         onView(withId(R.id.signup_page_name_edittext)).perform(typeText("TestName"));
         onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD), closeSoftKeyboard());
-        // No email (username) input
+        // No username input
         onView(withId(R.id.signup_page_signup_button)).perform(click());
         // Assert
         onView(withId(R.id.signup_page_error_message))
@@ -111,7 +111,7 @@ public class SignupTest {
         Intents.init();
         // Act
         onView(withId(R.id.signup_page_name_edittext)).perform(typeText("TestName"), closeSoftKeyboard());
-        onView(withId(R.id.signup_page_signup_email_edittext)).perform(typeText(TESTUSER), closeSoftKeyboard());
+        onView(withId(R.id.signup_page_signup_username_edittext)).perform(typeText(TESTUSER), closeSoftKeyboard());
         onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD), closeSoftKeyboard());
         onView(withId(R.id.signup_page_signup_button)).perform(click());
         Thread.sleep(2000);
@@ -130,7 +130,7 @@ public class SignupTest {
             Intents.init();
             // Act
             onView(withId(R.id.signup_page_name_edittext)).perform(typeText(TESTUSER));
-            onView(withId(R.id.signup_page_signup_email_edittext)).perform(typeText(TESTUSER));
+            onView(withId(R.id.signup_page_signup_username_edittext)).perform(typeText(TESTUSER));
             onView(withId(R.id.signup_page_signup_password_edittext)).perform(typeText(PASSWORD), closeSoftKeyboard());
             onView(withId(R.id.signup_page_signup_button)).perform(click());
             // Assert

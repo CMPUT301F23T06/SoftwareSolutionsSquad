@@ -2,9 +2,8 @@
     <string name="app_name">SoftwareSolutionsSquad</string>
     <string name="login">Login</string>
     <string name="sign_up">Sign Up</string>
-    <string name="email_address">Email Address</string>
+    <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="forgot_password">Forgot Password?</string>
     <string name="no_account">Don\'t have an account?</string>
     <string name="create_account">Create Account</string>
     <string name="existing_user">Already have an account?</string>
@@ -13,7 +12,6 @@
     <string name="confirm">Confirm</string>
     <string name="name">Name</string>
     <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
@@ -24,16 +22,11 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string-array name="order_options">
-        <item>Date ASC</item>
-        <item>Date DESC</item>
-        <item>DESCR ASC</item>
-        <item>DESCR DESC</item>
-        <item>Make ASC</item>
-        <item>Make DESC</item>
-        <item>EST_VAL ASC</item>
-        <item>EST_VAL DESC</item>
-        <item>TAG ASC</item>
-        <item>TAG DESC</item>
+        <item>Date</item>
+        <item>Description</item>
+        <item>Make</item>
+        <item>Estimated Value</item>
+        <item>Tag</item>
     </string-array>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>

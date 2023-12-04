@@ -151,10 +151,11 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/sort_view"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_gravity="end"
-            android:src="@drawable/sort" />
+            android:src="@drawable/up_down_arrows_sorting_resized" />
 
         <Spinner
             android:id="@+id/spinner_order"
@@ -220,6 +221,7 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/home_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray" />

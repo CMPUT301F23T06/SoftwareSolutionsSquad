@@ -27,21 +27,21 @@ import java.util.stream.Collectors;
  * Controller for filtering inventory items by date range.
  */
 public class DateFilterController {
-    private final EditText startDateEditText;
-    private final EditText endDateEditText;
-    private final TextView dateFilterButton;
-    private final TextView keywordFilterButton;
-    private final TextView makeFilterButton;
-    private final TextView tagFilterButton;
-    private final LinearLayout dateFilterLayout;
-    private final LinearLayout keywordFilterLayout;
-    private final LinearLayout makeFilterLayout;
-    private final LinearLayout tagFilterLayout;
-    private final Context context;
-    private final InventoryListAdapter inventoryListAdapter;
-    private final ListView inventoryListView;
-    private Predicate<InventoryItem> filterCondition;
-    private final ArrayList<InventoryItem> inventoryItems;
+    public final EditText startDateEditText;
+    public final EditText endDateEditText;
+    public final TextView dateFilterButton;
+    public final TextView keywordFilterButton;
+    public final TextView makeFilterButton;
+    public final TextView tagFilterButton;
+    public final LinearLayout dateFilterLayout;
+    public final LinearLayout keywordFilterLayout;
+    public final LinearLayout makeFilterLayout;
+    public final LinearLayout tagFilterLayout;
+    public final Context context;
+    public final InventoryListAdapter inventoryListAdapter;
+    public final ListView inventoryListView;
+    public Predicate<InventoryItem> filterCondition;
+    public final ArrayList<InventoryItem> inventoryItems;
 
     /**
      * Constructs a new DateFilterController.
@@ -95,7 +95,7 @@ public class DateFilterController {
     /**
      * Initializes date filter by setting up listeners for date input fields and buttons.
      */
-    private void initializeDateFilter() {
+    public void initializeDateFilter() {
         dateFilterButton.setOnClickListener(view -> toggleFilters());
         startDateEditText.setOnClickListener(view -> showDatePicker(startDateEditText, endDateEditText, true));
         endDateEditText.setOnClickListener(view -> showDatePicker(endDateEditText, startDateEditText, false));
@@ -104,7 +104,7 @@ public class DateFilterController {
     /**
      * Toggles visibility of filter layouts and resets filter conditions.
      */
-    private void toggleFilters() {
+    public void toggleFilters() {
         // Hide other filters when date filter is active
         keywordFilterLayout.setVisibility(View.GONE);
         makeFilterLayout.setVisibility(View.GONE);
@@ -131,7 +131,7 @@ public class DateFilterController {
      * @param otherDateEditText    the other date EditText that is not being updated
      * @param isStartDate          flag to indicate if the start date is being set
      */
-    private void showDatePicker(final EditText selectedDateEditText, final EditText otherDateEditText, final boolean isStartDate) {
+    public void showDatePicker(final EditText selectedDateEditText, final EditText otherDateEditText, final boolean isStartDate) {
         DatePickerDialog.OnDateSetListener dateSetListener = (view, year, month, dayOfMonth) -> {
             LocalDate date = LocalDate.of(year, month + 1, dayOfMonth);
             selectedDateEditText.setText(date.toString());
@@ -161,7 +161,7 @@ public class DateFilterController {
      * @param startDateEditText the EditText containing the start date
      * @param endDateEditText   the EditText containing the end date
      */
-    private void updateDateFilter(EditText startDateEditText, EditText endDateEditText) {
+    public void updateDateFilter(EditText startDateEditText, EditText endDateEditText) {
         Date startDate = convertStringToDate(startDateEditText.getText().toString());
         Date endDate = convertStringToDate(endDateEditText.getText().toString());
         filterCondition = item -> !item.getPurchaseDate().before(startDate) && !item.getPurchaseDate().after(endDate);
@@ -174,7 +174,7 @@ public class DateFilterController {
      * @param dateString the date string to convert
      * @return the Date object
      */
-    private Date convertStringToDate(String dateString) {
+    public Date convertStringToDate(String dateString) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         return Date.from(LocalDate.parse(dateString).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
@@ -184,7 +184,7 @@ public class DateFilterController {
      *
      * @param condition the condition to filter the list
      */
-    private void displayFilteredResults(Predicate<InventoryItem> condition) {
+    public void displayFilteredResults(Predicate<InventoryItem> condition) {
         ArrayList<InventoryItem> filteredResults = inventoryItems.stream().filter(condition).collect(Collectors.toCollection(ArrayList::new));
         inventoryListView.setAdapter(new InventoryListAdapter(context, filteredResults));
     }
@@ -194,7 +194,7 @@ public class DateFilterController {
      *
      * @param button the button to update
      */
-    private void setButtonActiveBackground(TextView button) {
+    public void setButtonActiveBackground(TextView button) {
         button.setTextColor(Color.WHITE);
         ViewCompat.setBackgroundTintList(button, ColorStateList.valueOf(context.getResources().getColor(R.color.app_blue, null)));
     }
@@ -204,7 +204,7 @@ public class DateFilterController {
      *
      * @param button the button to reset
      */
-    private void resetButtonBackground(TextView button) {
+    public void resetButtonBackground(TextView button) {
         button.setTextColor(Color.BLACK);
         ViewCompat.setBackgroundTintList(button, null);
     }
@@ -213,14 +213,14 @@ public class DateFilterController {
     /**
      * Resets the ListView adapter to display all items and clears any filter conditions.
      */
-    private void resetListViewAdapter() {
+    public void resetListViewAdapter() {
         inventoryListView.setAdapter(inventoryListAdapter);
     }
 
     /**
      * Sets default dates in the date filter fields when the filter is first activated.
      */
-    private void setDefaultDates() {
+    public void setDefaultDates() {
         startDateEditText.setText("2010-01-01"); // Default start date
         endDateEditText.setText(LocalDate.now().toString()); // Current date as default end date
     }
@@ -228,7 +228,7 @@ public class DateFilterController {
     /**
      * Resets the backgrounds of all filter buttons to default state.
      */
-    private void resetButtonBackgrounds() {
+    public void resetButtonBackgrounds() {
         resetButtonBackground(keywordFilterButton);
         resetButtonBackground(makeFilterButton);
         resetButtonBackground(tagFilterButton);

@@ -17,6 +17,7 @@ import static org.hamcrest.Matchers.allOf;
 import static java.lang.Thread.sleep;
 import static kotlin.jvm.internal.Intrinsics.checkNotNull;
 
+import android.Manifest;
 import android.view.View;
 import android.widget.DatePicker;
 
@@ -52,7 +53,6 @@ import java.time.LocalDate;
  */
 @RunWith(AndroidJUnit4.class)
 public class ItemTest {
-
     @Rule
     public ActivityScenarioRule<MainActivity> activityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
     private String uniqueDescription, makeValue, modelValue;
@@ -109,16 +109,16 @@ public class ItemTest {
         sleep(1000);
 
         onView(withId(R.id.btnSelectImage)).perform(click());
-        device.wait(Until.hasObject(By.textContains("Pictures")), 10000);
 
+        device.wait(Until.hasObject(By.textContains("Pictures")), 10000);
         UiObject picturesButton = device.findObject(new UiSelector().textContains("Pictures"));
         picturesButton.click();
-        device.wait(Until.hasObject(By.textContains("Nov")), 10000);
 
-        UiObject image = device.findObject(new UiSelector().textContains("Nov"));
+        device.wait(Until.hasObject(By.checkable(true)), 10000);
+        UiObject image = device.findObject(new UiSelector().checkable(true));
         image.click();
-        device.wait(Until.hasObject(By.textContains("Done")), 10000);
 
+        device.wait(Until.hasObject(By.textContains("Done")), 10000);
         UiObject doneButton = device.findObject(new UiSelector().textContains("Done"));
         doneButton.click();
         sleep(2000);
@@ -143,6 +143,8 @@ public class ItemTest {
 
         onView(withId(R.id.btnCreate)).perform(click());
         sleep(5000);
+
+        onView(withId(R.id.navigation_home)).perform(click());
 
         // Now verify the item was added
         onData(withItemContent(uniqueDescription))
@@ -194,9 +196,9 @@ public class ItemTest {
 
         UiObject picturesButton = device.findObject(new UiSelector().textContains("Pictures"));
         picturesButton.click();
-        device.wait(Until.hasObject(By.textContains("Nov")), 10000);
+        device.wait(Until.hasObject(By.checkable(true)), 10000);
 
-        UiObject image = device.findObject(new UiSelector().textContains("Nov"));
+        UiObject image = device.findObject(new UiSelector().checkable(true));
         image.click();
         device.wait(Until.hasObject(By.textContains("Done")), 10000);
 
@@ -236,6 +238,17 @@ public class ItemTest {
 
         // Reset the flag
         isEditTest = false;
+    }
+
+    @Test
+    public void testScanners() throws InterruptedException {
+        onView(withId(R.id.btnScanDescription)).perform(click());
+        onView(withId(R.id.surfaceView)).check(matches(isDisplayed()));
+        onView(withText("Cancel")).perform(click());
+
+        onView(withId(R.id.btnScanSerial)).perform(click());
+        onView(withId(R.id.surfaceView)).check(matches(isDisplayed()));
+        onView(withText("Cancel")).perform(click());
     }
 
     /**

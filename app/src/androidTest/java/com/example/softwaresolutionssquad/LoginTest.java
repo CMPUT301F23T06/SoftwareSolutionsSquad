@@ -60,8 +60,8 @@ public class LoginTest {
     }
 
     @Test
-    public void testLoginButtonWithEmailOnly() {
-        onView(withId(R.id.login_page_login_email_edittext)).perform(typeText(TEST_USER), closeSoftKeyboard());
+    public void testLoginButtonWithUsernameOnly() {
+        onView(withId(R.id.login_page_login_username_edittext)).perform(typeText(TEST_USER), closeSoftKeyboard());
         onView(withId(R.id.login_page_login_button)).perform(click());
 
         onView(withId(R.id.login_page_error_message)).check(matches(withText("Please enter both username and password.")));
@@ -77,7 +77,7 @@ public class LoginTest {
 
     @Test
     public void testLoginWithInvalidCredentials() {
-        onView(withId(R.id.login_page_login_email_edittext)).perform(typeText("invalidUser"), closeSoftKeyboard());
+        onView(withId(R.id.login_page_login_username_edittext)).perform(typeText("invalidUser"), closeSoftKeyboard());
         onView(withId(R.id.login_page_login_password_edittext)).perform(typeText("invalidPass"), closeSoftKeyboard());
         onView(withId(R.id.login_page_login_button)).perform(click());
 
@@ -90,7 +90,7 @@ public class LoginTest {
         Intents.init();
         db.collection("User").document(TEST_USER).set(userData);
         // Act
-        onView(withId(R.id.login_page_login_email_edittext)).perform(typeText(TEST_USER), closeSoftKeyboard());
+        onView(withId(R.id.login_page_login_username_edittext)).perform(typeText(TEST_USER), closeSoftKeyboard());
         onView(withId(R.id.login_page_login_password_edittext)).perform(typeText(PASSWORD), closeSoftKeyboard());
         onView(withId(R.id.login_page_login_button)).perform(click());
         Thread.sleep(2000);

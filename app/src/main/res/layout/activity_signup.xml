@@ -40,24 +40,24 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/signup_page_signup_email_textview"
+        android:id="@+id/signup_page_signup_username_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="55sp"
         android:layout_marginTop="30sp"
         android:layout_marginEnd="35sp"
-        android:text="Username"
+        android:text="@string/username"
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/signup_page_signup_email_edittext"
+        android:id="@+id/signup_page_signup_username_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="50sp"
         android:layout_marginEnd="50sp"
         android:ems="10"
         android:backgroundTint="@color/button_blue_color"
-        android:inputType="textEmailAddress" />
+        android:inputType="text" />
 
     <TextView
         android:id="@+id/signup_page_signup_password_textview"
