@@ -34,14 +34,29 @@ public class AddItemTagFragment extends DialogFragment {
 
         private OnFragmentInteractionListener listener;
 
+        /**
+         * Interface for handling interaction with the fragment.
+         */
         public interface OnFragmentInteractionListener {
                 void onOkPressed(ArrayList<String> selectedTags);
         }
 
+        /**
+         * Sets the listener for fragment interaction events.
+         * @param listener The listener to handle fragment interaction callbacks.
+         */
         public void setListener(OnFragmentInteractionListener listener) {
                 this.listener = listener;
         }
 
+        /**
+         * Creates and returns the view hierarchy associated with the fragment.
+         * This method initializes the fragment's UI components and sets up interactions.
+         * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+         * @param container If non-null, this is the parent view that the fragment's UI should be attached to.
+         * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+         * @return The View for the fragment's UI, or null.
+         */
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -79,9 +94,10 @@ public class AddItemTagFragment extends DialogFragment {
                 return view;
         }
 
-
-
-
+        /**
+         * Fetches tag data from Firestore and updates the UI accordingly.
+         * This method queries the Firestore database for tags related to the current user and displays them in a ListView.
+         */
         private void fetchFromFireStore() {
                 CollectionReference tagsRef = FirebaseFirestore.getInstance().collection("Tags");
 
@@ -106,7 +122,10 @@ public class AddItemTagFragment extends DialogFragment {
                 });
         }
 
-
+        /**
+         * Displays a list of tags in the ListView within the fragment.
+         * @param tags The list of tags to be displayed.
+         */
         private void displayTags(List<String> tags) {
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_multiple_choice, tags);
                 tagListView.setAdapter(adapter);

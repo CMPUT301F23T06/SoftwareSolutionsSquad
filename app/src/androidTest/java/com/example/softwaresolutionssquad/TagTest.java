@@ -72,8 +72,6 @@ public class TagTest {
         });
     }
 
-
-
     @Test
     public void testTagFragmentUI() {
         onView(withId(R.id.navigation_tag)).perform(click());
@@ -107,12 +105,5 @@ public class TagTest {
         onView(withText("TestTag")).perform(click());
         onView(withId(R.id.deleteButton)).perform(click());
         onView(withId(R.id.tag_list)).check(matches(isDisplayed()));
-
     }
-
-
-
-
-
-
 }

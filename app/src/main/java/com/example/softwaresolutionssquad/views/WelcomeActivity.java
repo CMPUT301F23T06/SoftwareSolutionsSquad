@@ -10,6 +10,10 @@ import com.example.softwaresolutionssquad.R;
 
 public class WelcomeActivity extends AppCompatActivity {
 
+    /**
+     * Called when the activity is starting. Initializes the activity, sets up the UI layout, and configures button interactions.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down, this contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

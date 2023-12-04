@@ -39,6 +39,9 @@ public class TagFilterControllerTest {
     private List<InventoryItem> mockInventoryItems;
     private TagFilterController controller;
 
+    /**
+     * Sets up the test environment before each test. Initializes mock objects and the TagFilterController.
+     */
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -61,6 +64,9 @@ public class TagFilterControllerTest {
         );
     }
 
+    /**
+     * Tests the functionality of toggling tag filter visibility.
+     */
     @Test
     public void testToggleTagFilterVisibility() {
         // Initial state should be hidden
@@ -75,6 +81,9 @@ public class TagFilterControllerTest {
         assertEquals(0, mockTagFilter.getVisibility());
     }
 
+    /**
+     * Tests the filtered results functionality of the TagFilterController.
+     */
     @Test
     public void testFilteredResults() {
         // Assuming you have a method in controller to apply the filter
@@ -85,10 +94,4 @@ public class TagFilterControllerTest {
         // Verify the inventory list is updated
         verify(mockInventoryListView).setAdapter(any(InventoryListAdapter.class));
     }
-
-    // More test methods can be added as needed
-
-    // Note: Testing the dialog interactions (e.g., selecting tags in the dialog)
-    // might require instrumented tests or a different approach, as it involves
-    // user interaction with UI elements.
 }

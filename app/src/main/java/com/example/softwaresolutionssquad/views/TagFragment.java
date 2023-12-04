@@ -65,16 +65,30 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
 
     private Context context;
 
+    /**
+     * Required empty constructor for instantiating the fragment.
+     */
     public TagFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Called when the fragment is first attached to its context. Sets up the context field.
+     * @param context The context to which the fragment is attached.
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
     }
 
+    /**
+     * Called to have the fragment instantiate its user interface view. Initializes UI components and sets up interactions.
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container The parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, the fragment is being re-constructed from a previous saved state.
+     * @return The View for the fragment's UI.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tag_layout, container, false);
@@ -232,6 +246,10 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
         return view;
     }
 
+    /**
+     * Determines whether the delete button should be enabled based on the selection of tags.
+     * @return A boolean indicating whether the delete button should be enabled.
+     */
     private boolean isDeleteButtonEnabled() {
         for (int i = 0; i < tagsList.getCount(); i++) {
             View tag = tagsList.getChildAt(i);
@@ -244,6 +262,10 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
         return false; // Disable the delete button
     }
 
+    /**
+     * Callback method when OK is pressed in the AddTagFragment. Adds a new tag to Firestore.
+     * @param tag The tag to be added.
+     */
     @Override
     public void onOkPressed(String tag) {
         if (originalTagDataList.contains(tag)) {
@@ -269,6 +291,10 @@ public class TagFragment extends Fragment implements AddTagFragment.OnFragmentIn
         }
     }
 
+    /**
+     * Deletes a specific tag from Firestore.
+     * @param tagName The name of the tag to be deleted.
+     */
     private void deleteTagFromFirestore(String tagName) {
         // Assuming you have a "tagsRef" that refers to your Firestore collection
         String tagDocumentName = tagName + userName;

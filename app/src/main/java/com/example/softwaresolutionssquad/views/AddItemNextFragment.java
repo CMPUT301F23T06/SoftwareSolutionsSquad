@@ -75,19 +75,34 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
     private final ArrayList<String> newImages = new ArrayList<>();
     ImageAdapter imageAdapter;
 
+    /**
+     * Constructor for AddItemNextFragment. Initializes the fragment with a given InventoryItem and a flag indicating if it's a new item.
+     * @param item The InventoryItem to be displayed or edited in this fragment.
+     * @param newItem A boolean flag indicating whether the item is new or existing.
+     */
     public AddItemNextFragment(InventoryItem item, boolean newItem) {
         this.item = item;
         this.newItem = newItem;
         this.imageUrisList = item.getImageUrl();
     }
 
+    /**
+     * Called when the fragment is first attached to its context. Initializes context.
+     * @param context The context to which the fragment is attached.
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
     }
 
-
+    /**
+     * Creates and returns the view hierarchy associated with the fragment.
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container If non-null, this is the parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     * @return The View for the fragment's UI, or null.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -168,6 +183,10 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
         return view;
     }
 
+    /**
+     * Creates a new InventoryItem in the Firestore database.
+     * @param newItem The InventoryItem object to be created in the database.
+     */
     public void createNewItem(InventoryItem newItem) {
         // Get a new document reference from Firestore, which has an auto-generated ID
         DocumentReference newDocRef = itemsRef.document();
@@ -182,6 +201,10 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
                 });
     }
 
+    /**
+     * Updates an existing InventoryItem in the Firestore database.
+     * @param updatedItem The InventoryItem object with updated information to be saved in the database.
+     */
     public void onUpdatePressed(InventoryItem updatedItem) {
         // Use the ID from the updatedItem to reference the Firestore document
         itemsRef.document(updatedItem.getDocId()).set(updatedItem)
@@ -191,6 +214,10 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
                 .addOnFailureListener(e -> Log.w("UpdateItem", "Error updating document", e));
     }
 
+    /**
+     * Handles the selection of tags when the OK button is pressed in the AddItemTagFragment.
+     * @param selectedTags The list of selected tags.
+     */
     @Override
     public void onOkPressed(ArrayList<String> selectedTags) {
         for (String tag: selectedTags) {
@@ -214,6 +241,11 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
                 }
             });
 
+    /**
+     * Creates a new image file for capturing a photo, providing a unique file name.
+     * @return The Uri of the newly created image file.
+     * @throws IOException If there is an error creating the file.
+     */
     private Uri createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
@@ -229,6 +261,9 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
         return FileProvider.getUriForFile(getContext(), "com.example.softwaresolutionssquad.fileprovider", image);
     }
 
+    /**
+     * Initiates the camera intent to take a photo, storing the result in a file.
+     */
     private void takePhoto() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
@@ -252,6 +287,9 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
             }
     );
 
+    /**
+     * Checks for camera permission and, if granted, opens the camera to take a photo.
+     */
     private void checkCameraPermissionAndOpenCamera() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             takePhoto();
@@ -260,6 +298,9 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
         }
     }
 
+    /**
+     * Opens an intent to select an image from the device's storage.
+     */
     private void selectImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -282,6 +323,11 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
                 }
             });
 
+    /**
+     * Uploads a list of image URIs to Firebase Storage and invokes a callback upon completion.
+     * @param uriStrings The list of URI strings representing the images to upload.
+     * @param listener The callback to be invoked when the upload is complete.
+     */
     private void uploadImageToFirebase(ArrayList<String> uriStrings, UploadCompleteListener listener) {
         if (uriStrings != null && uriStrings.size() > 0) {
             // Initialize Firebase Storage with the specific URL
@@ -311,11 +357,10 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
                             });
                         })
                         .addOnFailureListener(e -> {
-                            // Handle unsuccessful uploads
-                            // You can display a message or perform other actions
+
                         })
                         .addOnProgressListener(snapshot -> {
-                            // If you want, you can show upload progress here
+
                         });
             }
         } else {
@@ -323,6 +368,11 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
         }
     }
 
+    /**
+     * Retrieves the file extension of a given Uri.
+     * @param uri The Uri of the file whose extension is to be determined.
+     * @return The file extension as a String.
+     */
     private String getFileExtension(Uri uri) {
         ContentResolver cr = getContext().getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();

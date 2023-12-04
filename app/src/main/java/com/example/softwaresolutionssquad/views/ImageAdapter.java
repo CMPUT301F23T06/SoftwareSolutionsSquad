@@ -1,7 +1,6 @@
 // Package declaration aligning with Java package naming conventions.
 package com.example.softwaresolutionssquad.views;
 
-// Import statements for necessary Android and Java classes.
 
 import android.app.Dialog;
 import android.content.Context;
@@ -52,12 +51,12 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageView;
-        public ImageButton deleteButton; // Add a delete button
+        public ImageButton deleteButton;
 
         public ViewHolder(View view) {
             super(view);
             imageView = view.findViewById(R.id.imageViewItem);
-            deleteButton = view.findViewById(R.id.deleteButton); // Initialize the delete button
+            deleteButton = view.findViewById(R.id.deleteButton);
         }
     }
 
@@ -70,7 +69,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Uri imageUri = Uri.parse(imageUris.get(position));
-//        holder.imageView.setImageURI(imageUri);
         Glide.with(context)
                 .load(imageUris.get(position))
                 .override(holder.imageView.getWidth(), holder.imageView.getHeight())

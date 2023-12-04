@@ -72,8 +72,6 @@ public class LogoutTest {
         });
     }
 
-
-
     @Test
     public void testTagFragmentUI() {
         // Navigate to the ProfileFragment
@@ -89,12 +87,5 @@ public class LogoutTest {
 
         // Check if the login screen is displayed after logout
         onView(withId(R.id.login_page_login_textview)).check(matches(isDisplayed()));
-
     }
-
-
-
-
-
-
 }

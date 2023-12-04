@@ -24,6 +24,9 @@ public class InventoryItemTest {
     private final ArrayList<String> imageUrl = new ArrayList<>();
     private final boolean isSelected = true;
 
+    /**
+     * Sets up the test environment before each test. Initializes an InventoryItem object.
+     */
     @Before
     public void setUp() {
         purchaseDate = new Date();
@@ -32,6 +35,9 @@ public class InventoryItemTest {
         item.setSelected(isSelected);
     }
 
+    /**
+     * Tests various getter and setter methods of the InventoryItem class.
+     */
     @Test
     public void testGetPurchaseDate() {
         assertEquals(purchaseDate, item.getPurchaseDate());
@@ -152,6 +158,9 @@ public class InventoryItemTest {
         assertFalse(item.getSelected());
     }
 
+    /**
+     * Tests the toString method of the InventoryItem class.
+     */
     @Test
     public void testToString() {
         String expectedString = "InventoryItem{" +

@@ -43,6 +43,9 @@ public class DateFilterControllerTest {
     private ArrayList<InventoryItem> inventoryItems;
     private DateFilterController controller;
 
+    /**
+     * Sets up the test environment before each test. Initializes mock objects and the DateFilterController.
+     */
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -71,12 +74,18 @@ public class DateFilterControllerTest {
         );
     }
 
+    /**
+     * Tests the initialization of the DateFilterController constructor.
+     */
     @Test
     public void testConstructorInitialization() {
         assertNotNull(controller);
-        // Add more assertions as needed to verify initial state
+
     }
 
+    /**
+     * Tests the functionality of toggling filter visibility.
+     */
     @Test
     public void testToggleFilters() {
         // Initial state should be hidden
@@ -91,6 +100,9 @@ public class DateFilterControllerTest {
         assertEquals(0, mockDateFilterLayout.getVisibility());
     }
 
+    /**
+     * Tests setting the default dates in the date filter.
+     */
     @Test
     public void testDefaultDates() {
         ArgumentCaptor<String> startDateCaptor = ArgumentCaptor.forClass(String.class);
@@ -106,7 +118,4 @@ public class DateFilterControllerTest {
         assertEquals("1900-01-01", startDateCaptor.getValue());
         assertEquals(LocalDate.now().toString(), endDateCaptor.getValue());
     }
-
-    // More test methods can be added as needed
-
 }
