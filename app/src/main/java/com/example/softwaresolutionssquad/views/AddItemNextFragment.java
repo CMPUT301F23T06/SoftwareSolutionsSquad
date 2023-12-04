@@ -125,7 +125,7 @@ public class AddItemNextFragment extends Fragment implements AddItemTagFragment.
 
         if (!newItem) {
             createBtn.setText("Update");
-            titleTextView.setText("Update Item");
+            titleTextView.setText("View/Update Item");
         }
 
         itemsRef =  ((MainActivity)getActivity()).getDb().collection("Item");

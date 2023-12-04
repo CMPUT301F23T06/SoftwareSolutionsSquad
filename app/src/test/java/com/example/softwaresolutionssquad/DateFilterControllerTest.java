@@ -103,7 +103,7 @@ public class DateFilterControllerTest {
         verify(mockStartDateEditText).setText(startDateCaptor.capture());
         verify(mockEndDateEditText).setText(endDateCaptor.capture());
 
-        assertEquals("1900-01-01", startDateCaptor.getValue());
+        assertEquals("2010-01-01", startDateCaptor.getValue());
         assertEquals(LocalDate.now().toString(), endDateCaptor.getValue());
     }
 
