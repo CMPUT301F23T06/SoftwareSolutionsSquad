@@ -42,10 +42,14 @@ public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
         this.context = context;
     }
 
-    public void updateItems(List<InventoryItem> newItems) {
+    public void updateItems(ArrayList<InventoryItem> newItems) {
         items.clear();
         items.addAll(newItems);
         this.notifyDataSetChanged();
+    }
+
+    public ArrayList<InventoryItem> getItems(){
+        return items;
     }
     /**
      * Interface for delete button visibility callback.

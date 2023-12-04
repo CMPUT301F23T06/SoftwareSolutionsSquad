@@ -201,9 +201,8 @@ public class DateFilterController {
      */
     public void displayFilteredResults(Predicate<InventoryItem> condition) {
         ArrayList<InventoryItem> filteredResults = inventoryItems.stream().filter(condition).collect(Collectors.toCollection(ArrayList::new));
-        InventoryListAdapter new_adapter = new InventoryListAdapter(context, filteredResults);
-        inventoryListView.setAdapter(new_adapter);
-        SortController sortController = new SortController(new_adapter, filteredResults);
+        inventoryListAdapter.updateItems(filteredResults);
+        SortController sortController = new SortController(inventoryListAdapter, filteredResults);
         spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
