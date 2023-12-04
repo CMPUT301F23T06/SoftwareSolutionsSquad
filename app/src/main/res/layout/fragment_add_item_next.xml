@@ -37,8 +37,7 @@
         android:layout_marginHorizontal="15dp"
         android:layout_marginTop="15dp"
         android:backgroundTint="@color/button_blue_color"
-        android:text="Add Tags"
-        android:textSize="12sp" />
+        android:text="Add Tags" />
 
     <!-- Set layout_weight for the GridView to 1 and layout_height to 0dp -->
     <GridView
