@@ -38,13 +38,11 @@ public class ProfileFragment extends Fragment {
     private String userName;
 
     private TextView user;
-<<<<<<< HEAD
-=======
+
 
     /**
      * Required empty constructor for instantiating the fragment.
      */
->>>>>>> main
     public ProfileFragment() {
         // Required empty public constructor
     }
