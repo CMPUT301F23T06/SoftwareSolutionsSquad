@@ -44,7 +44,7 @@ public class KeywordFilterController {
     private final Context context;
     private InventoryListAdapter inventoryListAdapter;
     private final ListView inventoryListView;
-    private final ArrayList<InventoryItem> inventoryItems;
+    private ArrayList<InventoryItem> inventoryItems;
 
     private TextView estimatedValue;
 
@@ -159,6 +159,7 @@ public class KeywordFilterController {
      * @param condition the filter condition to apply
      */
     private void filteredResults(Predicate<InventoryItem> condition) {
+        inventoryItems = inventoryListAdapter.getOriginalItems();
         ArrayList<InventoryItem> filteredResults = inventoryItems.stream()
                 .filter(condition)
                 .collect(Collectors.toCollection(ArrayList::new));

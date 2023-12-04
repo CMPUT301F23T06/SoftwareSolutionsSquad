@@ -19,6 +19,7 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -355,6 +356,9 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                     .addOnFailureListener(e -> Log.w("DeleteItem", "Error deleting document", e));
         }
         buttonsLayout.setVisibility(View.GONE);
+        HomeFragment homeFragment = new HomeFragment();
+        ((MainActivity) getActivity()).setFragment(homeFragment);
+        Toast.makeText(getActivity(), "Item(s) deleted successfully!", Toast.LENGTH_SHORT).show();
 //        inventoryListView.setAdapter(inventoryListAdapter);
 
 
@@ -393,6 +397,9 @@ public class HomeFragment extends Fragment implements InventoryListAdapter.OnChe
                 updateItemInFirestore(item);
             }
         });
+        HomeFragment homeFragment = new HomeFragment();
+        ((MainActivity) getActivity()).setFragment(homeFragment);
+        Toast.makeText(getActivity(), "Tag[s) added successfully!", Toast.LENGTH_SHORT).show();
     }
 
     /***

@@ -33,7 +33,7 @@ public class TagFilterController {
     private final LinearLayout tagFilter;
     private final InventoryListAdapter inventoryListAdapter;
     private final ListView inventoryListView;
-    private final List<InventoryItem> inventoryItems;
+    private List<InventoryItem> inventoryItems;
     private final ArrayList<String> allTagsList;
     private final ArrayList<Integer> selectedTagsIndices;
     private Predicate<InventoryItem> filterCondition;
@@ -212,6 +212,7 @@ public class TagFilterController {
      * @param condition The predicate to apply as the filter condition.
      */
     public void filteredResults(Predicate<InventoryItem> condition) {
+        inventoryItems = inventoryListAdapter.getOriginalItems();
         List<InventoryItem> filteredResults = inventoryItems.stream()
                 .filter(condition)
                 .collect(Collectors.toList());

@@ -33,7 +33,7 @@ public class MakeFilterController {
     private final LinearLayout makeFilter;
     private final InventoryListAdapter inventoryListAdapter;
     private final ListView inventoryListView;
-    private final ArrayList<InventoryItem> inventoryItems;
+    private ArrayList<InventoryItem> inventoryItems;
     private final ArrayList<String> allMakesList;
     private final ArrayList<Integer> selectedMakesIndices;
     private Predicate<InventoryItem> filterCondition;
@@ -155,7 +155,7 @@ public class MakeFilterController {
         }
         makesTextView.setText(String.join(", ", selectedMakesList));
         if (selectedMakesList.isEmpty()) {
-            inventoryListView.setAdapter(inventoryListAdapter);
+            inventoryListAdapter.resetItems();
             updateTotalValue(inventoryListAdapter);
         } else {
             filterCondition = item -> selectedMakesList.contains(item.getMake());
@@ -213,6 +213,7 @@ public class MakeFilterController {
      * @param condition The predicate to apply as the filter condition.
      */
     public void filteredResults(Predicate<InventoryItem> condition) {
+        inventoryItems = inventoryListAdapter.getOriginalItems();
         ArrayList<InventoryItem> filteredResults = inventoryItems.stream()
                 .filter(condition)
                 .collect(Collectors.toCollection(ArrayList::new));

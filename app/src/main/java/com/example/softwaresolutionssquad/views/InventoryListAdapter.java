@@ -14,12 +14,9 @@ import androidx.annotation.Nullable;
 
 import com.example.softwaresolutionssquad.R;
 import com.example.softwaresolutionssquad.models.InventoryItem;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -48,6 +45,10 @@ public class InventoryListAdapter extends ArrayAdapter<InventoryItem> {
     public void addToOriginal(ArrayList<InventoryItem> items) {
         originalItems.clear();
         originalItems.addAll(items);
+    }
+
+    public ArrayList<InventoryItem> getOriginalItems() {
+        return originalItems;
     }
 
     public void updateItems(ArrayList<InventoryItem> newItems) {

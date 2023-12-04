@@ -47,7 +47,7 @@ public class DateFilterController {
     public final InventoryListAdapter inventoryListAdapter;
     public final ListView inventoryListView;
     public Predicate<InventoryItem> filterCondition;
-    public final ArrayList<InventoryItem> inventoryItems;
+    public ArrayList<InventoryItem> inventoryItems;
 
     private TextView estimatedValue;
 
@@ -214,6 +214,7 @@ public class DateFilterController {
      * @param condition the condition to filter the list
      */
     public void displayFilteredResults(Predicate<InventoryItem> condition) {
+        inventoryItems = inventoryListAdapter.getOriginalItems();
         ArrayList<InventoryItem> filteredResults = inventoryItems.stream().filter(condition).collect(Collectors.toCollection(ArrayList::new));
         inventoryListAdapter.updateItems(filteredResults);
         updateTotalValue(inventoryListAdapter);
