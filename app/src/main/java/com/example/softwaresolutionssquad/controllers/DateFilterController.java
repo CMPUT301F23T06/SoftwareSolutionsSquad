@@ -153,7 +153,7 @@ public class DateFilterController {
             dateFilterLayout.setVisibility(View.GONE);
             resetListViewAdapter();
             resetButtonBackground(dateFilterButton);
-            sortController.setFromHome(true);
+            sortController.setFromHome(false);
             sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
         }
     }

@@ -206,7 +206,7 @@ public class MakeFilterController {
             ViewCompat.setBackgroundTintList(makeButton, null);
             inventoryListAdapter.resetItems();
             sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
-            sortController.setFromHome(true);
+            sortController.setFromHome(false);
             updateTotalValue(inventoryListAdapter);
         }
     }

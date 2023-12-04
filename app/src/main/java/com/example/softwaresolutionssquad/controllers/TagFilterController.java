@@ -212,7 +212,7 @@ public class TagFilterController {
             ViewCompat.setBackgroundTintList(tagButton, null);
             inventoryListAdapter.resetItems();
             sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
-            sortController.setFromHome(true);
+            sortController.setFromHome(false);
             updateTotalValue(inventoryListAdapter);
         }
     }
