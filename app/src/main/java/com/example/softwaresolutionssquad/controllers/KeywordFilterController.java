@@ -46,6 +46,8 @@ public class KeywordFilterController {
     private final ListView inventoryListView;
     private ArrayList<InventoryItem> inventoryItems;
 
+    private SortController sortController;
+
     private TextView estimatedValue;
 
     private boolean isAscendingOrder = true;
@@ -82,7 +84,8 @@ public class KeywordFilterController {
                                    ListView inventoryListView,
                                    ArrayList<InventoryItem> inventoryItems,
                                    Spinner spinnerOrder,
-                                   ImageView sortOrderIcon
+                                   ImageView sortOrderIcon,
+                                   SortController sortController
     ) {
         this.context = context;
         this.keyFilter = keyFilter;
@@ -100,6 +103,7 @@ public class KeywordFilterController {
         this.spinnerOrder = spinnerOrder;
         this.sortordericon = sortOrderIcon;
         this.estimatedValue = estimatedValue;
+        this.sortController = sortController;
         setupKeywordFilter();
     }
 
@@ -165,28 +169,9 @@ public class KeywordFilterController {
                 .collect(Collectors.toCollection(ArrayList::new));
         inventoryListAdapter.updateItems(filteredResults);
         updateTotalValue(inventoryListAdapter);
-        SortController sortController = new SortController(inventoryListAdapter, filteredResults);
-        spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        sortController.setInventoryItems(filteredResults);
+        sortController.setFromHome(false);
 
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                sortController.onItemSelected(position*2);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // If no item is selected, no action is needed
-            }
-        });
-
-        sortordericon.setOnClickListener(v -> {
-            // Toggle the sort order
-            isAscendingOrder = !isAscendingOrder;
-
-            // Perform sorting with the current criterion and order
-            int criterionPosition = spinnerOrder.getSelectedItemPosition();
-            sortController.onItemSelected(getSortPositionFromSpinner(criterionPosition));
-        });
     }
 
     private int getSortPositionFromSpinner(int spinnerPosition) {
@@ -202,6 +187,8 @@ public class KeywordFilterController {
     private void resetFilterButtons() {
         keywords.setText("");
         inventoryListAdapter.resetItems();
+        sortController.setInventoryItems(inventoryListAdapter.getOriginalItems());
+        sortController.setFromHome(false);
         updateTotalValue(inventoryListAdapter);
         dateButton.setTextColor(Color.BLACK);
         makeButton.setTextColor(Color.BLACK);

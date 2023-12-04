@@ -12,7 +12,7 @@
 
     <style name="AlertDialogNegativeButtonStyle">
         <item name="android:textColor">@color/button_blue_color</item>
-        <item name="android:backgroundTint">@null</item>
+        <item name="android:backgroundTint">@color/white</item>
         <!-- Add other button style attributes here -->
     </style>
 

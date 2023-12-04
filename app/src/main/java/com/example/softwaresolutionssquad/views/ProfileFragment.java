@@ -39,6 +39,7 @@ public class ProfileFragment extends Fragment {
 
     private TextView user;
 
+
     /**
      * Required empty constructor for instantiating the fragment.
      */

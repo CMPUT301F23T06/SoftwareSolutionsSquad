@@ -218,7 +218,7 @@ public class AddItemFragment extends Fragment {
 
         // Prepopulate fields if currentItem is not null (i.e., we're editing an existing item)
         if (currentItem != null) {
-            title.setText("Update Item");
+            title.setText("View/Update Item");
             prepopulateFields(currentItem);
         }
         return view;
