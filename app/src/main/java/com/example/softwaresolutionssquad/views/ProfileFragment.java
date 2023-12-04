@@ -86,7 +86,7 @@ public class ProfileFragment extends Fragment {
         itemsRef.whereEqualTo("username", userName).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 itemCount = 0;
-                for (QueryDocumentSnapshot _ : task.getResult()) {
+                for (QueryDocumentSnapshot q : task.getResult()) {
                     itemCount += 1;
                 }
                 itemCountTextView.setText(String.valueOf(itemCount));
@@ -106,7 +106,7 @@ public class ProfileFragment extends Fragment {
         tagsRef.whereEqualTo("user", userName).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 tagCount = 0;
-                for (QueryDocumentSnapshot _ : task.getResult()) {
+                for (QueryDocumentSnapshot q : task.getResult()) {
                     tagCount += 1;
                 }
                 tagCountTextView.setText(String.valueOf(tagCount));
